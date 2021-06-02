@@ -1,0 +1,11 @@
+KБПD Fx=0 82    ПxB  1    -    xПB   Kx=0D ПxE  xПC
+ПxB  Flg  Kx=0D ПxD  Пx0  -    С/П   ПxC   xПE  9
+xПB  xП0  Пx0   xПA  ПxC  Fπ   +     Feˣ   K{x} xПC
+FВх  ПxD  KɅ    KxПA FL0  22   4     4     KV   xП1
+ПxD  xП0  Kзн   F10ˣ ПxA  ×    K{x}  Fx=0  58   БП
+10   +    KxПB  FL0  89   Fx≥0 17    ПxA   xПA  KПxB
+ПxA  1    +     5    ×    KɅ   K{x}  ПxA   ÷    В/О
+2    F10ˣ Fcos  Fx=0 42   KППD Kx≠0D F1/x  ПxB  +
+xПB  KППD 4     -    Fx≠0 50   +     Kx≥0B +    +
+Kинв <->  ПxB   FВх  <->  <->  ВП    С/П   Fx=0 70
+KППD ПxA  ×     -    KxПB

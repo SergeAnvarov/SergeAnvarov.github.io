@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta content="true" name="HandheldFriendly"/>
+	<meta content="width" name="MobileOptimized"/>
+	<meta content="yes" name="apple-mobile-web-app-capable"/>
+	<meta name="description" content="Кладоискатель-2"/>
+	<title>Кладоискатель-2</title>
+
+<style>
+
+span.but, span.but_f, span.but_k, span.but_cx, span.but_b, span.reg, span.op_f, span.op_k {
+	border:thin solid black;
+	border-radius:4px;
+	display:inline-block;
+	font-size:1.1em;
+	font-weight:bold;
+	font-family:monospace;
+	text-align:center;
+	min-width:2.3em;
+	white-space:nowrap;
+}
+
+sup {
+	line-height:0;
+}
+
+span.but {
+	background-color:#CCCCCC;
+	color:black;
+}
+
+span.but_f {
+	background-color:#F5E345;
+	color:black;
+}
+
+span.but_k {
+	background-color:LightSkyBlue;
+	color:white;
+}
+
+span.but_cx {
+	background-color:#F00505;
+	color:white;
+}
+
+span.but_b {
+	background-color:black;
+	color:white;
+}
+
+span.reg {
+	background-color:black;
+	color:white;
+}
+
+span.op_f {
+	background-color:black;
+	color:yellow;
+}
+
+span.op_k {
+	background-color:black;
+	color:#00BFFF;
+}
+
+.code {
+	background-color:#103810;
+	color:#77FF77;
+	font-size:1.1em;
+	font-family:monospace;
+	font-weight:bold;
+	padding:1px 2px 1px 2px;
+	white-space:pre;
+}
+
+table {
+	border-collapse:collapse;
+}
+
+table, th, td {
+	border:1px solid black;
+}
+
+.center {
+	text-align:center;
+}
+
+h2, h3, h4, header {
+	display:inline-block;
+}
+
+</style>
+
+</head>
+
+<body>
+	<header>
+		<h2>Кладоискатель-2</h2>
+	</header>
+	<p>
+		Игровая программа по поиску кладов в лабиринте, который формирует ПМК.
+	</p>
+	<p>
+		<b>Задача</b> &ndash; собрать как можно больше кладов и успешно выйти из лабиринта.
+		В лабиринте 9 этажей по 7 ячеек на этаже. <b>Вход</b> на 9-м этаже
+		(слева из стены) делается за игрока автоматически.
+		<b>Выход</b> на 1-м, налево в стену, на остальных этажах прохода нет.
+	</p>
+	<p>
+		<b>Начало</b>. После ввода программы можно ввести случайно число в регистр
+		<span class="reg">c</span> или оставить там ноль и ввести
+		<span class="code">-55555555   </span>
+		<span class="but_b">x&rarr;П</span><span class="but">d</span>
+		<span class="but_b">В/О</span>
+		<span class="but_b">С/П</span>.
+	</p>
+	<p>
+		После остановки показывается номер этажа (он же в регистре Y),
+		<span class="code">.</span>(стена), план текущего этажа и
+		положение игрока символами слева направо:
+	</p>
+	<table>
+		<tr>
+			<th>Значение</th>
+			<th>Символ</th>
+			<th>С игроком</th>
+		</tr>
+		<tr>
+			<td>Пол</td>
+			<td class="center"><span class="code">-</span></td>
+			<td class="center"><span class="code">8</span></td>
+		</tr>
+		<tr>
+			<td>Лестница</td>
+			<td class="center"><span class="code">E</span></td>
+			<td class="center"><span class="code">C</span></td>
+		</tr>
+		<tr>
+			<td>Дыра</td>
+			<td class="center"><span class="code"> </span></td>
+			<td class="center"><span class="code">Г</span></td>
+		</tr>
+		<tr>
+			<td>Клад</td>
+			<td class="center"><span class="code">L</span></td>
+			<td class="center"><span class="code">9</span></td>
+		</tr>
+	</table>
+	<p>
+		<b>Движение:</b> Влево/Вверх/Вправо определяется переключателем Р/ГРД/Г
+		при ненулевом значении регистра Х, <span class="but_b">С/П</span>.
+		Для того чтобы срыть пол или лестницу, нужно нажать
+		<span class="but_cx">Cx</span> или <span class="but">0</span>,
+		<span class="but_b">С/П</span>. Падение в дыру идёт автоматически.
+	</p>
+	<ul>
+		<li>
+			Вверх получится сходить только на лестнице, в остальных случаях ход
+			игнорируется. На 9-м этаже он игнорируется и для лестницы. Для
+			быстроты (нет необходимости что-то делать) ход вверх в
+			пустоте (на верхушке лестницы) воспринимается так же, как ход вниз,
+			т.е. идёт спуск по лестнице.
+		</li>
+		<li>
+			Влево возле стены ход игнорируется, кроме 1-го этажа, где это
+			воспринимается как выход.
+		</li>
+		<li>
+			Нулевой этаж &ndash; биомасса. Если упал &ndash; то пропал
+			<span class="code">ЕГГ0Г</span>. То же происходит при уходе вправо
+			за лабиринт, т.к. там ничего нет и снова падение в биомассу.
+		</li>
+		<li>
+			В дыре игрок может остановиться, только поднявшись снизу по
+			лестнице, в остальных случаях он проваливается в дыру (может на
+			несколько этажей), пока не встретит что-то другое или не упадет
+			в биомассу.
+		</li>
+		<li>
+			Символ взятого клада показывается только раз, при последующих ходах
+			это уже пол.
+		</li>
+	</ul>
+	<p>
+		Вот лабиринт, генерируемый ПМК при нулевом начальном значении датчика
+		случайных чисел (регистр <span class="reg">c</span>):
+		<br>
+		<span class="code"> 9.EEL LE    </span>
+		<br>
+		<span class="code"> 8.LLEL- E   </span>
+		<br>
+		<span class="code"> 7.E-E L-    </span>
+		<br>
+		<span class="code"> 6. EL-E-L   </span>
+		<br>
+		<span class="code"> 5.L  E  -   </span>
+		<br>
+		<span class="code"> 4.   EELL   </span>
+		<br>
+		<span class="code"> 3.EE-E E-   </span>
+		<br>
+		<span class="code"> 2. EL-EEE   </span>
+		<br>
+		<span class="code"> 1.--L  -    </span>
+		<br>
+	</p>
+	<p>
+		<b>По окончании</b> (выход на 1-м этаже влево) показывает количество
+		кладов. Для указанного примера, если собрать все возможные
+		(кроме одного на 9-ом), будет <span class="code">-12</span>.
+		Количество специально отражается отрицательным, чтобы не спутать с
+		планом этажа. Кому хочется положительным &ndash; поменяйте местами команды
+		по адресам 13 и 14.
+	</p>
+	<p>
+		Затем <span class="but_b">С/П</span> и будет сформирован <b>новый лабиринт</b>.
+	</p>
+	<p>
+		Если прохождение завершилось падением, то после
+		<span class="code">ЕГГ0Г</span> нужно нажать
+		<span class="but_b">С/П</span>, отразиться количество кладов, которое
+		игрок успел взять, и снова <span class="but_b">С/П</span>.
+		При этом будет сформирован <b>тот же лабиринт</b>, который игрок не
+		смог пройти, для повторной попытки.
+	</p>
+	<p>
+		Дополнительно (после остановки):
+	</p>
+	<ul>
+		<li>
+			Отрицательное число <span class="but_b">В/О</span>
+			<span class="but_b">С/П</span> &ndash; генерация нового лабиринта.
+			Например, если игра закончилась неудачно, то после
+			<span class="but_b">С/П</span> и просмотра количества кладов можно
+			нажать не сразу <span class="but_b">С/П</span> для повторного
+			прохождения, а пропустить этот и сформировать новый лабиринт
+			<span class="but_b">В/О</span> <span class="but_b">С/П</span>,
+			т.к. количество кладов отображается со знаком минус.
+		</li>
+		<li>
+			Не отрицательное число <span class="but_b">В/О</span>
+			<span class="but_b">С/П</span> &ndash; отображение текущего положения.
+			Например, проводили какие-то вычисления и забыли, где остановились.
+		</li>
+		<li>
+			В промежутке между лабиринтами (пока не начали новый) можно
+			свободно использовать все регистры, кроме регистров
+			<span class="reg">c</span> и <span class="reg">d</span>.
+		</li>
+	</ul>
+
+	<hr>
+
+	<details>
+		<summary>
+			<h3>Далее только для тех, кто не только играет...</h3>
+		</summary>
+		<p>
+			Оригинал взят <a href="http://www.lordbss.pp.ru/pmk190.html">здесь</a>.
+			Текущая программа &ndash; это доработанный вариант. Вот код:
+		</p>
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_k">K</span><span class="but_b">БП</span><span class="reg">d</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+				<td><span class="but">82</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">-</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">b</span></td>
+				<td><span class="but_k">K</span><span class="op_f">x=0</span><span class="reg">d</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">e</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;10&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+				<td><span class="but_f">F</span><span class="op_f">lg</span></td>
+				<td><span class="but_k">K</span><span class="op_f">x=0</span><span class="reg">d</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+				<td><span class="but">-</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">e</span></td>
+				<td><span class="but">9</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;20&#8202;|&#8202;</th>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">b</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">a</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+				<td><span class="but_f">F</span><span class="op_f">&pi;</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_f">F</span><span class="op_f">e<sup>x</sup></span></td>
+				<td><span class="but_k">K</span><span class="op_k">{x}</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;30&#8202;|&#8202;</th>
+				<td><span class="but_f">F</span><span class="op_f">Bx</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+				<td><span class="but_k">K</span><span class="op_k">&and;</span></td>
+				<td><span class="but_k">K</span><span class="but_b">x&rarr;П</span><span class="reg">a</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L0</span></td>
+				<td><span class="but">22</span></td>
+				<td><span class="but">4</span></td>
+				<td><span class="but">4</span></td>
+				<td><span class="but_k">K</span><span class="op_k">&or;</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;40&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but_k">K</span><span class="op_k">ЗН</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_k">K</span><span class="op_k">{x}</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+				<td><span class="but">58</span></td>
+				<td><span class="but_b">БП</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;50&#8202;|&#8202;</th>
+				<td><span class="but">10</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">K</span><span class="but_b">x&rarr;П</span><span class="reg">b</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L0</span></td>
+				<td><span class="but">89</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ge;0</span></td>
+				<td><span class="but">17</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">a</span></td>
+				<td><span class="but_k">K</span><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;60&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but">5</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_k">K</span><span class="op_k">&and;</span></td>
+				<td><span class="but_k">K</span><span class="op_k">{x}</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but">&div;</span></td>
+				<td><span class="but_b">В/О</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;70&#8202;|&#8202;</th>
+				<td><span class="but">2</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but_f">F</span><span class="op_f">cos</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+				<td><span class="but">42</span></td>
+				<td><span class="but_k">K</span><span class="but_b">ПП</span><span class="reg">d</span></td>
+				<td><span class="but_k">K</span><span class="op_f">x&ne;0</span><span class="reg">d</span></td>
+				<td><span class="but_f">F</span><span class="op_f">1/x</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+				<td><span class="but">+</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;80&#8202;|&#8202;</th>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">b</span></td>
+				<td><span class="but_k">K</span><span class="but_b">ПП</span><span class="reg">d</span></td>
+				<td><span class="but">4</span></td>
+				<td><span class="but">-</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+				<td><span class="but">50</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">K</span><span class="op_f">x&ge;0</span><span class="reg">b</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but">+</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;90&#8202;|&#8202;</th>
+				<td><span class="but_k">K</span><span class="op_k">ИНВ</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Bx</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+				<td><span class="but">70</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;A0&#8202;|&#8202;</th>
+				<td><span class="but_k">K</span><span class="but_b">ПП</span><span class="reg">d</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but">-</span></td>
+				<td><span class="but_k">K</span><span class="but_b">x&rarr;П</span><span class="reg">b</span></td>
+					<td colspan="5"></td>
+			</tr>
+		</table>
+		<p></p>
+		<table>
+			<caption>Распределение регистров</caption>
+			<tr><td>R0</td><td>Количество кладов в виде разницы с RD</td></tr>
+			<tr><td>R1&hellip;R9</td><td>План 1&ndash;9 этажей</td></tr>
+			<tr><td>Ra</td><td>Положение на этаже. В начале у левой стенки 0.1, правее 0.01, 0.001 и т.д.</td></tr>
+			<tr><td>Rb</td><td>Номер текущего этажа</td></tr>
+			<tr><td>Rc</td><td>Последнее значение случайного числа</td></tr>
+			<tr><td>Rd</td><td>&minus;55555555</td></tr>
+			<tr><td>Re</td><td>Начальное значение случайного числа</td></tr>
+		</table>
+		<p>
+			Каждый этаж представлен в виде числа 8.xxxxxxx, где x: 0 &ndash; пусто,
+			1 &ndash; лестница, 4 &ndash; клад, 5 &ndash; пол (используются биты 0 и 2).
+			Результат отображается в инвертированном виде. Взято так, из-за того,
+			что ноль при инвертирование превращается в пусто
+			<span class="code">&nbsp;</span>,
+			5 в пол <span class="code">-</span>,
+			а <span class="code">E</span> (not 1) больше всего похоже на лестницу.
+			Для отображения положения игрока перед инвертированием
+			устанавливается бит 1 у цифры в нужной позиции (всё как в оригинале).
+		</p>
+		<p>
+			Регистр <span class="reg">d</span> выполняет сразу несколько
+			функций: как адрес перехода (последние две цифры), как битовая
+			маска для исключения из случайного числа ненужных бит,
+			как просто большое число, для сокращения процедуры подсчета кладов,
+			как отрицательное для сокращения размера программы
+			(безшовный переход по адресу 42 на обычную проверку движения
+			влево/вправо, с автоматической инциализацией начального
+			положения в RA=0.1).
+		</p>
+		<p>
+		Некоторые особенности программы:
+		</p>
+		<ul>
+			<li>
+				Программа использует тот факт, что обычно стек возврата из процедур пустой,
+				за счет этого команда <span class="but_b">В/О</span> возвращает на адрес 01.
+				Если это не так, то необходимо выключить/включить ПМК. А если это
+				неудобно, то прогнать 3Г0ГГа с нулевой мантиссой:
+				<span class="but_cx">Cx</span>
+				<span class="but">B&uarr;</span>
+				<span class="but">&div;</span>
+				<span class="but">ВП</span>
+				<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>
+				<span class="but_cx">Cx</span>
+				<span class="but">&lt;-&gt;</span>
+				<span class="but_cx">Cx</span>, который очистит стек.
+			</li>
+			<li>
+				Для подстановки номера этажа в шестнадцатеричное представление плана этажа
+				используется недокументированные возможности команды
+				<span class="but">ВП</span>, проявляющиеся только при выполнении.
+				При пошаговом исполнении результат будет как в оригинале:
+				всегда <span class="code">8.</span>, а в регистре Y номер этажа.
+				Можно вместо команд по адресам 91, 93, 95, 96 вбить команду
+				<span class="but_k">K</span><span class="op_k">НОП</span> для
+				достижения того же эффекта.
+			</li>
+			<li>
+				После последней команды по адресу &minus;4 предполагается, что
+				программа будет выполнять короткую побочную ветку (с адреса 00),
+				поэтому стоит
+				<span class="but_k">K</span><span class="but_b">БП</span><span class="reg">d</span>,
+				а не
+				<span class="but_k">K</span> <span class="but_b">ПП</span><span class="reg">d</span>,
+				иначе будет выполнена команда по адресу 06 (L1), а затем снова
+				00 (L2), без проверки по адресу 07.
+			</li>
+			<li>
+				В подпрограмме получения цифры текущего положения (с адреса 55) может
+				показаться, что команды c по адресам 61&ndash;64 можно выполнить и в форме
+				<span class="but">5</span>
+				<span class="but">&times;</span>
+				<span class="but">1</span>
+				<span class="but">+</span>, или заменить на более короткое
+				<span class="but_f">F</span><span class="op_f">1/x</span>
+				<span class="but">5</span>
+				<span class="but">+</span>.
+				Но в случае очень маленького числа (10<sup>&minus;8</sup> &ndash; за лабиринтом)
+				произойдет округление, а не отбрасывание последней цифры, что ведёт
+				к неверному результату.
+			</li>
+			<li>
+				Одна команда <span class="but_f">F</span><span class="op_f">lg</span>
+				по адресу 11 проводит сразу тройную проверку. На нулевом этаже генерит
+				ошибку, на 1-ом (=ноль) даёт выйти из лабиринта,
+				на остальных (не ноль) &ndash; не пропускает в левую стену.
+			</li>
+			<li>
+				Подъем выше осуществляется безусловно (адреса 77&ndash;80), но для ячейки со
+				значение 1 (лестница) это будет +1, а для пола (5) будет 0.2,
+				т.е. +0 (дробная часть отбросится при последующем косвенном обращении).
+				Нулевое значение проверяется перед этим (76).
+			</li>
+			<li>
+				Участок кода для учета клада (50&ndash;54) не только использует адрес перехода как
+				код команды (<span class="but">10</span> по адресу 50 это и команда
+				<span class="but">+</span>), но и делает приращение счетчика,
+				и безусловный переход по одной команде (53&ndash;54), учитывая то, что в R0
+				находится большое отрицательное число.
+			</li>
+			<li>
+				Запрет выхода на крышу (10-й этаж) по лестнице с 9-го этажа осуществляется
+				несколько замысловато. После кода подъема по адресам 78&ndash;80 и получения значения
+				текущей ячейки (81), которое будет всегда ноль,
+				т.к. в 10 регистре (<span class="reg">a</span>) только одна цифра,
+				последовательность 82&ndash;83 даст отрицательное число (&minus;4). При сложении (86)
+				с числом-планом этажа это даст минус,
+				т.к. сложилось с числом в R<span class="reg">a</span> &lt; 1 (для обычных
+				этажей 8.xxxxxxx такое сложение ничего не портит). При проверке (87) переход
+				идёт не на основную ветвь (адрес 55, возрат на 01 и автоматический спуск
+				на этаж ниже (03&ndash;06) по нулевому значению ячейки), а сначала на адрес 10
+				(номер этажа в <span class="reg">b</span>), где отрицательное RX заменяется
+				на положительное, чтобы проскочить проверку (55&ndash;56) генерации нового лабиринта.
+			</li>
+		</ul>
+	</details>
+</body>
+
+</html>
