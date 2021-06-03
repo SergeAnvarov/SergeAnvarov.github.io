@@ -305,103 +305,103 @@
 <body>
 	<div style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center;">
 		<table id="Общая_таблица">
-			<tbody>
-        <tr>
-          <td rowspan="2" id="Калькулятор" style="width: 50%; vertical-align: middle; text-align: center;"></td>
-          <td style="vertical-align: middle; text-align: center;">
-            <div id="Таблица_регистров">
-              <table>
-                <tr>
-                  <td style="width: 45%; text-align: center;"><span class="бел_т">Регистры:</span></td>
-                  <td style="width: 25%; text-align: center;"><span class="бел_т">Стек:</span></td>
-                  <td style="text-align: center;"><span class="бел_т">Возвраты:</span></td>
-                  <td style="text-align: center;"><span class="бел_т">Состояние:</span></td>
-                </tr>
-                <tr>
-                  <td rowspan="2" style="vertical-align: top;">
-                    <table>
-                      <tr>
-                        <td style="vertical-align: top;">
-                          <table>
-                            <tr><td>0:</td><td><input type="text" id="Р0" readonly="readonly"></td></tr>
-                            <tr><td>1:</td><td><input type="text" id="Р1" readonly="readonly"></td></tr>
-                            <tr><td>2:</td><td><input type="text" id="Р2" readonly="readonly"></td></tr>
-                            <tr><td>3:</td><td><input type="text" id="Р3" readonly="readonly"></td></tr>
-                            <tr><td colspan=2>&nbsp;</td></tr>
-                            <tr><td>4:</td><td><input type="text" id="Р4" readonly="readonly"></td></tr>
-                            <tr><td>5:</td><td><input type="text" id="Р5" readonly="readonly"></td></tr>
-                            <tr><td>6:</td><td><input type="text" id="Р6" readonly="readonly"></td></tr>
-                          </table>
-                        </td>
-                        <td style="vertical-align: top;">
-                          <table>
-                            <tr><td>7:</td><td><input type="text" id="Р7" readonly="readonly"></td></tr>
-                            <tr><td>8:</td><td><input type="text" id="Р8" readonly="readonly"></td></tr>
-                            <tr><td>9:</td><td><input type="text" id="Р9" readonly="readonly"></td></tr>
-                            <tr><td>A:</td><td><input type="text" id="Р10" readonly="readonly"></td></tr>
-                            <tr><td>B:</td><td><input type="text" id="Р11" readonly="readonly"></td></tr>
-                            <tr><td>C:</td><td><input type="text" id="Р12" readonly="readonly"></td></tr>
-                            <tr><td>D:</td><td><input type="text" id="Р13" readonly="readonly"></td></tr>
-                            <tr><td>E:</td><td><input type="text" id="Р14" readonly="readonly"></td></tr>
-                          </table>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td style="vertical-align: top; border-left: dashed 1px #C0C0C0;">
-                    <table>
-                      <tr><td>T:</td><td><input type="text" id="С_4" readonly="readonly"></td></tr>
-                      <tr><td>Z:</td><td><input type="text" id="С_3" readonly="readonly"></td></tr>
-                      <tr><td>Y:</td><td><input type="text" id="С_2" readonly="readonly"></td></tr>
-                      <tr><td>X:</td><td><input type="text" id="С_1" readonly="readonly"></td></tr>
-                      <tr><td colspan=2></td></tr>
-                      <tr><td>X1:</td><td><input type="text" id="С_0" readonly="readonly"></td></tr>
-                    </table>
-                  </td>
-                  <td style="vertical-align: top; border-left: dashed 1px #C0C0C0;">
-                    <table>
-                      <tr><td><input type="text" id="В_4" size="2" readonly="readonly"></td></tr>
-                      <tr><td><input type="text" id="В_3" size="2" readonly="readonly"></td></tr>
-                      <tr><td><input type="text" id="В_2" size="2" readonly="readonly"></td></tr>
-                      <tr><td><input type="text" id="В_1" size="2" readonly="readonly"></td></tr>
-                      <tr><td><input type="text" id="В_0" size="2" readonly="readonly"></td></tr>
-                    </table>
-                  </td>
-                  <td rowspan="2" style="vertical-align: top; border-left: dashed 1px #C0C0C0;">
-                    <input type="button" onclick="Прочитать_состояние();" value="Прочитать" style="width: 80px; height: 25px; margin: 5px 3px; border-radius: 10px;">
-                    <input type="button" onclick="Ввести_состояние();" value="Ввести" style="width: 80px; height: 25px; margin: 5px 3px; border-radius: 10px;">
-                    <input type="button" id="Пауза" onclick="Приостановить();" value="Стоп" style="margin-top: 25px;">
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2" style="vertical-align: middle; border: dashed 1px #C0C0C0; border-width: 1px 0 0 1px;">
-                    <div class="бел_т" style="margin: auto;">Счётчик команд: <input type="text" id="СК" style="font-family: monospace;" size="2" readonly="readonly"></div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </td>
+			<tr>
+				<td rowspan="2" id="Калькулятор" style="width: 50%; vertical-align: middle; text-align: center;"></td>
+				<td style="vertical-align: middle; text-align: center;">
+					<div id="Таблица_регистров">
+						<table>
+							<tr>
+								<td style="width: 45%; text-align: center;"><span class="бел_т">Регистры:</span></td>
+								<td style="width: 25%; text-align: center;"><span class="бел_т">Стек:</span></td>
+								<td style="text-align: center;"><span class="бел_т">Возвраты:</span></td>
+								<td style="text-align: center;"><span class="бел_т">Состояние:</span></td>
+							</tr>
+							<tr>
+								<td rowspan="2" style="vertical-align: top;">
+									<table>
+										<tr>
+											<td style="vertical-align: top;">
+											  <table>
+												<tr><td>0:</td><td><input type="text" id="Р0" readonly="readonly"></td></tr>
+												<tr><td>1:</td><td><input type="text" id="Р1" readonly="readonly"></td></tr>
+												<tr><td>2:</td><td><input type="text" id="Р2" readonly="readonly"></td></tr>
+												<tr><td>3:</td><td><input type="text" id="Р3" readonly="readonly"></td></tr>
+												<tr><td colspan=2>&nbsp;</td></tr>
+												<tr><td>4:</td><td><input type="text" id="Р4" readonly="readonly"></td></tr>
+												<tr><td>5:</td><td><input type="text" id="Р5" readonly="readonly"></td></tr>
+												<tr><td>6:</td><td><input type="text" id="Р6" readonly="readonly"></td></tr>
+											  </table>
+											</td>
+											<td style="vertical-align: top;">
+												<table>
+													<tr><td>7:</td><td><input type="text" id="Р7" readonly="readonly"></td></tr>
+													<tr><td>8:</td><td><input type="text" id="Р8" readonly="readonly"></td></tr>
+													<tr><td>9:</td><td><input type="text" id="Р9" readonly="readonly"></td></tr>
+													<tr><td>A:</td><td><input type="text" id="Р10" readonly="readonly"></td></tr>
+													<tr><td>B:</td><td><input type="text" id="Р11" readonly="readonly"></td></tr>
+													<tr><td>C:</td><td><input type="text" id="Р12" readonly="readonly"></td></tr>
+													<tr><td>D:</td><td><input type="text" id="Р13" readonly="readonly"></td></tr>
+													<tr><td>E:</td><td><input type="text" id="Р14" readonly="readonly"></td></tr>
+												</table>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td style="vertical-align: top; border-left: dashed 1px #C0C0C0;">
+									<table>
+										<tr><td>T:</td><td><input type="text" id="С_4" readonly="readonly"></td></tr>
+										<tr><td>Z:</td><td><input type="text" id="С_3" readonly="readonly"></td></tr>
+										<tr><td>Y:</td><td><input type="text" id="С_2" readonly="readonly"></td></tr>
+										<tr><td>X:</td><td><input type="text" id="С_1" readonly="readonly"></td></tr>
+										<tr><td colspan=2></td></tr>
+										<tr><td>X1:</td><td><input type="text" id="С_0" readonly="readonly"></td></tr>
+									</table>
+								</td>
+								<td style="vertical-align: top; border-left: dashed 1px #C0C0C0;">
+									<table>
+										<tr><td><input type="text" id="В_4" size="2" readonly="readonly"></td></tr>
+										<tr><td><input type="text" id="В_3" size="2" readonly="readonly"></td></tr>
+										<tr><td><input type="text" id="В_2" size="2" readonly="readonly"></td></tr>
+										<tr><td><input type="text" id="В_1" size="2" readonly="readonly"></td></tr>
+										<tr><td><input type="text" id="В_0" size="2" readonly="readonly"></td></tr>
+									</table>
+								</td>
+								<td rowspan="2" style="vertical-align: top; border-left: dashed 1px #C0C0C0;">
+									<input type="button" onclick="Прочитать_состояние();" value="Прочитать" style="width: 80px; height: 25px; margin: 5px 3px; border-radius: 10px;">
+									<input type="button" onclick="Ввести_состояние();" value="Ввести" style="width: 80px; height: 25px; margin: 5px 3px; border-radius: 10px;">
+									<input type="button" id="Пауза" onclick="Приостановить();" value="Стоп" style="margin-top: 25px;">
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" style="vertical-align: middle; border: dashed 1px #C0C0C0; border-width: 1px 0 0 1px;">
+									<div class="бел_т" style="margin: auto;">Счётчик команд: <input type="text" id="СК" style="font-family: monospace;" size="2" readonly="readonly"></div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</td>
 			</tr>
 			<tr>
 				<td style="vertical-align: middle;">
 					<table style="width: 100%;">
-            <tr><td><span class="бел_т">Код программы:</span></td></tr>
-            <tr><td><div id="Код" spellcheck="false" contenteditable=""><br></div></td></tr>
-            <tr>
-              <td>
-                <label><input type="checkbox" id="Простой_код" checked="checked">Простой код</label>
-                <label><input type="checkbox" id="Подсветка" checked="checked">Подсветка</label>
-                <label><input type="checkbox" id="Числовые_значения">Числовые значения</label>
-                <div style="margin-top: 5px;">
-                  <input type="button" onclick="Прочитать_код();" value="Прочитать из памяти">
-                  <input type="button" onclick="Ввести_код();" value="Ввести в память">
-                </div>
-              </td>
-            </tr>
+						<tr><td><span class="бел_т">Код программы:</span></td></tr>
+						<tr><td><div id="Код" spellcheck="false" contenteditable=""><br></div></td></tr>
+						<tr>
+							<td>
+								<label><input type="checkbox" id="Простой_код" checked="checked">Простой код</label>
+								<label><input type="checkbox" id="Подсветка" checked="checked">Подсветка</label>
+								<label><input type="checkbox" id="Числовые_значения">Числовые значения</label>
+								<label><input type="checkbox" id="Ускоренный_режим" onclick="Сменить_Режим();">Ускоренный режим</label>
+								<div style="margin-top: 5px;">
+									<input type="button" onclick="Прочитать_код();" value="Прочитать из памяти">
+									<input type="button" onclick="Ввести_код();" value="Ввести в память">
+								</div>
+							</td>
+						</tr>
 					</table>
 				</td>
 			</tr>
-		</tbody></table>
+		</table>
 	</div>
 
 	<div id="_МК-61" style="display: none;">
@@ -442,7 +442,7 @@
 			<img class="перекл" data-название="ВКЛ" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAPCAYAAAAyPTUwAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAGMSURBVHjaPJHLbhNBEEVPVde0ZzKWFSkEb0FIyHwEiP//BDZESOxIZMiM3eN+FItxXKtW6ejc7tvy9dt3P3z5zOl0QkSY55llSbjD8XgkxsjDwzue/7xgOWdKKQzDwDAMjONIKYWcM7vdjtYah8OBp5+/kA8fP/m47dls4s0eY6TWiqrS9z3u8PL8F1MVVAPDcEfOFbPA4+N7TqeZaZqJscfdCRYwdzAzluXCOsL5fMYdVJVaK8tyWZNghXPOuDu1Vl5fX4kxst/vr7vCeDdirTVSSoQQbnDXdUzTxLIs9P2GWiu1+Gp+A0IIDMPAdrvl/v4eM0NEGceRlNL6QBEhpUQphRgjOWdyzrfrTdOEu2PuzjTN1Fpun+LulFKotV7twnbcYa05aZkBWbsQwd1prQGQUmKz6am1YCICrMB6Xtt5gwG6zgjBqplZC9ppbXV1O7Tq1yTBLHjQ7uLuyVprWUQtKHK1O46LioiIi+hZRP4BL6aqU9dZ31oL1+gmIk1VXVUvwLOq/gZ+/B8A1kTtVjG9RVEAAAAASUVORK5CYII=" style="left: 51px; top: 262px;" onclick="Включить_выключить();" alt="">
 			<img class="перекл" data-название="Р_ГРД_Г" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAUCAYAAACAl21KAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAMdSURBVHjaXJJdbxRHEEXPreqZWW92bSdriKMA8gPwkPfw/38GQSJSrAQJY1ib2Y/Zme6uPOBFQL9U60rnqm5V6eWLP+Li8SP6vme735FrZdZ1BJBrxd3pWuf8/BxJ3N3dsdvtiAi6rmOxWLBcLknuztPfn5BL5vbjRz7dr1ldPKLWyjhNeJOoeaTWSq2Vk5MTTk9PKaXQti2vXv1J32/RsydXcfnbr6TUsD8MHMYDUymYGZUgpcQwDJgZ7k7btqSUSCmRc+bq6oq+70nuCZMxHAYEjMMBS4nDeMBkTNP0tZtSCiYxTRM/zeeUUrh5f0NqGpK3RljFGyPnjLmYpoFnT5/Rdi3X19fkqEAQNXBBzoXGBCamw54omVRqjVyKSimM4wiCiGC5XJDciYfhj+NIEEzjiLuTc6aWwsVqRQ1IRLDf75FE13W0bUvOmdevXyOJlNLXeJKQxHw+p2kadrsdXddRapAk6fz8jNXqgs+fP7Pb7bi8vGS/35NzZrlcUkrh9vaWruuYz+eYGavVis1mw9nZGeu7e1JKic12S9fN6PuecRzJOTMMA5Lo+56cM23bAjCbzdhut19TvHnzBpmj5y9e5vX9J0/+ZZ1mBoAkfnxHLSKoD8dqZvyyeoSVmg9uHpIwM76tR+g4m28NjyZt0+BuJGBjZk1ENEfgR0gSEfGdZmZ0XXfcYDU3W6eURknh7t9BR6DW+p3m7iRPuCeapo2maatFjQ8KekOZGlADBUStEAEBLnAZhjA5YIQlAo9QKqUymaQbwQY4AAWIL2f85SeCY1AzCzfHU0Nq2uopFWRjDfpkZjdIa0nziJCkFrCHGAKZpJAs3D3MPcxTNbMi2cHdt25+kyT9K+kx4ECNiJmk7sFMktxkgaxICpMmM5uAAeITcCNxnUB/mdlM0gjcAafAiaSZJANckmQ2mtno7gdz32K2kfRfjXgLvE1m9tbdUynlPiJ+jogzYAEsJCVJ7m7FPA2Sdu6+kdk+pLXM/jGzvz2ld0nig5m5mb2LiC4iFsCpmZ08dJRS8izzAbiXtA0Yga1Ja5PeS9r9PwCqIZ5PuTVGbQAAAABJRU5ErkJggg==" style="left: 182px; top: 262px;" onclick="Изменить_меру_угла(Мера_угла == 10 || Мера_угла == 11 ? 'ГРД' : event.offsetX < 9 ? 'Р' : 'Г');" alt="">
 
-			<input type="button" class="прозр_кнопка" style="left: 43px; top: 303px;" onclick="Нажатие_кнопки(11,9);" id="b11_9" value=" " title="hotkey: F">
+			<input type="button" class="прозр_кнопка" style="left: 43px; top: 303px;" onclick="Нажатие_кнопки(11,9);" id="b11_9" value=" " title="hotkey: F" + (KeyEvent.DOM_VK_0).ToString()>
 			<input type="button" class="прозр_кнопка" style="left: 83px; top: 303px;" onclick="Нажатие_кнопки(7,9);" id="b7_9" value=" " title="hotkey: &rarr;">
 			<input type="button" class="прозр_кнопка" style="left: 123px; top: 303px;" onclick="Нажатие_кнопки(9,9);" id="b9_9" value=" " title="hotkey: &larr;">
 			<input type="button" class="прозр_кнопка" style="left: 162px; top: 303px;" onclick="Нажатие_кнопки(4,9);" id="b4_9" value=" " title="hotkey: Home">
@@ -1581,7 +1581,11 @@
 		}
 		
 		function Включить() {
-			Исполнение = setInterval(Шаг, 300);
+			let Delay = 300;
+			if (document.getElementById("Ускоренный_режим").checked) {
+				Delay = 4;
+			}
+			Исполнение = setInterval(Шаг, Delay);
 			Шаг();
 		}
 
@@ -1613,8 +1617,9 @@
 				if (Пауза) {
 					Пауза = false;
 					document.getElementById("Пауза").value = "Стоп";
-					Исполнение = setInterval(Шаг, 300);
-					Шаг();
+					//Исполнение = setInterval(Шаг, 300);
+					Включить();
+					//Шаг();
 				}
 				else {
 					clearInterval(Исполнение);
@@ -1625,6 +1630,11 @@
 			}
 		}
 
+		function Сменить_Режим() {
+			Приостановить();
+			Приостановить();
+		}
+		
 		function Нажатие_с_фокусом(x, y) {
 			document.getElementById("b" + x + "_" + y).focus();
 			Нажатие_кнопки(x, y);
@@ -1632,11 +1642,11 @@
 		
 		function Нажатие_клавиши(код) {
 			if ((код >= 48) && (код <= 57)) { // Normal 0..9
-				Нажатие_с_фокусом(код-46, 1);
+				Нажатие_с_фокусом(код - 46, 1);
 			}
 			else  {
 				if ((код >= 96) && (код <= 105)) { // Numpad 0..9
-					Нажатие_с_фокусом(код-94, 1);
+					Нажатие_с_фокусом(код - 94, 1);
 				}
 				else {
 					switch (код) {
@@ -2167,7 +2177,8 @@
 			else {
 				Элемент_по_названию("ВКЛ").style.left = "63px";
 			}
-			Исполнение = setInterval(Шаг, 300);
+			// Исполнение = setInterval(Шаг, 300);
+			Включить();
 		}
 
 		function Прочитать_код() {
@@ -2283,7 +2294,8 @@
 			}
 			document.getElementById("Код").innerHTML = innerHTML;
 			if (!Пауза) {
-				Исполнение = setInterval(Шаг, 300);
+				// Исполнение = setInterval(Шаг, 300);
+				Включить();
 			}
 		}
 
@@ -2339,7 +2351,8 @@
 				let окно = window.open("", "Состояние", "width=400px, height=150px");
 				окно.document.body.innerHTML = '<div style="margin: auto;"><textarea style="width: 350px; height: 125px;">' + вывод + "</textarea></div>";
 				if (!Пауза) {
-					Исполнение = setInterval(Шаг, 300);
+					// Исполнение = setInterval(Шаг, 300);
+					Включить();
 				}
 			}
 		}
@@ -2405,18 +2418,18 @@
 				микросхемы[сч_1].обн_индик = parseInt(состояние[350 + 162 * сч_1]) == 1;
 			}
 			Элемент_по_названию("ВКЛ").style.left = "63px";
-			Исполнение = setInterval(Шаг, 300);
-			Шаг();
+			// Исполнение = setInterval(Шаг, 300);
+			// Шаг();
+			Включить();
 		}
 
 		let ввод_кода = false;
-		document.getElementById("Код").addEventListener("focus", событие => ввод_кода = true);
-		document.getElementById("Код").addEventListener("blur", событие => ввод_кода = false);
+		document.getElementById("Код").addEventListener("focus", () => ввод_кода = true);
+		document.getElementById("Код").addEventListener("blur", () => ввод_кода = false);
 
-		document.body.addEventListener("keydown", событие => {
+		document.body.addEventListener("keydown", () => {
 			if (!ввод_кода) {
-				const e = событие || window.event;
-				Нажатие_клавиши(e.charCode && e.keyCode == 0 ? e.charCode : e.keyCode);
+				Нажатие_клавиши(window.event.keyCode);
 			}
 		});
 
