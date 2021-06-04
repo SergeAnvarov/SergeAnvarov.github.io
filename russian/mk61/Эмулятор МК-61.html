@@ -367,9 +367,21 @@
 									</table>
 								</td>
 								<td rowspan="2" style="vertical-align: top; border-left: dashed 1px #C0C0C0;">
-									<input type="button" onclick="Прочитать_состояние();" value="Прочитать" style="width: 80px; height: 25px; margin: 5px 3px; border-radius: 10px;">
-									<input type="button" onclick="Ввести_состояние();" value="Ввести" style="width: 80px; height: 25px; margin: 5px 3px; border-radius: 10px;">
-									<input type="button" id="Пауза" onclick="Приостановить();" value="Стоп" style="margin-top: 25px;">
+									<table>
+										<tr>
+											<td>
+												<input type="button" onclick="Прочитать_состояние();" value="Прочитать" style="width: 80px; height: 25px; margin: 5px 3px; border-radius: 10px;">
+												<input type="button" onclick="Ввести_состояние();" value="Ввести" style="width: 80px; height: 25px; margin: 5px 3px; border-radius: 10px;">
+												<input type="button" id="Пауза" onclick="Приостановить();" value="Стоп" style="margin-top: 25px;">
+												<p></p>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<label><input type="checkbox" id="Ускоренный_режим" onclick="Сменить_Режим();">Ускоренный режим</label>
+											</td>
+										</tr>
+									</table>
 								</td>
 							</tr>
 							<tr>
@@ -391,7 +403,6 @@
 								<label><input type="checkbox" id="Простой_код" checked="checked">Простой код</label>
 								<label><input type="checkbox" id="Подсветка" checked="checked">Подсветка</label>
 								<label><input type="checkbox" id="Числовые_значения">Числовые значения</label>
-								<label><input type="checkbox" id="Ускоренный_режим" onclick="Сменить_Режим();">Ускоренный режим</label>
 								<div style="margin-top: 5px;">
 									<input type="button" onclick="Прочитать_код();" value="Прочитать из памяти">
 									<input type="button" onclick="Ввести_код();" value="Ввести в память">
@@ -439,18 +450,18 @@
 			<span class="прозр_перекл" style="width: 12px; left: 193px; top: 260px;" onclick="Изменить_меру_угла('ГРД');"></span>
 			<span class="прозр_перекл" style="width: 12px; left: 205px; top: 260px;" onclick="Изменить_меру_угла('Г');"></span>
 
-			<img class="перекл" data-название="ВКЛ" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAPCAYAAAAyPTUwAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAGMSURBVHjaPJHLbhNBEEVPVde0ZzKWFSkEb0FIyHwEiP//BDZESOxIZMiM3eN+FItxXKtW6ejc7tvy9dt3P3z5zOl0QkSY55llSbjD8XgkxsjDwzue/7xgOWdKKQzDwDAMjONIKYWcM7vdjtYah8OBp5+/kA8fP/m47dls4s0eY6TWiqrS9z3u8PL8F1MVVAPDcEfOFbPA4+N7TqeZaZqJscfdCRYwdzAzluXCOsL5fMYdVJVaK8tyWZNghXPOuDu1Vl5fX4kxst/vr7vCeDdirTVSSoQQbnDXdUzTxLIs9P2GWiu1+Gp+A0IIDMPAdrvl/v4eM0NEGceRlNL6QBEhpUQphRgjOWdyzrfrTdOEu2PuzjTN1Fpun+LulFKotV7twnbcYa05aZkBWbsQwd1prQGQUmKz6am1YCICrMB6Xtt5gwG6zgjBqplZC9ppbXV1O7Tq1yTBLHjQ7uLuyVprWUQtKHK1O46LioiIi+hZRP4BL6aqU9dZ31oL1+gmIk1VXVUvwLOq/gZ+/B8A1kTtVjG9RVEAAAAASUVORK5CYII=" style="left: 51px; top: 262px;" onclick="Включить_выключить();" alt="">
-			<img class="перекл" data-название="Р_ГРД_Г" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAUCAYAAACAl21KAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAMdSURBVHjaXJJdbxRHEEXPreqZWW92bSdriKMA8gPwkPfw/38GQSJSrAQJY1ib2Y/Zme6uPOBFQL9U60rnqm5V6eWLP+Li8SP6vme735FrZdZ1BJBrxd3pWuf8/BxJ3N3dsdvtiAi6rmOxWLBcLknuztPfn5BL5vbjRz7dr1ldPKLWyjhNeJOoeaTWSq2Vk5MTTk9PKaXQti2vXv1J32/RsydXcfnbr6TUsD8MHMYDUymYGZUgpcQwDJgZ7k7btqSUSCmRc+bq6oq+70nuCZMxHAYEjMMBS4nDeMBkTNP0tZtSCiYxTRM/zeeUUrh5f0NqGpK3RljFGyPnjLmYpoFnT5/Rdi3X19fkqEAQNXBBzoXGBCamw54omVRqjVyKSimM4wiCiGC5XJDciYfhj+NIEEzjiLuTc6aWwsVqRQ1IRLDf75FE13W0bUvOmdevXyOJlNLXeJKQxHw+p2kadrsdXddRapAk6fz8jNXqgs+fP7Pb7bi8vGS/35NzZrlcUkrh9vaWruuYz+eYGavVis1mw9nZGeu7e1JKic12S9fN6PuecRzJOTMMA5Lo+56cM23bAjCbzdhut19TvHnzBpmj5y9e5vX9J0/+ZZ1mBoAkfnxHLSKoD8dqZvyyeoSVmg9uHpIwM76tR+g4m28NjyZt0+BuJGBjZk1ENEfgR0gSEfGdZmZ0XXfcYDU3W6eURknh7t9BR6DW+p3m7iRPuCeapo2maatFjQ8KekOZGlADBUStEAEBLnAZhjA5YIQlAo9QKqUymaQbwQY4AAWIL2f85SeCY1AzCzfHU0Nq2uopFWRjDfpkZjdIa0nziJCkFrCHGAKZpJAs3D3MPcxTNbMi2cHdt25+kyT9K+kx4ECNiJmk7sFMktxkgaxICpMmM5uAAeITcCNxnUB/mdlM0gjcAafAiaSZJANckmQ2mtno7gdz32K2kfRfjXgLvE1m9tbdUynlPiJ+jogzYAEsJCVJ7m7FPA2Sdu6+kdk+pLXM/jGzvz2ld0nig5m5mb2LiC4iFsCpmZ08dJRS8izzAbiXtA0Yga1Ja5PeS9r9PwCqIZ5PuTVGbQAAAABJRU5ErkJggg==" style="left: 182px; top: 262px;" onclick="Изменить_меру_угла(Мера_угла == 10 || Мера_угла == 11 ? 'ГРД' : event.offsetX < 9 ? 'Р' : 'Г');" alt="">
+			<img class="перекл" data-название="ВКЛ" style="left: 51px; top: 262px;" onclick="Включить_выключить();" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAPCAYAAAAyPTUwAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAGMSURBVHjaPJHLbhNBEEVPVde0ZzKWFSkEb0FIyHwEiP//BDZESOxIZMiM3eN+FItxXKtW6ejc7tvy9dt3P3z5zOl0QkSY55llSbjD8XgkxsjDwzue/7xgOWdKKQzDwDAMjONIKYWcM7vdjtYah8OBp5+/kA8fP/m47dls4s0eY6TWiqrS9z3u8PL8F1MVVAPDcEfOFbPA4+N7TqeZaZqJscfdCRYwdzAzluXCOsL5fMYdVJVaK8tyWZNghXPOuDu1Vl5fX4kxst/vr7vCeDdirTVSSoQQbnDXdUzTxLIs9P2GWiu1+Gp+A0IIDMPAdrvl/v4eM0NEGceRlNL6QBEhpUQphRgjOWdyzrfrTdOEu2PuzjTN1Fpun+LulFKotV7twnbcYa05aZkBWbsQwd1prQGQUmKz6am1YCICrMB6Xtt5gwG6zgjBqplZC9ppbXV1O7Tq1yTBLHjQ7uLuyVprWUQtKHK1O46LioiIi+hZRP4BL6aqU9dZ31oL1+gmIk1VXVUvwLOq/gZ+/B8A1kTtVjG9RVEAAAAASUVORK5CYII=" >
+			<img id="b_grad" class="перекл" title="&larr; &rarr;" style="left: 182px; top: 262px;" onclick="Изменить_меру_угла(Мера_угла == 10 || Мера_угла == 11 ? 'ГРД' : event.offsetX < 9 ? 'Р' : 'Г');" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAUCAYAAACAl21KAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAMdSURBVHjaXJJdbxRHEEXPreqZWW92bSdriKMA8gPwkPfw/38GQSJSrAQJY1ib2Y/Zme6uPOBFQL9U60rnqm5V6eWLP+Li8SP6vme735FrZdZ1BJBrxd3pWuf8/BxJ3N3dsdvtiAi6rmOxWLBcLknuztPfn5BL5vbjRz7dr1ldPKLWyjhNeJOoeaTWSq2Vk5MTTk9PKaXQti2vXv1J32/RsydXcfnbr6TUsD8MHMYDUymYGZUgpcQwDJgZ7k7btqSUSCmRc+bq6oq+70nuCZMxHAYEjMMBS4nDeMBkTNP0tZtSCiYxTRM/zeeUUrh5f0NqGpK3RljFGyPnjLmYpoFnT5/Rdi3X19fkqEAQNXBBzoXGBCamw54omVRqjVyKSimM4wiCiGC5XJDciYfhj+NIEEzjiLuTc6aWwsVqRQ1IRLDf75FE13W0bUvOmdevXyOJlNLXeJKQxHw+p2kadrsdXddRapAk6fz8jNXqgs+fP7Pb7bi8vGS/35NzZrlcUkrh9vaWruuYz+eYGavVis1mw9nZGeu7e1JKic12S9fN6PuecRzJOTMMA5Lo+56cM23bAjCbzdhut19TvHnzBpmj5y9e5vX9J0/+ZZ1mBoAkfnxHLSKoD8dqZvyyeoSVmg9uHpIwM76tR+g4m28NjyZt0+BuJGBjZk1ENEfgR0gSEfGdZmZ0XXfcYDU3W6eURknh7t9BR6DW+p3m7iRPuCeapo2maatFjQ8KekOZGlADBUStEAEBLnAZhjA5YIQlAo9QKqUymaQbwQY4AAWIL2f85SeCY1AzCzfHU0Nq2uopFWRjDfpkZjdIa0nziJCkFrCHGAKZpJAs3D3MPcxTNbMi2cHdt25+kyT9K+kx4ECNiJmk7sFMktxkgaxICpMmM5uAAeITcCNxnUB/mdlM0gjcAafAiaSZJANckmQ2mtno7gdz32K2kfRfjXgLvE1m9tbdUynlPiJ+jogzYAEsJCVJ7m7FPA2Sdu6+kdk+pLXM/jGzvz2ld0nig5m5mb2LiC4iFsCpmZ08dJRS8izzAbiXtA0Yga1Ja5PeS9r9PwCqIZ5PuTVGbQAAAABJRU5ErkJggg==">
 
-			<input type="button" class="прозр_кнопка" style="left: 43px; top: 303px;" onclick="Нажатие_кнопки(11,9);" id="b11_9" value=" " title="hotkey: F" + (KeyEvent.DOM_VK_0).ToString()>
-			<input type="button" class="прозр_кнопка" style="left: 83px; top: 303px;" onclick="Нажатие_кнопки(7,9);" id="b7_9" value=" " title="hotkey: &rarr;">
-			<input type="button" class="прозр_кнопка" style="left: 123px; top: 303px;" onclick="Нажатие_кнопки(9,9);" id="b9_9" value=" " title="hotkey: &larr;">
+			<input type="button" class="прозр_кнопка" style="left: 43px; top: 303px;" onclick="Нажатие_кнопки(11,9);" id="b11_9" value=" " title="hotkey: F">
+			<input type="button" class="прозр_кнопка" style="left: 83px; top: 303px;" onclick="Нажатие_кнопки(7,9);" id="b7_9" value=" " title="hotkey: PgDown">
+			<input type="button" class="прозр_кнопка" style="left: 123px; top: 303px;" onclick="Нажатие_кнопки(9,9);" id="b9_9" value=" " title="hotkey: PgUp">
 			<input type="button" class="прозр_кнопка" style="left: 162px; top: 303px;" onclick="Нажатие_кнопки(4,9);" id="b4_9" value=" " title="hotkey: Home">
 			<input type="button" class="прозр_кнопка" style="left: 200px; top: 303px;" onclick="Нажатие_кнопки(2,9);" id="b2_9" value=" " title="hotkey: F9">
 
 			<input type="button" class="прозр_кнопка" style="left: 43px; top: 347px;" onclick="Нажатие_кнопки(10,9);" id="b10_9" value=" " title="hotkey: K">
-			<input type="button" class="прозр_кнопка" style="left: 83px; top: 347px;" onclick="Нажатие_кнопки(8,9);" id="b8_9" value=" " title="hotkey: F6">
-			<input type="button" class="прозр_кнопка" style="left: 122px; top: 347px;" onclick="Нажатие_кнопки(6,9);" id="b6_9" value=" " title="hotkey: F5">
+			<input type="button" class="прозр_кнопка" style="left: 83px; top: 347px;" onclick="Нажатие_кнопки(8,9);" id="b8_9" value=" " title="hotkey: F4">
+			<input type="button" class="прозр_кнопка" style="left: 122px; top: 347px;" onclick="Нажатие_кнопки(6,9);" id="b6_9" value=" " title="hotkey: F2">
 			<input type="button" class="прозр_кнопка" style="left: 162px; top: 347px;" onclick="Нажатие_кнопки(3,9);" id="b3_9" value=" " title="hotkey: F7">
 			<input type="button" class="прозр_кнопка" style="left: 200px; top: 347px;" onclick="Нажатие_кнопки(5,9);" id="b5_9" value=" " title="hotkey: F8">
 
@@ -469,13 +480,13 @@
 			<input type="button" class="прозр_кнопка" style="left: 44px; top: 477px;" onclick="Нажатие_кнопки(3,1);" id="b3_1" value=" " title="hotkey: 1">
 			<input type="button" class="прозр_кнопка" style="left: 83px; top: 477px;" onclick="Нажатие_кнопки(4,1);" id="b4_1" value=" " title="hotkey: 2">
 			<input type="button" class="прозр_кнопка" style="left: 123px; top: 477px;" onclick="Нажатие_кнопки(5,1);" id="b5_1" value=" " title="hotkey: 3">
-			<input type="button" class="прозр_кнопка" style="left: 161px; top: 477px;" onclick="Нажатие_кнопки(6,8);" id="b6_8" value=" " title="hotkey: F4">
+			<input type="button" class="прозр_кнопка" style="left: 161px; top: 477px;" onclick="Нажатие_кнопки(6,8);" id="b6_8" value=" " title="hotkey: Backspace">
 			<input type="button" class="прозр_кнопка" style="left: 200px; top: 477px;" onclick="Нажатие_кнопки(11,8);" id="b11_8" value=" " title="hotkey: Enter; &uarr;; Space">
 
 			<input type="button" class="прозр_кнопка" style="left: 44px; top: 521px;" onclick="Нажатие_кнопки(2,1);" id="b2_1" value=" " title="hotkey: 0">
 			<input type="button" class="прозр_кнопка" style="left: 83px; top: 521px;" onclick="Нажатие_кнопки(7,8);" id="b7_8" value=" " title="hotkey: .; ,">
 			<input type="button" class="прозр_кнопка" style="left: 122px; top: 521px;" onclick="Нажатие_кнопки(8,8);" id="b8_8" value=" " title="hotkey: ~">
-			<input type="button" class="прозр_кнопка" style="left: 162px; top: 521px;" onclick="Нажатие_кнопки(9,8);" id="b9_8" value=" " title="hotkey: F2">
+			<input type="button" class="прозр_кнопка" style="left: 162px; top: 521px;" onclick="Нажатие_кнопки(9,8);" id="b9_8" value=" " title="hotkey: Ins">
 			<input type="button" class="прозр_кнопка" style="left: 200px; top: 521px;" onclick="Нажатие_кнопки(10,8);" id="b10_8" value=" " title="hotkey: Del; Esc">
 		</div>
 	</div>
@@ -1617,9 +1628,7 @@
 				if (Пауза) {
 					Пауза = false;
 					document.getElementById("Пауза").value = "Стоп";
-					//Исполнение = setInterval(Шаг, 300);
 					Включить();
-					//Шаг();
 				}
 				else {
 					clearInterval(Исполнение);
@@ -1631,13 +1640,16 @@
 		}
 
 		function Сменить_Режим() {
-			Приостановить();
-			Приостановить();
+			Приостановить(); 
+			Приостановить(); // Запустить уже с новой скоростью
 		}
 		
 		function Нажатие_с_фокусом(x, y) {
-			document.getElementById("b" + x + "_" + y).focus();
+			if (Исполнение !== false && !Пауза) {
+				Шаг(); // Force waiting code
+			}
 			Нажатие_кнопки(x, y);
+			document.getElementById("b" + x + "_" + y).focus();
 		}
 		
 		function Нажатие_клавиши(код) {
@@ -1650,26 +1662,72 @@
 				}
 				else {
 					switch (код) {
-						case 13: case 38: case 32: Нажатие_с_фокусом(11, 8); break; // Enter, ↑, Space - В^
-						case 27: case 46: Нажатие_с_фокусом(10, 8); break; // Esc, Del - Сx
-						case 36: Нажатие_с_фокусом(4, 9); break; // Home - В/О
-						case 37: Нажатие_с_фокусом(7, 9); break; // ← - ШГ<-
-						case 39: Нажатие_с_фокусом(9, 9); break; // → - ШГ->
-						case 70: Нажатие_с_фокусом(11, 9); break; // F
-						case 75: Нажатие_с_фокусом(10, 9); break; // K
-						case 106: Нажатие_с_фокусом(4, 8); break; // *
-						case 107: Нажатие_с_фокусом(2, 8); break; // +
-						case 109: Нажатие_с_фокусом(3, 8); break; // -
-						case 110: Нажатие_с_фокусом(7, 8); break; // ,
-						case 111: Нажатие_с_фокусом(5, 8); break; // /
-						case 113: Нажатие_с_фокусом(9, 8); break; // F2 - ВП
-						case 115: Нажатие_с_фокусом(6, 8); break; // F4 - <->
-						case 116: Нажатие_с_фокусом(6, 9); break; // F5 - Пх
-						case 117: Нажатие_с_фокусом(8, 9); break; // F6 - Пх
-						case 118: Нажатие_с_фокусом(3, 9); break; // F7 - БП
-						case 119: Нажатие_с_фокусом(5, 9); break; // F8 - ПП
-						case 120: Нажатие_с_фокусом(2, 9); break; // F9 - С/П
-						case 192: Нажатие_с_фокусом(8, 8); break; // ~ - /-/
+						case 8: // Backspace
+							Нажатие_с_фокусом(6, 8); break; // <->
+						case 13: // Enter
+							Нажатие_с_фокусом(11, 8); break; // В↑
+						case 27: // Esc
+							Нажатие_с_фокусом(10, 8); break; // Сx
+						case 32: // Space
+							Нажатие_с_фокусом(11, 8); break; // В↑
+						case 33: // PgUp
+							Нажатие_с_фокусом(9, 9); break; // ШГ<-
+						case 34: // PgDown
+							Нажатие_с_фокусом(7, 9); break; //  ШГ->
+						case 36: // Home
+							Нажатие_с_фокусом(4, 9); break; // В/О
+						case 37: // <-
+							switch (Мера_угла) { // Р(10)-ГРД(12)-Г(11)
+							  case 11: Изменить_меру_угла("ГРД"); break; // "Г"
+							  case 12: Изменить_меру_угла("Р"); break; // "ГРД"
+							};
+							break; 
+						case 38: // ↑
+							Нажатие_с_фокусом(11, 8); break; // В↑
+						case 39: // ->  
+							switch (Мера_угла) { // Р(10)-ГРД(12)-Г(11)
+							  case 10: Изменить_меру_угла("ГРД"); break; // "Р"
+							  case 12: Изменить_меру_угла("Г"); break; // "ГРД"
+							};
+							break; 
+						case 45: // Ins
+							Нажатие_с_фокусом(9, 8); break; // ВП
+						case 46: // Del
+							Нажатие_с_фокусом(10, 8); break; // Сx
+						case 70: // "F"
+							Нажатие_с_фокусом(11, 9); break; // F
+						case 75: case 82: // "K"
+							Нажатие_с_фокусом(10, 9); break; // K
+						case 106: // Gray *
+							Нажатие_с_фокусом(4, 8); break; // *
+						case 107: // Gray +
+							Нажатие_с_фокусом(2, 8); break; // +
+						case 109: // Gray -
+							Нажатие_с_фокусом(3, 8); break; // -
+						case 110: // Gray .
+							Нажатие_с_фокусом(7, 8); break; // ,
+						case 111: // Gray /
+							Нажатие_с_фокусом(5, 8); break; // "/"
+						case 113: // F2
+							Нажатие_с_фокусом(6, 9); break; // хП
+						case 115: // F4
+							Нажатие_с_фокусом(8, 9); break; // Пх
+						case 118: // F7
+							Нажатие_с_фокусом(3, 9); break; // БП
+						case 119: // F8
+							Нажатие_с_фокусом(5, 9); break; // ПП
+						case 120: // F9
+							Нажатие_с_фокусом(2, 9); break; // С/П
+						case 187: // "=" там же "+"
+							Нажатие_с_фокусом(3, 8); break; // +
+						case 188: // ","
+							Нажатие_с_фокусом(7, 8); break; // ,
+						case 189: // "-"
+							Нажатие_с_фокусом(3, 8); break; // -
+						case 191: // "/"
+							Нажатие_с_фокусом(5, 8); break; // "/"
+						case 192: // "~"
+							Нажатие_с_фокусом(8, 8); break; // /-/
 						default: break;
 					}
 				}
@@ -1680,7 +1738,7 @@
 
 		/*
 			[0] - Код команды
-			[1] - массив строк, которые пердставляют команду, первая всегда используется для вывода
+			[1] - массив строк, которые представляют команду, первая всегда используется для вывода
 			[2] - 1 - команда с регистром, 2 - команда с адресом, 0 - обычная
 			[3] - номер группы подстветки (см. подсв_N)
 			
@@ -1691,7 +1749,7 @@
 				0, 3
 			],
 			[	0x54,
-				["KНОП", "KНOП", "НOП", "K0"], // O кроме первой на анлийском
+				["КНОП", "KH0П", "H0П", "K0"], // Вначале на русском
 				0, 1
 			],
 			[	0x1F,
@@ -1735,11 +1793,11 @@
 				0, 3
 			],
 			[	0x1A,
-				["Fcosᐨ¹", "FCOSᐨ¹", "COSᐨ¹", "FCOS⁻¹", "COS⁻¹", "FCOS-1", "FARCCOS", "ARCCOS", "COS-1"],
+				["Fcosᐨ¹", "FC0Sᐨ¹", "C0Sᐨ¹", "FC0S⁻¹", "C0S⁻¹", "FC0S-1", "FARCC0S", "ARCC0S", "C0S-1"],
 				0, 3
 			],
 			[	0x32,
-				["Kзн", "KЗН", "ЗН", "K5"],
+				["Kзн", "K3H", "3H", "K5"],
 				0, 3
 			],
 			[	0x1B,
@@ -1759,7 +1817,7 @@
 				0, 3
 			],
 			[	0x1D,
-				["Fcos", "FCOS", "COS"],
+				["Fcos", "FC0S", "C0S"],
 				0, 3
 			],
 			[	0x35,
@@ -1799,7 +1857,7 @@
 				0, 3
 			],
 			[	0x21,
-				["F√", "√", "KBKOР", "KOРEНЬ", "KBKOРEНЬ", "FKBKOР", "FKOРEНЬ", "FKBKOРEНЬ"], // K;O;E английские
+				["F√", "√", "KBK0Р", "FKBK0Р", "K0РEHЬ", "KBK0РEHЬ", "FKBK0Р", "FK0РEHЬ", "FKBK0РEHЬ"],
 				0, 3
 			],
 			[	0x22,
@@ -1835,7 +1893,7 @@
 				0, 1
 			],
 			[	0x24,
-				["Fxʸ", "FXʸ", "Xʸ", "FX^Y", "X^Y", "XY", "FXY"],
+				["Fxʸ", "FXʸ", "Xʸ", "FX^Y", "X^Y", "FXY"],
 				0, 3
 			],
 			[	0x27,
@@ -1843,7 +1901,7 @@
 				0, 5
 			],
 			[	0x28,
-				["K×", "KX", "K*"],
+				["K×", "KX", "K*", "K⋅"],
 				0, 5
 			],
 			[	0x29,
@@ -1851,7 +1909,7 @@
 				0, 5
 			],
 			[	0x2A,
-				["KМ→Ч", "KM→Ч", "M→Ч", "КM→Ч"], // М кроме первой на анлийском
+				["KМ→Ч", "KM→Ч", "M→Ч", "KM→Ч", "KMЧ", "MЧ"], // М кроме первой на анлийском
 				0, 3
 			],
 			[	0x2B,
@@ -1915,11 +1973,11 @@
 				0, 3
 			],
 			[	0x3A,
-				["Kинв", "KИНB", "ИНB", "KCX", "KD"], // "B" кроме первой на анлийском
+				["Kинв", "KИHB", "ИHB", "KCX", "KD"], // "B" кроме первой на анлийском
 				0, 3
 			],
 			[	0x52,
-				["В/О", "B/0", "B/O"],  // "B" кроме первой на анлийском, во второй - цифра ноль
+				["В/О", "B/0"],  // Первая "B" на русском
 				0, 4
 			],
 			[	0x50,
@@ -1927,13 +1985,11 @@
 				0, 4
 			],
 			[	0x59,
-				["Fx≥0", "FX≥0", "X>=0", "X≥0", "X⩾0", "FX>=0",
-				"Fx≥O", "FX≥O", "X>=O", "X≥O", "X⩾O", "FX>=O"],  // Тут вместо нуля буква O
+				["Fx≥0", "FX≥0", "X>=0", "X≥0", "X⩾0", "FX>=0", "FX⩾0"],
 				2, 4
 			],
 			[	0x57,
-				["Fx≠0", "FX≠0", "X#0", "X!=0", "X<>0", "FX#0", "FX!=0", "FX<>0", 
-				"FX≠O", "X#O", "X!=O", "X<>O", "FX#O", "FX!=O", "FX<>O"], //Тут вместо нуля буква O
+				["Fx≠0", "FX≠0", "X#0", "X!=0", "X<>0", "FX#0", "FX!=0", "FX<>0"],
 				2, 4
 			],
 			[	0x51,
@@ -1953,18 +2009,15 @@
 				2, 4
 			],
 			[	0x5C,
-				["Fx<0", "FX<0", "X<0", 
-				"FX<O", "X<O"], // Тут вместо нуля буква O
+				["Fx<0", "FX<0", "X<0"], 
 				2, 4
 			],
 			[	0x5E,
-				["Fx=0", "FX=0", "X=0", 
-				"FX=O", "X=O"], // Тут вместо нуля буква O
+				["Fx=0", "FX=0", "X=0"], 
 				2, 4
 			],
 			[	0x5D,
-				["FL0", "L0", 
-				"FLO", "LO"], // Тут вместо нуля буква O
+				["FL0", "L0"],
 				2, 4
 			],
 			[	0x5B,
@@ -1992,8 +2045,7 @@
 				0, 2
 			],
 			[	0x70,
-				["Kx≠0", "KX≠0", "KX#0", "KX!=0", "KX<>0", 
-				"KX≠O", "KX#O", "KX!=O", "KX<>O"], // Тут вместо нуля буква O
+				["Kx≠0", "KX≠0", "KX#0", "KX!=0", "KX<>0"],
 				1, 4
 			],
 			[	0x7F,
@@ -2009,8 +2061,7 @@
 				0, 4
 			],
 			[	0x90,
-				["Kx≥0", "KX≥0", "KX⩾0", "KX>=0", 
-				"Kx≥O", "KX≥O", "KX⩾O", "KX>=O"], // Тут вместо нуля буква O
+				["Kx≥0", "KX≥0", "KX⩾0", "KX>=0"], 
 				1, 4
 			],
 			[	0x9F,
@@ -2034,8 +2085,7 @@
 				0, 2
 			],
 			[	0xC0,
-				["Kx<0", "KX<0", 
-				"KX<O"], // Тут вместо нуля буква O
+				["Kx<0", "KX<0"],
 				1, 4
 			],
 			[	0xCF,
@@ -2051,8 +2101,7 @@
 				0, 2
 			],
 			[	0xE0,
-				["Kx=0", "KX=0", 
-				"KX=O"], // Тут вместо нуля буква O
+				["Kx=0", "KX=0"], 
 				1, 4
 			],
 			[	0xEF,
@@ -2123,9 +2172,12 @@
 					.replace("С", "C") // Русская С на английскую C
 					.replace("Д", "D") 
 					.replace("Е", "E") // Русская Е на английскую E
+					.replace("З", "3") // Русская З на цифру 3
 					.replace(/К/g, "K") // Все русские К на английскую K
 					.replace("М", "M") // Русская М на английскую M
-					.replace("О", "O") // Русская О на английскую O
+					.replace("Н", "H") // Русская Н на английскую H
+					.replace("О", "0") // Русская О на ноль
+					.replace("O", "0") // Английская O на ноль
 					.replace("Х", "X"); // Русская Х на английскую X
 				if ((команда.length > 2) && (команда[2] == ".")) {
 					// Отработка варианта, когда перед командой стоит ее адрес, например 99.Cx, A4.В/О
@@ -2177,7 +2229,6 @@
 			else {
 				Элемент_по_названию("ВКЛ").style.left = "63px";
 			}
-			// Исполнение = setInterval(Шаг, 300);
 			Включить();
 		}
 
@@ -2294,7 +2345,6 @@
 			}
 			document.getElementById("Код").innerHTML = innerHTML;
 			if (!Пауза) {
-				// Исполнение = setInterval(Шаг, 300);
 				Включить();
 			}
 		}
@@ -2351,7 +2401,6 @@
 				let окно = window.open("", "Состояние", "width=400px, height=150px");
 				окно.document.body.innerHTML = '<div style="margin: auto;"><textarea style="width: 350px; height: 125px;">' + вывод + "</textarea></div>";
 				if (!Пауза) {
-					// Исполнение = setInterval(Шаг, 300);
 					Включить();
 				}
 			}
@@ -2380,7 +2429,7 @@
 			Выключить();
 			const микросхемы = [ИР2_1, ИР2_2, ИК1302, ИК1303, ИК1306];
 			Мера_угла = parseInt(состояние[0], 16);
-			Элемент_по_названию("Р_ГРД_Г").style.left = (Мера_угла == 10 ? "181px" : Мера_угла == 11 ? "198px" : "190px");
+			document.getElementById("b_grad").style.left = (Мера_угла == 10 ? "181px" : Мера_угла == 11 ? "198px" : "190px");
 			for (сч_1 = 0; сч_1 < 2; сч_1++) {
 				for (сч_2 = 0; сч_2 < 252; сч_2++) {
 					микросхемы[сч_1].M[сч_2] = parseInt(состояние[сч_2 + 1 + 256 * сч_1], 16);
@@ -2418,8 +2467,6 @@
 				микросхемы[сч_1].обн_индик = parseInt(состояние[350 + 162 * сч_1]) == 1;
 			}
 			Элемент_по_названию("ВКЛ").style.left = "63px";
-			// Исполнение = setInterval(Шаг, 300);
-			// Шаг();
 			Включить();
 		}
 
@@ -2452,9 +2499,9 @@
 
 		function Изменить_меру_угла(мера) {
 			switch (мера) {
-				case "Р": Элемент_по_названию("Р_ГРД_Г").style.left = "181px"; Мера_угла = 10; break;
-				case "ГРД": Элемент_по_названию("Р_ГРД_Г").style.left = "190px"; Мера_угла = 12; break;
-				case "Г": Элемент_по_названию("Р_ГРД_Г").style.left = "198px"; Мера_угла = 11; break;
+				case "Р": document.getElementById("b_grad").style.left = "181px"; Мера_угла = 10; break;
+				case "ГРД": document.getElementById("b_grad").style.left = "190px"; Мера_угла = 12; break;
+				case "Г": document.getElementById("b_grad").style.left = "198px"; Мера_угла = 11; break;
 			}
 		}
 
