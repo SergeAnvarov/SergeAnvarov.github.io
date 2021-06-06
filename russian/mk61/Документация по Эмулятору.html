@@ -12,14 +12,19 @@
 
 <style>
 
-.code {
-	background-color:#103810;
-	color:#77FF77;
+
+
+span.code, .fixedfont {
 	font-size:1.1em;
 	font-family:monospace;
-	font-weight:bold;
 	padding:1px 2px 1px 2px;
 	white-space:pre;
+}
+
+span.code {
+	background-color:#103810;
+	color:#77FF77;
+	font-weight:bold;
 }
 
 table {
@@ -46,9 +51,9 @@ table, th, td {
 	<section>
 		<h2>Кратко о возможностях</h2>
 		<p>
-			Этот эмулятор, использующий JavaScript (т. е. совместимый с 
+			Этот эмулятор, использующий JavaScript (т. е. совместимый с
 			большинством браузеров), можно использовать для написания и отладки
-			программ под ПМК-61, используя дополнительные возможности, 
+			программ под ПМК-61, используя дополнительные возможности,
 			которые недоступны в реальном калькуляторе:
 		</p>
 		<ul>
@@ -66,7 +71,7 @@ table, th, td {
 			</li>
 		</ul>
 	</section>
-	
+
 	<section>
 		<h2>Базовые возможности</h2>
 		<p>
@@ -74,8 +79,8 @@ table, th, td {
 			Кнопки можно нажимать мышкой, чтобы выполнять стандартные операции.
 		</p>
 		<p>
-			Кроме того, можно использовать «горячие» клавиши 
-			(кроме кнопки включения), которые 
+			Кроме того, можно использовать «горячие» клавиши
+			(кроме кнопки включения), которые
 			отображаются как подсказки над каждой кнопкой.
 			«Горячие» клавиши не работают, когда фокус в поле ввода кода программы.
 			Они также не зависят от раскладки языка, состояния CapsLock и NumLock.
@@ -84,29 +89,29 @@ table, th, td {
 			Операции «&minus;», «+» &ndash; так же. На основной это правее цифры 9.
 			Операция «*» только на дополнительной клавиатуре, т. к. на основной
 			она совмещена с «8». Знак деления на основной (на дополнительной
-			и так видно) клавиатуре обычно расположен снизу 
-			возле правого Shift (после буквы «Ю»). Левее него идут знаки 
+			и так видно) клавиатуре обычно расположен снизу
+			возле правого Shift (после буквы «Ю»). Левее него идут знаки
 			«.» или «,» (оба понимаются как «.»). На дополнительной клавиатуре
-			очевидно снизу. Знак «~» (для смены знака) там, где буква Ё, обычно 
+			очевидно снизу. Знак «~» (для смены знака) там, где буква Ё, обычно
 			под Esc.
 		</p>
 	</section>
-	
+
 	<section>
 		<h2>Отображение содержимого регистров памяти</h2>
 		<p>
-			Содержимое 15 (R0&hellip;RE) регистров памяти отображается в 
-			форме: цифры мантиссы,
-			и если есть порядок, то символ «^» (разделения порядка), а если 
-			порядок содержит шестнадцатеричные цифры, то они отображаются через 
+			Содержимое 15 (R0&hellip;RE) регистров памяти отображается
+			в виде: цифры мантиссы,
+			и если есть порядок, то символ «^» (разделения порядка), а если
+			порядок содержит шестнадцатеричные цифры, то они отображаются через
 			дополнительный разделительный символ «|». В последнем случае именно
 			такой вид порядок будет отображён при выводе
-			его на экран. Числовое значение до знака «|» показывает его 
+			его на экран. Числовое значение до знака «|» показывает его
 			фактическое значение (с точки зрения калькулятора).
 		</p>
 		<p>
 			Приведём пример в виде таблицы, где будем указывать вводимые команды,
-			содержимое основного экрана калькулятора и поле регистра X 
+			содержимое основного экрана калькулятора и поле регистра X
 			(оно шире, чем на экране, по указанной вверху причине).
 			Не забывайте, что это полный эмулятор калькулятора, а значит он
 			эмулирует все «особенности» физического калькулятора.
@@ -135,10 +140,10 @@ table, th, td {
 				<td><span class="code"> ЕГГ0Г       </span></td>
 				<td><span class="code"> 1.       ^100    </span></td>
 				<td>
-					На основном экране отобразится код ошибки из-за 
+					На основном экране отобразится код ошибки из-за
 					переполнения порядка (более 99), но в поле
-					будет показано число с порядком 100, т. е. фактически 
-					калькулятор может его использовать, хотя и не может 
+					будет показано число с порядком 100, т. е. фактически
+					калькулятор может его использовать, хотя и не может
 					его показывать.
 				</td>
 			</tr>
@@ -147,7 +152,7 @@ table, th, td {
 				<td><span class="code"> 3ГГ0Г       </span></td>
 				<td><span class="code"> 1.       ^200    </span></td>
 				<td>
-					Порядок увеличился. Начинаются известные из 
+					Порядок увеличился. Начинаются известные из
 					<a href="https://ru.wikipedia.org/wiki/Еггогология" target="_blank">
 						Еггогологии
 					</a>
@@ -166,10 +171,10 @@ table, th, td {
 				<td><span class="code"> 3ГГ0Г    200</span></td>
 				<td><span class="code"> 1.       ^ 57|--3</span></td>
 				<td>
-					Команда «.», и вот он(!) известный способ заставить 
-					калькулятор отобразить на экране значение сверхчисла. 
-					Но глядя на поле регистра видно, 
-					что	фактически это уже другое число, не очень большое, но с 
+					Команда «.», и вот он(!) известный способ заставить
+					калькулятор отобразить на экране значение сверхчисла.
+					Но глядя на поле регистра видно,
+					что	фактически это уже другое число, не очень большое, но с
 					порядком, содержащим шестнадцатеричные цифры.
 				</td>
 			</tr>
@@ -188,27 +193,27 @@ table, th, td {
 		</table>
 		<p>
 			И кстати, в документе
-			<a href="Недокументированные%20возможности%20ПМК%20МК-61.html#id_indirect_addr_exponent" target="_blank">
+			<a href="https://sergeanvarov.github.io/russian/mk61/Недокументированные%20возможности%20ПМК%20МК-61.html#id_indirect_addr_exponent" target="_blank">
 				про недокументированные особенности</a
 			> указано правило 160, по которому в данном случае порядок &minus;103
-			(&minus;«&minus;3» = &minus;«A3» = &minus;«103») 
+			(&minus;«&minus;3» = &minus;«A3» = &minus;«103»)
 			превращается в 57-й.
 		</p>
 		<p>
 			Стек адресов возврата начинается снизу (как стек данных). Во время
-			выполнения он может временно отображать «мусор». При остановке всё 
+			выполнения он может временно отображать «мусор». При остановке всё
 			нормализуется.
 		</p>
 	</section>
-	
+
 	<section>
 		<h2>Состояние</h2>
 		<p>
-			Кнопка «Прочитать» позволяют прочитать всё содержимое ПМК в 
+			Кнопка «Прочитать» позволяют прочитать всё содержимое ПМК в
 			виде одной строки (автоматического копирования в буфер обмена
-			не производится, чтобы не иметь проблем с безопасностью). Её 
+			не производится, чтобы не иметь проблем с безопасностью). Её
 			можно не интерпретировать, считайте это бинарное состояние, но в
-			виде текста. 
+			виде текста.
 		</p>
 		<p>
 			Если требуется прочитать состояние при работающей программе, можно
@@ -216,549 +221,576 @@ table, th, td {
 			переменных).
 		</p>
 		<p>
-			Позднее в любой момент можно «Ввести» сохранённую строку состояния 
-			обратно, восстановив все регистры и программу. Если ПМК до этого 
+			Позднее в любой момент можно «Ввести» сохранённую строку состояния
+			обратно, восстановив все регистры и программу. Если ПМК до этого
 			был выключен, то он автоматически включится.
 		</p>
 		<p>
-			Ускоренный режим в 10-15 раз ускоряет выполнение, но вглядеться в 
+			Ускоренный режим в 10-15 раз ускоряет выполнение, но вглядеться в
 			индикацию на основном экране ПМК, что используется в некоторых
 			играх, будет уже затруднительно. По умолчанию (после включения)
 			этот режим выключен.
 		</p>
 	</section>
-	
+
 	<section>
 		<h2>Код программы</h2>
 		<p>
 			Это самое интересное в эмуляторе.
 		</p>
+		<h3>Вывод кода программы в текст</h3>
 		<p>
-			Начнём с вывода. По кнопке «Прочитать из памяти» программа 
+			Начнём с вывода. По кнопке «Прочитать из памяти» программа
 			будет выведена в псевдокодах (см. далее) в поле для редактирования.
 			Выводимый текст может при этом быть специальным образом отформатирован,
-			в зависимости от установки флагов под этим полем:
+			в зависимости от установки флагов под этим полем.
 		</p>
-		<ul>
-			<li>
-				<b>Простой код.</b> По умолчанию включён. В этом случае выводятся
-				только команды, без адреса. Форматируется по 10 команд в строку 
-				с равномерным отступами для лучшего чтения. Если флаг сброшен, то
-				каждая команда предваряется адресом (с точкой), для удобства 
-				восприятия уменьшенным шрифтом и неярким цветом.
-			</li>
-			<li>
-				<b>Подсветка.</b> По умолчанию включён. 
-				В этом случае каждая команда раскрашивается, в зависимости 
-				от типа:
-				<table>
-					<tr>
-						<td style="color:#A0A000;">Цитрусовый цвет</td>
-						<td>
-							Используется для операций со стеком и пустых операторов.
-						</td>
-					</tr>
-					<tr>
-						<td style="color:#00A000;">Истинно зелёный цвет</td>
-						<td>
-							Используется для операций работы с регистрами памяти,
-							в том числе косвенными.
-						</td>
-					</tr>
-					<tr>
-						<td style="color:#A00000;">Глубокий красный цвет</td>
-						<td>
-							Используется для всех функций и операций. 
-							F<span style="font-size:large;">&pi;</span>
-							считается функцией.
-						</td>
-					</tr>
-					<tr>
-						<td style="color:#0000A0;">Королевский синий цвет</td>
-						<td>
-							Используется для операторов, которые могут изменить
-							порядок выполнения. Условные и безусловные переходы,
-							операторы сравнения. Команды остановки и возврата.
-						</td>
-					</tr>
-					<tr>
-						<td style="color:#000000;">Обычный чёрный цвет</td>
-						<td>
-							Используется для операторов ввода числа, т. е. цифр,
-							ввода порядка, смены знака, точки.
-						</td>
-					</tr>
-					<tr>
-						<td style="color:#A000A0; text-decoration: underline;">
-							Барни фиолетовый с подчёркиванием
-						</td>
-						<td>
-							Используется для числовых значений адресов перехода 
-							после операторов сравнения, циклов или безусловных 
-							переходов.
-						</td>
-					</tr>
-					<tr>
-						<td style="color:red;">Красный цвет</td>
-						<td>
-							Используется для операторов, которые точно приведут 
-							к остановке по ошибке.
-						</td>
-					</tr>
-				</table>
-				Если флаг подсветки не установлен, то будет вывод обычным цветом 
-				текста.
-			</li>
-			<li>
-				<b>Числовые значения.</b> По умолчанию выключен. 
+		<h4>Простой код</h4>
+		<p>
+			По умолчанию включён. В этом случае выводятся
+			только команды, без адреса. Форматируется по 10 команд в строку
+			с равномерным отступами для лучшего чтения. Если флаг сброшен, то
+			каждая команда предваряется адресом (с точкой), для удобства
+			восприятия уменьшенным шрифтом и неярким цветом.
+		</p>
+		<h4>Подсветка</h4>
+		<p>
+			По умолчанию включён. В этом случае каждая команда раскрашивается, в зависимости
+			от типа:
+		</p>
+		<table>
+			<tr>
+				<th>Цвет</th>
+				<th>Используется для&hellip;</th>
+			</tr>
+			<tr>
+				<td style="color:#A0A000;">Цитрусовый</td>
+				<td>
+					операций со стеком и пустых операторов.
+				</td>
+			</tr>
+			<tr>
+				<td style="color:#00A000;">Истинно зелёный</td>
+				<td>
+					операций работы с регистрами памяти,
+					в том числе косвенными.
+				</td>
+			</tr>
+			<tr>
+				<td style="color:#A00000;">Глубокий красный</td>
+				<td>
+					всех функций и операций.
+					F<span style="font-size:large;">&pi;</span>
+					считается функцией.
+				</td>
+			</tr>
+			<tr>
+				<td style="color:#0000A0;">Королевский синий</td>
+				<td>
+					операторов, которые могут изменить
+					порядок выполнения. Условные и безусловные переходы,
+					операторы сравнения. Команды остановки и возврата.
+				</td>
+			</tr>
+			<tr>
+				<td style="color:#000000;">Обычный чёрный</td>
+				<td>
+					операторов ввода числа, т. е. цифр,
+					ввода порядка, смены знака, точки.
+				</td>
+			</tr>
+			<tr>
+				<td style="color:#A000A0; text-decoration: underline;">
+					Барни фиолетовый с подчёркиванием
+				</td>
+				<td>
+					числовых значений адресов перехода
+					после операторов сравнения, циклов или безусловных
+					переходов.
+				</td>
+			</tr>
+			<tr>
+				<td style="color:red;">Красный</td>
+				<td>
+					операторов, которые точно приведут
+					к остановке по ошибке.
+				</td>
+			</tr>
+		</table>
+		<p>
+			Если флаг подсветки не установлен, то будет вывод обычным цветом
+			текста.
+		</p>
+		<h4>Числовые значения</h4>
+		<p>
+			По умолчанию выключен.
 				Будут выведены только числовые коды
 				операций, а не их псевдокоды. При этом два предыдущих флага
 				сохраняют значения (с адресами или подсветкой).
-			</li>
-		</ul>
+		</p>
+		<h3>Ввод текста в код программы</h3>
 		<p>
-			Но самое интересное &ndash; это конечно ввод программы. По кнопке 
+			Но самое интересное &ndash; это конечно ввод программы. По кнопке
 			«Ввести в память» можно попытаться ввести текст, который сейчас
-			находится в поле программы в программную память ПМК. Результат
-			можно узнать, прочитав его обратно.
+			находится в поле программы в программную память ПМК. При этом,
+			если калькулятор был выключен, он включится автоматически.
+			Результат можно узнать, прочитав его обратно.
 		</p>
 		<p>
 			Чтобы понять, как вводить программу, расскажу о работе парсера,
-			который считывает команды. Он сделан так, чтобы максимально 
-			упростить ввод, в то же время учитывает множество разных вариантов 
+			который считывает команды. Он сделан так, чтобы максимально
+			упростить ввод, в то же время учитывает множество разных вариантов
 			ввода. При это оформление текста игнорируется (цвет, шрифт), а
 			используется только текст.
 		</p>
+		<h4>Правила парсера</h4>
 		<ol>
 			<li>
-				Парсер считает командами всё, что разделено пробелами 
-				(или концом строки). Т. е. псевдокод команды не должен содержать 
+				Парсер считает командами всё, что разделено пробелами
+				(или концом строки). Т. е. псевдокод команды не должен содержать
 				пробелы. И формально можно все команды указать в одну строку.
 			</li>
 			<li>
-				Парсер воспримет только первые 105 команд, остальные 
-				проигнорирует. Если команд меньше, то оставшиеся место будет 
+				Парсер воспримет только первые 105 команд, остальные
+				проигнорирует. Если команд меньше, то оставшиеся место будет
 				безусловно заполнено нулями (как делает ПМК при включении).
 			</li>
 			<li>
-				Парсер игнорирует регистр букв. Т. е. можно вводить в верхнем, 
+				Парсер игнорирует регистр букв. Т. е. можно вводить в верхнем,
 				нижнем или смешанном режиме &ndash; всё распознается.
 			</li>
 			<li>
-				Он считает одинаковыми все буквы, которые визуально похожи 
-				в английском и русском алфавитах. Т. е. можно вводить в смешанном 
-				режиме, всё равно парсер разберётся. Конкретно буквы 
-				(приведены только русские) А, В, С, Е, З, К, М, О, Р, Х, Д. 
-				Последнюю он будет считать как букву D (регистр D). Буква О 
-				(русская или английская) и нуль также не отличаются 
+				Он считает одинаковыми все буквы, которые визуально похожи
+				в английском и русском алфавитах. Т. е. можно вводить в смешанном
+				режиме, всё равно парсер разберётся. Конкретно буквы
+				(приведены только русские) А, В, С, Е, З, К, М, О, Р, Х, Д.
+				Последнюю он будет считать как букву D (регистр D). Буква О
+				(русская или английская) и нуль также не отличаются
 				при разборе. Т. е. используйте «что ближе». Буква «З» и цифра
-				3 тоже взаимозаменяемы. Все похожие на минус 
-				(EnDash, EnDash, Minus) заменяется на знак минус.
+				3 тоже взаимозаменяемы. Все похожие на дефис
+				(&amp;ndash; &ndash;, &amp;mdash; &mdash;, &amp;minus; &minus;)
+				заменяется на знак дефиса.
 			</li>
 			<li>
-				Вместо псевдокода можно использовать цифровой код команды. 
+				Вместо псевдокода можно использовать цифровой код команды.
 				По счастью однознаковые числа по кодам совпадают сами с собой,
 				т. е. код 2 и цифра 2 это одно и то же.
 			</li>
 			<li>
-				Каждая команда может содержать префикс адреса в виде «nn.», 
+				Каждая команда может содержать префикс адреса в виде «nn.»,
 				т. е. в виде адреса с точкой. В этом случае команда будет
-				помещена по этому адресу, а все последующие (без префикса) 
-				последовательно после неё. Понятно, что первая команда 
+				помещена по этому адресу, а все последующие (без префикса)
+				последовательно после неё. Понятно, что первая команда
 				по умолчанию идёт по нулевому адресу. Для адреса после 99
-				допустимо «A0.», «&minus;0.», «.0.».
+				допустимо «A0», «-0», «.0».
 			</li>
 		</ol>
+		<h4>Псевдокоды</h4>
 		<p>
 			Далее опишем псевдокоды, которые понимает парсер. В первой колонке
-			идёт команда, какой она будет представлена при выводе, а далее 
-			(через пробелы)	варианты ввода. 
+			идёт код команды, во второй команда, какой она будет представлена
+			при выводе, а далее (через пробелы)	варианты ввода.
 			Не забывайте про правила 3 и 4 выше, поэтому варианты приведены
-			в «канонической» форме, т. е. с уже преобразованными буквами 
+			в «канонической» форме, т. е. с уже преобразованными буквами
 			в верхнем регистре.
 		</p>
-		<table style="font-family:monospace; font-size:1.1em;">
-			<tr>
-				<th>Код</th>
-				<th>Вывод</th>
-				<th>Принимается парсером</th>
-			</tr>
-			<tr>
-				<td class="center">10</td>
-				<td class="center">+</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td class="center">11</td>
-				<td class="center">-</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td class="center">12</td>
-				<td class="center">×</td>
-				<td>⋅&emsp;X&emsp;*</td>
-			</tr>
-			<tr>
-				<td class="center">13</td>
-				<td class="center">÷</td>
-				<td>/&emsp;:</td>
-			</tr>
-			<tr>
-				<td class="center">0A</td>
-				<td class="center">.</td>
-				<td>,&emsp;•</td>
-			</tr>
-			<tr>
-				<td class="center">0B</td>
-				<td class="center">/-/</td>
-				<td>+/-</td>
-			</tr>
-			<tr>
-				<td class="center">0C</td>
-				<td class="center">ВП</td>
-				<td>BП</td>
-			</tr>
-			<tr>
-				<td class="center">0D</td>
-				<td class="center">Сx</td>
-				<td>CX</td>
-			</tr>
-			<tr>
-				<td class="center">15</td>
-				<td class="center">F10ˣ</td>
-				<td>10ˣ&emsp;F10^X&emsp;10^x&emsp;F10X&emsp;10X&emsp;F10**X&emsp;10**X</td>
-			</tr>
-			<tr>
-				<td class="center">16</td>
-				<td class="center">Feˣ</td>
-				<td>FEˣ&emsp;Eˣ&emsp;FE^X&emsp;E^X&emsp;FEX&emsp;EX&emsp;FE**X&emsp;E**X</td>
-			</tr>
-			<tr>
-				<td class="center">22</td>
-				<td class="center">Fx²</td>
-				<td>FX²&emsp;X²&emsp;FX^2&emsp;X^2&emsp;FX2&emsp;X2&emsp;FX**2&emsp;X**2</td>
-			</tr>
-			<tr>
-				<td class="center">24</td>
-				<td class="center">Fxʸ</td>
-				<td>FXʸ&emsp;Xʸ&emsp;FX^Y&emsp;X^Y&emsp;FXY</td>
-			</tr>
-			<tr>
-				<td class="center">17</td>
-				<td class="center">Flg</td>
-				<td>FLG&emsp;LG</td>
-			</tr>
-			<tr>
-				<td class="center">18</td>
-				<td class="center">Fln</td>
-				<td>FLN&emsp;LN</td>
-			</tr>
-			<tr>
-				<td class="center">1D</td>
-				<td class="center">Fcos</td>
-				<td>FC0S&emsp;C0S</td>
-			</tr>
-			<tr>
-				<td class="center">1A</td>
-				<td class="center">Fcosᐨ¹</td>
-				<td>FC0Sᐨ¹&emsp;C0Sᐨ¹&emsp;FC0S⁻¹&emsp;C0S⁻¹&emsp;FC0S-1&emsp;C0S-1&emsp;FARCC0S&emsp;ARCC0S</td>
-			</tr>
-			<tr>
-				<td class="center">1C</td>
-				<td class="center">Fsin</td>
-				<td>FSIN&emsp;SIN</td>
-			</tr>
-			<tr>
-				<td class="center">19</td>
-				<td class="center">Fsinᐨ¹</td>
-				<td>FSINᐨ¹&emsp;SINᐨ¹&emsp;FSIN⁻¹&emsp;SIN⁻¹&emsp;FSIN-1&emsp;SIN-1&emsp;FARCSIN&emsp;ARCSIN</td>
-			</tr>
-			<tr>
-				<td class="center">1E</td>
-				<td class="center">Ftg</td>
-				<td>FTG&emsp;TG</td>
-			</tr>
-			<tr>
-				<td class="center">1B</td>
-				<td class="center">Ftgᐨ¹</td>
-				<td>FTGᐨ¹&emsp;TGᐨ¹&emsp;FTG⁻¹&emsp;TG⁻¹&emsp;FTG-1&emsp;TG-1&emsp;FARCTG&emsp;ARCTG</td>
-			</tr>
-			<tr>
-				<td class="center">20</td>
-				<td class="center">Fπ</td>
-				<td>FΠ&emsp;Π&emsp;FПИ&emsp;ПИ</td>
-			</tr>
-			<tr>
-				<td class="center">21</td>
-				<td class="center">F√</td>
-				<td>√&emsp;FKBK0P&emsp;KBK0P&emsp;FK0PEHЬ&emsp;K0PEHЬ&emsp;FKBK0PEHЬ&emsp;KBK0PEHЬ</td>
-			</tr>
-			<tr>
-				<td class="center">23</td>
-				<td class="center">F1/x</td>
-				<td>F1/X&emsp;1/X</td>
-			</tr>
-			<tr>
-				<td class="center">0E</td>
-				<td class="center">В↑</td>
-				<td>B↑&emsp;↑&emsp;B^&emsp;^</td>
-			</tr>
-			<tr>
-				<td class="center">0F</td>
-				<td class="center">FВх</td>
-				<td>FBX&emsp;ВX</td>
-			</tr>
-			<tr>
-				<td class="center">14</td>
-				<td class="center">&lt;-&gt;</td>
-				<td>↔&emsp;XY&emsp;X↔Y&emsp;⟷</td>
-			</tr>
-			<tr>
-				<td class="center">25</td>
-				<td class="center">Fѻ</td>
-				<td>FѺ&emsp;Ѻ&emsp;F↻&emsp;↻&emsp;F-&gt;&emsp;-&gt;&emsp;F→&emsp;→</td>
-			</tr>
-			<tr>
-				<td class="center">3E</td>
-				<td class="center">x←y</td>
-				<td>X←Y</td>
-			</tr>
-			<tr>
-				<td class="center">3B</td>
-				<td class="center">КCЧ</td>
-				<td>KCЧ&emsp;CЧ&emsp;KE</td>
-			</tr>
-			<tr>
-				<td class="center">37</td>
-				<td class="center">КɅ</td>
-				<td>КɅ&emsp;Ʌ&emsp;K^&emsp;^&emsp;K⋀&emsp; ⋀&emsp;K∧&emsp;∧&emsp;K/\&emsp;/\&emsp;K.&emsp;KA</td>
-			</tr>
-			<tr>
-				<td class="center">38</td>
-				<td class="center">КV</td>
-				<td>KV&emsp;V&emsp;K⋁&emsp;⋁&emsp;K∨&emsp;∨&emsp;K\/&emsp;\/&emsp;K/-/&emsp;KB</td>
-			</tr>
-			<tr>
-				<td class="center">39</td>
-				<td class="center">К(+)</td>
-				<td>K(+)&emsp;(+)&emsp;K⊕&emsp;⊕&emsp;KBП&emsp;KC</td>
-			</tr>
-			<tr>
-				<td class="center">3A</td>
-				<td class="center">Кинв</td>
-				<td>KИHB&emsp;ИHB&emsp;KCX&emsp;KD</td>
-			</tr>
-			<tr>
-				<td class="center">2A</td>
-				<td class="center">КМ→Ч</td>
-				<td>KM→Ч&emsp;M→Ч&emsp;KM→Ч&emsp;KMЧ&emsp;MЧ</td>
-			</tr>
-			<tr>
-				<td class="center">30</td>
-				<td class="center">КЧ→М</td>
-				<td>KЧ→MKЧM&emsp;ЧM&emsp;K3</td>
-			</tr>
-			<tr>
-				<td class="center">26</td>
-				<td class="center">КМ→Г</td>
-				<td>KM→Г&emsp;M→Г&emsp;KMГ&emsp;MГ&emsp;K+</td>
-			</tr>
-			<tr>
-				<td class="center">33</td>
-				<td class="center">КГ→М</td>
-				<td>KГ→M&emsp;Г→M&emsp;KГM&emsp;ГM&emsp;K6</td>
-			</tr>
-			<tr>
-				<td class="center">32</td>
-				<td class="center">Кзн</td>
-				<td>K3H&emsp;3H&emsp;K5</td>
-			</tr>
-			<tr>
-				<td class="center">31</td>
-				<td class="center">К|x|</td>
-				<td>K|X|&emsp;|X|&emsp;K4</td>
-			</tr>
-			<tr>
-				<td class="center">34</td>
-				<td class="center">К[x]</td>
-				<td>K[X]&emsp;[X]&emsp;K7</td>
-			</tr>
-			<tr>
-				<td class="center">35</td>
-				<td class="center">К{x}</td>
-				<td>K{X}&emsp;{X}&emsp;K(X)&emsp;(X)&emsp;K8</td>
-			</tr>
-			<tr>
-				<td class="center">36</td>
-				<td class="center">Кmax</td>
-				<td>KMAX&emsp;MAX&emsp;K9</td>
-			</tr>
-			<tr>
-				<td class="center">27</td>
-				<td class="center">K-</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td class="center">28</td>
-				<td class="center">K×</td>
-				<td>KX&emsp;K*&emsp;K⋅</td>
-			</tr>
-			<tr>
-				<td class="center">29</td>
-				<td class="center">K÷</td>
-				<td>K/&emsp;K:</td>
-			</tr>
-			<tr>
-				<td class="center">52</td>
-				<td class="center">В/О</td>
-				<td>B/0</td>
-			</tr>
-			<tr>
-				<td class="center">50</td>
-				<td class="center">С/П</td>
-				<td>C/П&emsp;CП</td>
-			</tr>
-			<tr>
-				<td class="center">51</td>
-				<td class="center">БП</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td class="center">80</td>
-				<td class="center">KБП</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td class="center">53</td>
-				<td class="center">ПП</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td class="center">A0</td>
-				<td class="center">KПП</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td class="center">5E</td>
-				<td class="center">Fx=0</td>
-				<td>FX=0&emsp;X=0</td>
-			</tr>
-			<tr>
-				<td class="center">E0</td>
-				<td class="center">Kx=0</td>
-				<td>KX=0</td>
-			</tr>
-			<tr>
-				<td class="center">57</td>
-				<td class="center">Fx≠0</td>
-				<td>FX≠0&emsp;X≠0&emsp;FX#0&emsp;X#0&emsp;FX!=0&emsp;X!=0&emsp;FX&lt;&gt;0&emsp;X&lt;&gt;0</td>
-			</tr>
-			<tr>
-				<td class="center">70</td>
-				<td class="center">Kx≠0</td>
-				<td>KX≠0&emsp;KX#0&emsp;KX!=0&emsp;KX&lt;&gt;0</td>
-			</tr>
-			<tr>
-				<td class="center">59</td>
-				<td class="center">Fx≥0</td>
-				<td>FX≥0&emsp;X≥0&emsp;FX&gt;=0&emsp;X&gt;=0&emsp;FX⩾0&emsp;X⩾0</td>
-			</tr>
-			<tr>
-				<td class="center">90</td>
-				<td class="center">Kx≥0</td>
-				<td>KX≥0&emsp;KX⩾0&emsp;KX&gt;=0</td>
-			</tr>
-			<tr>
-				<td class="center">5C</td>
-				<td class="center">Fx&lt;0</td>
-				<td>FX&lt;0&emsp;X&lt;0</td>
-			</tr>
-			<tr>
-				<td class="center">C0</td>
-				<td class="center">Kx&lt;0</td>
-				<td>KX&lt;0</td>
-			</tr>
-			<tr>
-				<td class="center">5D</td>
-				<td class="center">FL0</td>
-				<td>L0</td>
-			</tr>
-			<tr>
-				<td class="center">5B</td>
-				<td class="center">FL1</td>
-				<td>L1</td>
-			</tr>
-			<tr>
-				<td class="center">58</td>
-				<td class="center">FL2</td>
-				<td>L2</td>
-			</tr>
-			<tr>
-				<td class="center">5A</td>
-				<td class="center">FL3</td>
-				<td>L3</td>
-			</tr>
-			<tr>
-				<td class="center">54</td>
-				<td class="center">КНОП</td>
-				<td>KH0П&emsp;H0П&emsp;K0</td>
-			</tr>
-			<tr>
-				<td class="center">55</td>
-				<td class="center">K1</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td class="center">56</td>
-				<td class="center">K2</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td class="center">40</td>
-				<td class="center">xП&hellip;</td>
-				<td>XП&hellip;&emsp;П&hellip;&emsp;X→П&hellip;</td>
-			</tr>
-			<tr>
-				<td class="center">B0</td>
-				<td class="center">KxП</td>
-				<td>KXП&hellip;&emsp;KX→П&hellip;&emsp;KП&hellip;</td>
-			</tr>
-			<tr>
-				<td class="center">60</td>
-				<td class="center">Пx</td>
-				<td>ПX&hellip;&emsp;ИП&hellip;&emsp;П→X&hellip;</td>
-			</tr>
-			<tr>
-				<td class="center">D0</td>
-				<td class="center">КПx</td>
-				<td>KПX&hellip;&emsp;KП→X&hellip;&emsp;KИП&hellip;</td>
-			</tr>
+		<table>
+			<thead>
+				<tr>
+					<th>Код</th>
+					<th>Вывод</th>
+					<th>Принимается парсером</th>
+				</tr>
+			</thead>
+			<tbody class="fixedfont">
+				<tr>
+					<td class="center">10</td>
+					<td class="center">+</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="center">11</td>
+					<td class="center">-</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="center">12</td>
+					<td class="center">×</td>
+					<td>⋅&emsp;X&emsp;*</td>
+				</tr>
+				<tr>
+					<td class="center">13</td>
+					<td class="center">÷</td>
+					<td>/&emsp;:</td>
+				</tr>
+				<tr>
+					<td class="center">0A</td>
+					<td class="center">.</td>
+					<td>,&emsp;•</td>
+				</tr>
+				<tr>
+					<td class="center">0B</td>
+					<td class="center">/-/</td>
+					<td>+/-</td>
+				</tr>
+				<tr>
+					<td class="center">0C</td>
+					<td class="center">ВП</td>
+					<td>BП</td>
+				</tr>
+				<tr>
+					<td class="center">0D</td>
+					<td class="center">Сx</td>
+					<td>CX</td>
+				</tr>
+				<tr>
+					<td class="center">15</td>
+					<td class="center">F10ˣ</td>
+					<td>10ˣ&emsp;F10^X&emsp;10^x&emsp;F10X&emsp;10X&emsp;F10**X&emsp;10**X</td>
+				</tr>
+				<tr>
+					<td class="center">16</td>
+					<td class="center">Feˣ</td>
+					<td>FEˣ&emsp;Eˣ&emsp;FE^X&emsp;E^X&emsp;FEX&emsp;EX&emsp;FE**X&emsp;E**X</td>
+				</tr>
+				<tr>
+					<td class="center">22</td>
+					<td class="center">Fx²</td>
+					<td>FX²&emsp;X²&emsp;FX^2&emsp;X^2&emsp;FX2&emsp;X2&emsp;FX**2&emsp;X**2</td>
+				</tr>
+				<tr>
+					<td class="center">24</td>
+					<td class="center">Fxʸ</td>
+					<td>FXʸ&emsp;Xʸ&emsp;FX^Y&emsp;X^Y&emsp;FXY</td>
+				</tr>
+				<tr>
+					<td class="center">17</td>
+					<td class="center">Flg</td>
+					<td>FLG&emsp;LG</td>
+				</tr>
+				<tr>
+					<td class="center">18</td>
+					<td class="center">Fln</td>
+					<td>FLN&emsp;LN</td>
+				</tr>
+				<tr>
+					<td class="center">1D</td>
+					<td class="center">Fcos</td>
+					<td>FC0S&emsp;C0S</td>
+				</tr>
+				<tr>
+					<td class="center">1A</td>
+					<td class="center">Fcosᐨ¹</td>
+					<td>FC0Sᐨ¹&emsp;C0Sᐨ¹&emsp;FC0S⁻¹&emsp;C0S⁻¹&emsp;FC0S-1&emsp;C0S-1&emsp;FARCC0S&emsp;ARCC0S</td>
+				</tr>
+				<tr>
+					<td class="center">1C</td>
+					<td class="center">Fsin</td>
+					<td>FSIN&emsp;SIN</td>
+				</tr>
+				<tr>
+					<td class="center">19</td>
+					<td class="center">Fsinᐨ¹</td>
+					<td>FSINᐨ¹&emsp;SINᐨ¹&emsp;FSIN⁻¹&emsp;SIN⁻¹&emsp;FSIN-1&emsp;SIN-1&emsp;FARCSIN&emsp;ARCSIN</td>
+				</tr>
+				<tr>
+					<td class="center">1E</td>
+					<td class="center">Ftg</td>
+					<td>FTG&emsp;TG</td>
+				</tr>
+				<tr>
+					<td class="center">1B</td>
+					<td class="center">Ftgᐨ¹</td>
+					<td>FTGᐨ¹&emsp;TGᐨ¹&emsp;FTG⁻¹&emsp;TG⁻¹&emsp;FTG-1&emsp;TG-1&emsp;FARCTG&emsp;ARCTG</td>
+				</tr>
+				<tr>
+					<td class="center">20</td>
+					<td class="center">Fπ</td>
+					<td>FΠ&emsp;Π&emsp;FПИ&emsp;ПИ</td>
+				</tr>
+				<tr>
+					<td class="center">21</td>
+					<td class="center">F√</td>
+					<td>√&emsp;FKBK0P&emsp;KBK0P&emsp;FK0PEHЬ&emsp;K0PEHЬ&emsp;FKBK0PEHЬ&emsp;KBK0PEHЬ</td>
+				</tr>
+				<tr>
+					<td class="center">23</td>
+					<td class="center">F1/x</td>
+					<td>F1/X&emsp;1/X</td>
+				</tr>
+				<tr>
+					<td class="center">0E</td>
+					<td class="center">В↑</td>
+					<td>B↑&emsp;↑&emsp;B^&emsp;^</td>
+				</tr>
+				<tr>
+					<td class="center">0F</td>
+					<td class="center">FВх</td>
+					<td>FBX&emsp;ВX</td>
+				</tr>
+				<tr>
+					<td class="center">14</td>
+					<td class="center">&lt;-&gt;</td>
+					<td>↔&emsp;XY&emsp;X↔Y&emsp;⟷</td>
+				</tr>
+				<tr>
+					<td class="center">25</td>
+					<td class="center">Fѻ</td>
+					<td>FѺ&emsp;Ѻ&emsp;F↻&emsp;↻&emsp;F-&gt;&emsp;-&gt;&emsp;F→&emsp;→</td>
+				</tr>
+				<tr>
+					<td class="center">3E</td>
+					<td class="center">x←y</td>
+					<td>X←Y</td>
+				</tr>
+				<tr>
+					<td class="center">3B</td>
+					<td class="center">КCЧ</td>
+					<td>KCЧ&emsp;CЧ&emsp;KE</td>
+				</tr>
+				<tr>
+					<td class="center">37</td>
+					<td class="center">КɅ</td>
+					<td>КɅ&emsp;Ʌ&emsp;K^&emsp;^&emsp;K⋀&emsp; ⋀&emsp;K∧&emsp;∧&emsp;K/\&emsp;/\&emsp;K.&emsp;KA</td>
+				</tr>
+				<tr>
+					<td class="center">38</td>
+					<td class="center">КV</td>
+					<td>KV&emsp;V&emsp;K⋁&emsp;⋁&emsp;K∨&emsp;∨&emsp;K\/&emsp;\/&emsp;K/-/&emsp;KB</td>
+				</tr>
+				<tr>
+					<td class="center">39</td>
+					<td class="center">К(+)</td>
+					<td>K(+)&emsp;(+)&emsp;K⊕&emsp;⊕&emsp;KBП&emsp;KC</td>
+				</tr>
+				<tr>
+					<td class="center">3A</td>
+					<td class="center">Кинв</td>
+					<td>KИHB&emsp;ИHB&emsp;KCX&emsp;KD</td>
+				</tr>
+				<tr>
+					<td class="center">2A</td>
+					<td class="center">КМ→Ч</td>
+					<td>KM→Ч&emsp;M→Ч&emsp;KM→Ч&emsp;KMЧ&emsp;MЧ</td>
+				</tr>
+				<tr>
+					<td class="center">30</td>
+					<td class="center">КЧ→М</td>
+					<td>KЧ→MKЧM&emsp;ЧM&emsp;K3</td>
+				</tr>
+				<tr>
+					<td class="center">26</td>
+					<td class="center">КМ→Г</td>
+					<td>KM→Г&emsp;M→Г&emsp;KMГ&emsp;MГ&emsp;K+</td>
+				</tr>
+				<tr>
+					<td class="center">33</td>
+					<td class="center">КГ→М</td>
+					<td>KГ→M&emsp;Г→M&emsp;KГM&emsp;ГM&emsp;K6</td>
+				</tr>
+				<tr>
+					<td class="center">32</td>
+					<td class="center">Кзн</td>
+					<td>K3H&emsp;3H&emsp;K5</td>
+				</tr>
+				<tr>
+					<td class="center">31</td>
+					<td class="center">К|x|</td>
+					<td>K|X|&emsp;|X|&emsp;K4</td>
+				</tr>
+				<tr>
+					<td class="center">34</td>
+					<td class="center">К[x]</td>
+					<td>K[X]&emsp;[X]&emsp;K7</td>
+				</tr>
+				<tr>
+					<td class="center">35</td>
+					<td class="center">К{x}</td>
+					<td>K{X}&emsp;{X}&emsp;K(X)&emsp;(X)&emsp;K8</td>
+				</tr>
+				<tr>
+					<td class="center">36</td>
+					<td class="center">Кmax</td>
+					<td>KMAX&emsp;MAX&emsp;K9</td>
+				</tr>
+				<tr>
+					<td class="center">27</td>
+					<td class="center">K-</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="center">28</td>
+					<td class="center">K×</td>
+					<td>KX&emsp;K*&emsp;K⋅</td>
+				</tr>
+				<tr>
+					<td class="center">29</td>
+					<td class="center">K÷</td>
+					<td>K/&emsp;K:</td>
+				</tr>
+				<tr>
+					<td class="center">52</td>
+					<td class="center">В/О</td>
+					<td>B/0</td>
+				</tr>
+				<tr>
+					<td class="center">50</td>
+					<td class="center">С/П</td>
+					<td>C/П&emsp;CП</td>
+				</tr>
+				<tr>
+					<td class="center">51</td>
+					<td class="center">БП</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="center">8&hellip;</td>
+					<td class="center">KБП&hellip;</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="center">53</td>
+					<td class="center">ПП</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="center">A&hellip;</td>
+					<td class="center">KПП&hellip;</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="center">5E</td>
+					<td class="center">Fx=0</td>
+					<td>FX=0&emsp;X=0</td>
+				</tr>
+				<tr>
+					<td class="center">E&hellip;</td>
+					<td class="center">Kx=0&hellip;</td>
+					<td>KX=0&hellip;</td>
+				</tr>
+				<tr>
+					<td class="center">57</td>
+					<td class="center">Fx≠0</td>
+					<td>FX≠0&emsp;X≠0&emsp;FX#0&emsp;X#0&emsp;FX!=0&emsp;X!=0&emsp;FX&lt;&gt;0&emsp;X&lt;&gt;0</td>
+				</tr>
+				<tr>
+					<td class="center">7&hellip;</td>
+					<td class="center">Kx≠0&hellip;</td>
+					<td>KX≠0&hellip;&emsp;KX#0&hellip;&emsp;KX!=0&hellip;&emsp;KX&lt;&gt;0&hellip;</td>
+				</tr>
+				<tr>
+					<td class="center">59</td>
+					<td class="center">Fx≥0</td>
+					<td>FX≥0&emsp;X≥0&emsp;FX&gt;=0&emsp;X&gt;=0&emsp;FX⩾0&emsp;X⩾0</td>
+				</tr>
+				<tr>
+					<td class="center">9&hellip;</td>
+					<td class="center">Kx≥0&hellip;</td>
+					<td>KX≥0&hellip;&emsp;KX⩾0&hellip;&emsp;KX&gt;=0&hellip;</td>
+				</tr>
+				<tr>
+					<td class="center">5C</td>
+					<td class="center">Fx&lt;0</td>
+					<td>FX&lt;0&emsp;X&lt;0</td>
+				</tr>
+				<tr>
+					<td class="center">C&hellip;</td>
+					<td class="center">Kx&lt;0&hellip;</td>
+					<td>KX&lt;0&hellip;</td>
+				</tr>
+				<tr>
+					<td class="center">5D</td>
+					<td class="center">FL0</td>
+					<td>L0</td>
+				</tr>
+				<tr>
+					<td class="center">5B</td>
+					<td class="center">FL1</td>
+					<td>L1</td>
+				</tr>
+				<tr>
+					<td class="center">58</td>
+					<td class="center">FL2</td>
+					<td>L2</td>
+				</tr>
+				<tr>
+					<td class="center">5A</td>
+					<td class="center">FL3</td>
+					<td>L3</td>
+				</tr>
+				<tr>
+					<td class="center">54</td>
+					<td class="center">КНОП</td>
+					<td>KH0П&emsp;H0П&emsp;K0</td>
+				</tr>
+				<tr>
+					<td class="center">55</td>
+					<td class="center">K1</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="center">56</td>
+					<td class="center">K2</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="center">4&hellip;</td>
+					<td class="center">xП&hellip;</td>
+					<td>XП&hellip;&emsp;П&hellip;&emsp;X→П&hellip;</td>
+				</tr>
+				<tr>
+					<td class="center">B&hellip;</td>
+					<td class="center">KxП&hellip;</td>
+					<td>KXП&hellip;&emsp;KX→П&hellip;&emsp;KП&hellip;</td>
+				</tr>
+				<tr>
+					<td class="center">6&hellip;</td>
+					<td class="center">Пx&hellip;</td>
+					<td>ПX&hellip;&emsp;ИП&hellip;&emsp;П→X&hellip;</td>
+				</tr>
+				<tr>
+					<td class="center">D&hellip;</td>
+					<td class="center">КПx&hellip;</td>
+					<td>KПX&hellip;&emsp;KП→X&hellip;&emsp;KИП&hellip;</td>
+				</tr>
+			</tbody>
 		</table>
 		<ul>
 			Некоторые пояснения.
 			<li>
-				Для arc... в UNICODE есть два варианта верхнего индекса 
-				&minus;1 &ndash; приведены оба.
+				&hellip; означает какой-то номер регистра. Т.е. шестнадцатеричная
+				цифра от «0» до «E».
 			</li>
 			<li>
-				Для кода 14 есть несколько вариантов стрелочек. Причём XY 
+				Для обратных тригонометрических функций в UNICODE есть два
+				варианта верхнего индекса &minus;1 &ndash; приведены оба.
+			</li>
+			<li>
+				Для кода 14 есть несколько вариантов стрелочек. Причём XY
 				допустимо, но FXY это уже Fx<sup>y</sup>.
 			</li>
 			<li>
-				Для операции КɅ используется перевернутая заглавная буква v, 
-				⋀ и ∧ &ndash; разные варианты логичекого умножения, 
+				Для операции КɅ используется перевернутая заглавная буква v,
+				⋀ и ∧ &ndash; разные варианты логичекого умножения,
 				/\ &ndash; две наклонные черты рядом, а ^ &ndash; обычный карет.
 			</li>
 			<li>
-				Для операции КV используется заглавная буква v, 
-				⋁ и ∨ &ndash; разные варианты логичекого сложения, 
+				Для операции КV используется заглавная буква v,
+				⋁ и ∨ &ndash; разные варианты логичекого сложения,
 				\/ &ndash; две наклонные черты рядом.
+			</li>
+			<li>
+				Остальые коды операций вводятся (и выводятся) только в числовом
+				виде. Кстати, легко ввести коды с пустышками, например 5F
+				(зависание), AF (что эквивалентно КПП0) или просто FF, что
+				для реального калькулятора проблематично. Причем подстветка
+				для них всё равно работает.
 			</li>
 		</ul>
 		<p>
 			Кроме того, если первой строкой текста кода является
 			«# | 00 01 02 03 04 05 06 07 08 09» с любыми пробельными символами,
-			то она игнорируется. В некоторых таблицах с текстами программ это 
+			то она игнорируется. В некоторых таблицах с текстами программ это
 			обозначало заголовок с адресацией.
 		</p>
 		<p>
@@ -768,7 +800,7 @@ table, th, td {
 			адресацию.
 		</p>
 	</section>
-	
+
 </body>
-	
+
 </html>
