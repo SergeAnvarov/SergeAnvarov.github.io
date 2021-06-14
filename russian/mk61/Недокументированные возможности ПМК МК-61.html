@@ -7944,111 +7944,110 @@ span.first_bold::first-letter {
 			10.<sup>|+64</sup> попадет в X1, а команда <span class="but">/-/</span>
 			только проявит ошибку на экране.
 		</p>
+
+		<details id="id_F_commands" open="open">
+			<summary><h3>Команды с кодом F</h3></summary>
+			<p>
+				Некоторые команды с цифрой F в коде можно получить тоже
+				недокументированным образом.
+			</p>
+			<p>
+				Команды F0&hellip;FE получаются по адресам 30&hellip;44 после выполнения
+				в режиме вычислений пары команд
+				<span class="but_b">В/О</span>&ensp;
+				<span class="but_k">К</span><span class="but_b">ПП</span><span class="but">R</span>
+				(R = 0&hellip;e), которые переведут ПМК в режим ввода программы и вставят
+				код с цифрой F. При этом в регистрах R0&hellip;R3 должно быть число
+				заканчивающееся на 1 или 2 (точнее такое, чтобы после косвенной адресации
+				заканчивалось на 1 или 2). Если там будет другое (например, ноль, как
+				после включения ПМК), то для R1&hellip;R3 вставится F0&hellip;F2 по
+				адресу 30&hellip;32, а для R0 это будет самый быстрый способ получить
+				3Г0ГГа (причем перехода в режим ввода программы не произойдёт, 
+				но, увы, этот 3Г0ГГ очистку стека возврата не делает).
+			</p>
+			<p>
+				Так же по адресам 50&hellip;59 можно вставить команды, начинающиеся 
+				с цифры F. При этом можно даже управлять, на какую цифру заканчивается
+				и по какому адресу именно вставиться (в пределах указанного диапазона).
+				Для это сначала сделаем ЕГГ0Г (как число, а не ошибку). Например, как
+				<span class="but">5</span>&ensp;
+				<span class="but">0</span>&ensp;
+				<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>&ensp;
+				<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>.
+				Можно его и сохранить, чтобы повторить шаги.
+				После появления ЕГГ0Га (так или извлечения из регистра) набираем
+				<span class="but">ВП</span>&ensp;
+				<span class="but">{D1}</span>&ensp;
+				<span class="but">{D2}</span>&ensp;
+				<span class="but">.</span>&ensp;
+				<span class="but">0</span>, где {D1} и {D2} цифры. Так вот, в 
+				этот момент ПМК перейдет в режим ввода программы и по адресу 5{D1},
+				и будет вставлена команда F{D2}. Т.е. при вводе 
+				<span class="but">ВП</span>&ensp;
+				<span class="but">3</span>&ensp;
+				<span class="but">7</span>&ensp;
+				<span class="but">.</span>&ensp;
+				<span class="but">0</span>, по адресу 53 будет вставлена команда F7.
+
+			</p>
+			<p>
+				Последовательность 5 команд FF (через одну) можно получить
+				по любому адресу, если стек возврата <q>забить</q> числом, начинающимся
+				с пустышки, и перед переходом в режим ПРГ нажимается
+				<span class="but">БП</span> <q>Адрес</q>. Тогда
+				начиная с адреса <q>Адрес</q>&minus;11 через одну будут проставлены команды FF.
+				<br/>
+				Для начала получим адрес с начальной пустышкой, например число F8, и
+				сохраним в регистр, например в R7. Не забыть при этом в конце убрать
+				такое число с начальной пустышкой из RX!
+				<br/>
+				<span class="but">8</span>&ensp;
+				<span class="but">8</span>&ensp;
+				<span class="but">8</span>&ensp;
+				<span class="but">В&uarr;</span>&ensp;
+				<span class="but">7</span>&ensp;
+				<span class="but">7</span>&ensp;
+				<span class="but_k">K</span><span class="op_k">&or;</span>&ensp;
+				<span class="but_k">K</span><span class="op_k">{x}</span>&ensp;
+				<span class="but">ВП</span>&ensp;
+				<span class="but">2</span>&ensp;
+				<span class="but_b">x&rarr;П</span><span class="but">7</span>&ensp;
+				<span class="but_cx">Cx</span>
+				<br/>
+				Теперь по этому <q>темному</q> адресу вставим команду вызова подпрограммы
+				по R7:
+				<br/>
+				<span class="but_k">K</span><span class="but_b">БП</span><span class="but">7</span>&ensp;
+				<span class="but_f">F</span><span class="op_f">ПРГ</span>&ensp;
+				<span class="but_k">K</span><span class="but_b">ПП</span><span class="but">7</span>&ensp;
+				<span class="but_f">F</span><span class="op_f">АВТ</span>&ensp;
+				<span class="but_k">K</span><span class="but_b">БП</span><span class="but">7</span>
+				<br/>
+				Потом 5 раз (чтобы забить стек возврата) нажмем <span class="but_b">ПП</span>
+				<br/>
+				После этого уже выбираем, где нам нужны команды FF. Пусть мы хотим их с
+				адреса 80. Тогда делаем переход на 80+11=91
+				<span class="but_b">БП</span><span class="but">91</span> и
+				<span class="but_f">F</span><span class="op_f">ПРГ</span>&ensp;
+				<span class="but_f">F</span><span class="op_f">АВТ</span>
+				<br/>
+				Теперь по адресам 80, 82, 84, 86, 88 добавилась команда FF. Если нужно
+				побольше, например ещё и по адресам 81, 83, 85, 87, 89, то просто снова
+				заполним стек возврата
+				<span class="but_k">K</span><span class="but_b">БП</span><span class="but">7</span>,
+				5 раз <span class="but_b">ПП</span>, и после
+				<span class="but_b">БП</span><span class="but">92</span> и
+				<span class="but_f">F</span><span class="op_f">ПРГ</span>&ensp;
+				<span class="but_f">F</span><span class="op_f">АВТ</span>
+				получим то, что хотели.
+				<br/>
+				Не забудьте в конце почистить стек возврата (как указано в примечание для
+				команды В/О)!
+			</p>
+		</details>
+	
 	</details>
 
-	<hr/>
-	
-	<details id="id_F_commands" open="open">
-		<summary><h3>Команды с кодом F</h3></summary>
-		<p>
-			Некоторые команды с цифрой F в коде можно получить тоже
-			недокументированным образом.
-		</p>
-		<p>
-			Команды F0&hellip;FE получаются по адресам 30&hellip;44 после выполнения
-			в режиме вычислений пары команд
-			<span class="but_b">В/О</span>&ensp;
-			<span class="but_k">К</span><span class="but_b">ПП</span><span class="but">R</span>
-			(R = 0&hellip;e), которые переведут ПМК в режим ввода программы и вставят
-			код с цифрой F. При этом в регистрах R0&hellip;R3 должно быть число
-			заканчивающееся на 1 или 2 (точнее такое, чтобы после косвенной адресации
-			заканчивалось на 1 или 2). Если там будет другое (например, ноль, как
-			после включения ПМК), то для R1&hellip;R3 вставится F0&hellip;F2 по
-			адресу 30&hellip;32, а для R0 это будет самый быстрый способ получить
-			3Г0ГГа (причем перехода в режим ввода программы не произойдёт, 
-			но, увы, этот 3Г0ГГ очистку стека возврата не делает).
-		</p>
-		<p>
-			Так же по адресам 50&hellip;59 можно вставить команды, начинающиеся 
-			с цифры F. При этом можно даже управлять, на какую цифру заканчивается
-			и по какому адресу именно вставиться (в пределах указанного диапазона).
-			Для это сначала сделаем ЕГГ0Г (как число, а не ошибку). Например, как
-			<span class="but">5</span>&ensp;
-			<span class="but">0</span>&ensp;
-			<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>&ensp;
-			<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>.
-			Можно его и сохранить, чтобы повторить шаги.
-			После появления ЕГГ0Га (так или извлечения из регистра) набираем
-			<span class="but">ВП</span>&ensp;
-			<span class="but">{D1}</span>&ensp;
-			<span class="but">{D2}</span>&ensp;
-			<span class="but">.</span>&ensp;
-			<span class="but">0</span>, где {D1} и {D2} цифры. Так вот, в 
-			этот момент ПМК перейдет в режим ввода программы и по адресу 5{D1},
-			и будет вставлена команда F{D2}. Т.е. при вводе 
-			<span class="but">ВП</span>&ensp;
-			<span class="but">3</span>&ensp;
-			<span class="but">7</span>&ensp;
-			<span class="but">.</span>&ensp;
-			<span class="but">0</span>, по адресу 53 будет вставлена команда F7.
-
-		</p>
-		<p>
-			Последовательность 5 команд FF (через одну) можно получить
-			по любому адресу, если стек возврата <q>забить</q> числом, начинающимся
-			с пустышки, и перед переходом в режим ПРГ нажимается
-			<span class="but">БП</span> <q>Адрес</q>. Тогда
-			начиная с адреса <q>Адрес</q>&minus;11 через одну будут проставлены команды FF.
-			<br/>
-			Для начала получим адрес с начальной пустышкой, например число F8, и
-			сохраним в регистр, например в R7. Не забыть при этом в конце убрать
-			такое число с начальной пустышкой из RX!
-			<br/>
-			<span class="but">8</span>&ensp;
-			<span class="but">8</span>&ensp;
-			<span class="but">8</span>&ensp;
-			<span class="but">В&uarr;</span>&ensp;
-			<span class="but">7</span>&ensp;
-			<span class="but">7</span>&ensp;
-			<span class="but_k">K</span><span class="op_k">&or;</span>&ensp;
-			<span class="but_k">K</span><span class="op_k">{x}</span>&ensp;
-			<span class="but">ВП</span>&ensp;
-			<span class="but">2</span>&ensp;
-			<span class="but_b">x&rarr;П</span><span class="but">7</span>&ensp;
-			<span class="but_cx">Cx</span>
-			<br/>
-			Теперь по этому <q>темному</q> адресу вставим команду вызова подпрограммы
-			по R7:
-			<br/>
-			<span class="but_k">K</span><span class="but_b">БП</span><span class="but">7</span>&ensp;
-			<span class="but_f">F</span><span class="op_f">ПРГ</span>&ensp;
-			<span class="but_k">K</span><span class="but_b">ПП</span><span class="but">7</span>&ensp;
-			<span class="but_f">F</span><span class="op_f">АВТ</span>&ensp;
-			<span class="but_k">K</span><span class="but_b">БП</span><span class="but">7</span>
-			<br/>
-			Потом 5 раз (чтобы забить стек возврата) нажмем <span class="but_b">ПП</span>
-			<br/>
-			После этого уже выбираем, где нам нужны команды FF. Пусть мы хотим их с
-			адреса 80. Тогда делаем переход на 80+11=91
-			<span class="but_b">БП</span><span class="but">91</span> и
-			<span class="but_f">F</span><span class="op_f">ПРГ</span>&ensp;
-			<span class="but_f">F</span><span class="op_f">АВТ</span>
-			<br/>
-			Теперь по адресам 80, 82, 84, 86, 88 добавилась команда FF. Если нужно
-			побольше, например ещё и по адресам 81, 83, 85, 87, 89, то просто снова
-			заполним стек возврата
-			<span class="but_k">K</span><span class="but_b">БП</span><span class="but">7</span>,
-			5 раз <span class="but_b">ПП</span>, и после
-			<span class="but_b">БП</span><span class="but">92</span> и
-			<span class="but_f">F</span><span class="op_f">ПРГ</span>&ensp;
-			<span class="but_f">F</span><span class="op_f">АВТ</span>
-			получим то, что хотели.
-			<br/>
-			Не забудьте в конце почистить стек возврата (как указано в примечание для
-			команды В/О)!
-		</p>
-	</details>
-	
 	<hr/>
 
 	<details id="id_glossary" open="open">
