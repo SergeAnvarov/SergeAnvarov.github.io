@@ -196,17 +196,17 @@
 
     a:link {
       color: #C0FFFF;
-      text-decoration: none;
+      text-decoration: none; 
     }
 
     a:visited {
       color: #C0FFFF;
-      text-decoration: none;
-    }
+      text-decoration: none; 
+    } 
 
     a:hover {
       color: #FFFFFF;
-      text-decoration: underline;
+      text-decoration: underline;  
     }
 
     a:active {
@@ -305,6 +305,12 @@
 <body>
 	<div style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center;">
 		<table id="Общая_таблица">
+			<caption>
+				<label>
+					<input type="checkbox" id="Отладка" checked="checked" onclick=Скрыть_Расширенные_Возможности();>
+						Отображать расширенные возможности: регистры и код программы
+				</label>
+			</caption>
 			<tr>
 				<td rowspan="2" id="Калькулятор" style="width: 50%; vertical-align: middle; text-align: center;"></td>
 				<td style="vertical-align: middle; text-align: center;">
@@ -395,7 +401,7 @@
 			</tr>
 			<tr>
 				<td style="vertical-align: middle;">
-					<table style="width: 100%;">
+					<table style="width: 100%;" id="Код_Программы">
 						<tr><td><span class="бел_т">Код программы:</span></td></tr>
 						<tr><td><div id="Код" spellcheck="false" contenteditable=""><br></div></td></tr>
 						<tr>
@@ -1642,6 +1648,12 @@
 				}
 			}
 		}
+		
+		function Скрыть_Расширенные_Возможности() {
+			let Скрыть = !document.getElementById("Отладка").checked;
+			document.getElementById("Таблица_регистров").hidden = Скрыть;
+			document.getElementById("Код_Программы").hidden = Скрыть;
+		}
 
 		function Сменить_Режим() {
 			Приостановить(); 
@@ -1672,8 +1684,6 @@
 							Нажатие_с_фокусом(11, 8); break; // В↑
 						case 27: // Esc
 							Нажатие_с_фокусом(10, 8); break; // Сx
-						case 32: // Space
-							Нажатие_с_фокусом(11, 8); break; // В↑
 						case 33: // PgUp
 							Нажатие_с_фокусом(9, 9); break; // ШГ<-
 						case 34: // PgDown
@@ -1846,11 +1856,11 @@
 				0, 1
 			],
 			[	0x0F,
-				["FВх", "FBX", "ВX"],
+				["FВх", "FBX", "BX"],
 				0, 1
 			],
 			[	0x14,
-				["<->", "↔", "XY", "X↔Y", "⟷"],
+				["<->", "↔", "XY", "X↔Y", "⟷", "←→"],
 				0, 1
 			],
 			[	0x25,
