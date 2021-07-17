@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta content="true" name="HandheldFriendly"/>
+	<meta content="width" name="MobileOptimized"/>
+	<meta content="yes" name="apple-mobile-web-app-capable"/>
+	<meta name="description" content="Игра 100 (свинья) вдвоём с ПМК"/>
+	<title>Игра 100 (свинья) вдвоём с ПМК</title>
+
+<style>
+
+span.but, span.but_f, span.but_k, span.but_cx, span.but_b, span.reg, span.op_f, span.op_k {
+	border:thin solid black;
+	border-radius:4px;
+	display:inline-block;
+	font-size:1.1em;
+	font-weight:bold;
+	font-family:monospace;
+	text-align:center;
+	min-width:2.3em;
+	white-space:nowrap;
+}
+
+sup {
+	line-height:0;
+}
+
+span.but {
+	background-color:#CCCCCC;
+	color:black;
+}
+
+span.but_f {
+	background-color:#F5E345;
+	color:black;
+}
+
+span.but_k {
+	background-color:LightSkyBlue;
+	color:white;
+}
+
+span.but_cx {
+	background-color:#F00505;
+	color:white;
+}
+
+span.but_b {
+	background-color:black;
+	color:white;
+}
+
+span.reg {
+	background-color:black;
+	color:white;
+}
+
+span.op_f {
+	background-color:black;
+	color:yellow;
+}
+
+span.op_k {
+	background-color:black;
+	color:#00BFFF;
+}
+
+.code {
+	background-color:#103810;
+	color:#77FF77;
+	font-size:1.1em;
+	font-family:monospace;
+	font-weight:bold;
+	padding:1px 2px 1px 2px;
+	white-space:pre;
+}
+
+table {
+	border-collapse:collapse;
+}
+
+table, th, td {
+	border:1px solid black;
+}
+
+.center {
+	text-align:center;
+}
+
+details summary {
+  cursor: pointer;
+}
+details summary > * {
+  display: inline;
+}
+
+</style>
+
+</head>
+
+<body>
+	<header>
+		<h2>Игра 100 (свинья) вдвоём с ПМК</h2>
+	</header>
+	<p>
+		Простая игра в кости против ПМК.
+	</p>
+	<h3>Задача</h3>
+	<p>
+		Бросая кубик, набрать 100 очков.
+		Первым начинает игрок. Ход представляет собой серию бросков, и заключается
+		в следующем: игрок бросает кость (кубик) неограниченное число раз и суммирует
+		выпадающие значения. Однако если выпадает единица (свинья), вся сумма,
+		набранная за ход, аннулируется и ход переходит к ПМК.
+		Игрок может завершить свой ход в любой момент. То же самое делает ПМК.
+	</p>
+	<h3>Начало</h3>
+	<p>
+		<span class="but_b">В/О</span>,
+		<span class="but_b">С/П</span>. 
+		Первым безусловно <q>кидает кубик</q> игрок.
+	</p>
+	<h3>Ход игры</h3>
+	<p>
+		После остановки в регистре X отображается число в виде: 
+		<span class="code"> A.-BB-CCC-DD</span>, где
+		<ul>
+			<li>A &ndash; значение кубика при броске</li>
+			<li>BB &ndash; сумма очков за текущую серию</li>
+			<li>ССС &ndash; общая сумма очков, включая текущую серию</li>
+			<li>DD &ndash; номер броска в серии.</li>
+		</ul>
+		Например: <span class="code"> 5.-15-042-03</span>, означает, что
+		сейчас была выкинута пятёрка, за серию набрано 15 очков, всего вместе
+		с текущими 42, и это третий бросок в серии.
+	</p>
+	<p>
+		Затем нажимаем ноль (или <span class="but_cx">Cx</span>) для
+		завершения хода (нам хватит) и ход переходит к ПМК,
+		либо не ноль (т.&#8239;е. оставляем,
+		что есть) и <span class="but_b">С/П</span>, чтобы продлить серию.
+	</p>
+	<p>
+		Если на кубике выпала единичка (свинья), то очки за серию <q>сгорают</q>
+		и после <span class="but_b">С/П</span> ход безусловно перейдёт к ПМК
+		(даже если вы введёте не ноль). Например, после 4 броска вышла единица:
+		<span class="code"> 1.-00-022-04</span>
+	</p>
+	<p>
+		ПМК за себя играет всю серию сразу. При остановке значение в том же 
+		виде, только отрицательное.
+	</p>
+	<p>
+		После снова ход игрока. Поэтому, посмотрев на достижения ПМК,
+		нажимаем <span class="but_b">С/П</span>, чтобы кинуть кубик. 
+		На экране калькулятора последние нули в числе не отображаются, поэтому
+		начальный <q>промах</q> ПМК будет выглядеть, например, так:
+		<span class="code">-1.-00-   -03</span>.
+	</p>
+	<p>
+		Перед показом результата хода может отобразиться
+		<span class="code"> ЕГГ0Г      </span>, это значит,
+		что ход победный. После <span class="but_b">С/П</span> будет
+		показан итог хода (как выше). А потом после <span class="but_b">С/П</span>
+		безусловно начнётся новая игра.
+	</p>
+	<p>
+		Параметрами игры ПМК можно управлять. Для этого используются 
+		следующие регистры:
+	</p>
+	<table>
+		<tr>
+			<th>Регистр</th>
+			<th>Значение</th>
+			<th>Пояснение</th>
+		</tr>
+		<tr>
+			<td class="center">RA</td>
+			<td class="center">71</td>
+			<td>
+				Если кто-то (ПМК или игрок) набирает такую сумму, то ПМК <q>кидает
+				до победы</q>. Можно поставить 100, если не хотите, чтобы ПМК
+				так делал.
+			</td>
+		</tr>
+		<tr>
+			<td class="center">RB</td>
+			<td class="center">21</td>
+			<td>
+				Это сумму ПМК будет пытаться выбросить за свой ход.
+				Если задать меньше &ndash; ПМК осторожничает,
+				больше &ndash; играет агрессивнее. В действительности ПМК
+				использует скорректированное значение, в зависимости
+				от разрыва в очках между игроком и ПМК. А это значение
+				используется как базовое.
+			</td>
+		</tr>
+	</table>
+
+	<hr>
+
+	<details open="open">
+		<summary>
+			<h3>Далее только для тех, кто не только играет&hellip;</h3>
+		</summary>
+		<p>
+			ПМК для игры использует стратегию 
+			<a href="https://cupola.gettysburg.edu/cgi/viewcontent.cgi?article=1006&context=csfac&e=104240768">
+				Keep Pace and End Race</a
+			>, параметры которой и задаются в регистрах RA и RB.
+		</p>
+		<p>Распределение регистров</p>
+		<table>
+			<tr>
+				<td>R0</td>
+				<td>
+					Флаг новой игры. Если не равно единице, то 
+					начнётся новая игра.
+				</td>
+			</tr>
+			<tr>
+				<td>R1</td>
+				<td>
+					Флаг хода игрока. Если равно единице, то ходит игрок, 
+					иначе ПМК.
+				</td>
+			</tr>
+			<tr>
+				<td>R1</td>
+				<td>
+					Константа 2200.2. Используется для генерации видеоизображения.
+				</td>
+			</tr>
+			<tr>
+				<td>R3</td>
+				<td>
+					Рабочий. Используется ПМК для установки максимума для серии и 
+					для цикла по уменьшению порядка числа.
+				</td>
+			</tr>
+			<tr>
+				<td>R4</td>
+				<td>Число, выброшенное кубиком.</td>
+			</tr>
+			<tr>
+				<td>R5</td>
+				<td>Номер хода в серии.</td>
+			</tr>
+			<tr>
+				<td>R6</td>
+				<td>Сумма очков за серию.</td>
+			</tr>
+			<tr>
+				<td>R7</td>
+				<td>Сумма очков игрока.</td>
+			</tr>
+			<tr>
+				<td>R8</td>
+				<td>
+					Константа 88008000.
+					Используется для генерации видеоизображения.
+				</td>
+			</tr>
+			<tr>
+				<td>R9</td>
+				<td>Сумма очков ПМК.</td>
+			</tr>
+			<tr>
+				<td>RА</td>
+				<td>Константа 71. Смысл объяснён ранее.</td>
+			</tr>
+			<tr>
+				<td>RB</td>
+				<td>Константа 21. Смысл объяснён ранее.</td>
+			</tr>
+			<tr>
+				<td>RC</td>
+				<td>
+					Случайное число в диапазоне (0&hellip;1). При одинаковом начальном
+					значении выдаёт ту же последовательность случайных чисел 
+					(бросков кубика).
+				</td>
+			</tr>
+			<tr>
+				<td>RD</td>
+				<td>Константа 82. Адрес процедуры броска кубика.</td>
+			</tr>
+			<tr>
+				<td>RE</td>
+				<td>
+					Константа 77. Адрес кода, выполняемого когда сумма
+					превысит 71.
+				</td>
+			</tr>
+		</table>
+		<p>Текст программы</p>
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_cx">Cx</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">7</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">9</span></td>
+				<td><span class="but">0</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">5</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">6</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">d</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
+				<td><span class="but">+</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;10&#8202;|&#8202;</th>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">8</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;20&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="op_k">&or;</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L1</span></td>
+				<td><span class="but">28</span></td>
+				<td><span class="but">/-/</span></td>
+				<td><span class="but">/-/</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;30&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">/-/</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L3</span></td>
+				<td><span class="but">30</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L0</span></td>
+				<td><span class="but">00</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L1</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;40&#8202;|&#8202;</th>
+				<td><span class="but">03</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+				<td><span class="but">06</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">5</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">6</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;50&#8202;|&#8202;</th>
+				<td><span class="but">+</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">7</span></td>
+				<td><span class="but">-</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="reg">e</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but">-</span></td>
+				<td><span class="but_k">К</span><span class="but_b">x&lt;0</span><span class="reg">e</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but">8</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;60&#8202;|&#8202;</th>
+				<td><span class="but">&divide;</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+				<td><span class="but">-</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">d</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+				<td><span class="but">72</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ge;0</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;70&#8202;|&#8202;</th>
+				<td><span class="but">64</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">9</span></td>
+				<td><span class="but_b">БП</span></td>
+				<td><span class="but">10</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+				<td><span class="but">2</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+			</tr>
+			<tr>
+				<th>&#8202;80&#8202;|&#8202;</th>
+				<td><span class="but_b">БП</span></td>
+				<td><span class="but">62</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">&pi;</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;90&#8202;|&#8202;</th>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+				<td><span class="but">6</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">4</span></td>
+				<td><span class="but">В&uarr;</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+				<td><span class="but">+</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;A0&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="op_k">max</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">6</span></td>
+				<td><span class="but_b">В/О</span></td>
+				<td colspan="7"></td>
+			</tr>
+		</table>
+		<p>
+			Используемые <q>трюки</q> в программе.
+		</p>
+		<ul>
+			<li>
+				Использование единицы в конструкциях FLx. По сути используется 
+				проверка флага в регистре на да/нет, при этом единица остаётся в 
+				регистре без изменений, и не единица тоже. Удобство в том, что 
+				текущее состояние стека, при такой проверке, не меняется. 
+				По адресу 37 проверка перехода на новую игру. По адресу 39 
+				проверка перехода хода игроку. По адресу 25 ветвление в 
+				зависимости от того, чей сейчас ход.
+			</li>
+			<li>
+				Недокументированное использование команды 
+				<span class="but">ВП</span> по адресу 32 для <q>объединения</q>
+				значений из X и Y. При пошаговой отладке в X будет значение 
+				кубика и номер хода (отрицательная степень), а в регистре Y &ndash;
+				суммы серии и общая сумма. А в режиме исполнения они объединятся в одно. 
+				Тут же поясню, что полученное число содержит шестнадцатеричные 
+				цифры (минус = A), поэтому степень числа (указание на количество 
+				бросков) меняется по одному в цикле (по счётчику в R3), иначе 
+				деление на всю степень сразу уберёт шестнадцатеричные цифры.
+			</li>
+			<li>
+				Использование неверного исполнения функции
+				<span class="but_k">К</span><span class="op_k">max</span>
+				при значении Y равным нулю. ПМК считает ноль максимальным.
+				Дело в том, что когда мы вычисляем значение кубика на шаге 95,
+				то получаем значение 0&hellip;5. Нужно увеличить на единицу, но 
+				в то же время ноль должен остаться нулём для серии. Поэтому на 
+				единицу производится увеличение только перед отображением (шаг 13),
+				сумма серии тоже заранее увеличивается на 1 на шаге 84. Но если
+				будет ноль, то с помощью 
+				<span class="but_k">К</span><span class="op_k">max</span>
+				на шаге A0 сумма серии обнулится. В других случаях её значение
+				не измениться, т.&#8239;к. сумма не меньше, чем её последнее слагаемое.
+			</li>
+			<li>
+				Пропуск команды при ошибке. На шаге 10 при проверке суммы, когда
+				значение будет 100 или более, возникнет ошибка переполнения
+				(ЕГГ0Г), при этом в режиме выполнения программы одна команда 
+				(по адресу 11) будет пропущена. Т.&#8239;е. в обычном случае в 
+				R1 попадёт единица, а при ошибке число &ge; 100. Поэтому 
+				на шаге 37 при R1 &ne; 1 будет переход на начало новой игры.
+			</li>
+			<li>
+				Флага хода игрока устанавливается проще. На шаге 06 он задаётся
+				явно (первая команда подпрограммы с адреса 82 сохранит его значение),
+				а случае хода ПМК на шаге 64 используется отрицательность 
+				значения регистра R3 (сумма серии, которую ПМК пытается 
+				выбросить, храниться в отрицательном значении для оптимизации
+				&ndash; нет необходимости в минусе по адресу 80), либо 
+				отрицательность X, после проверки на шаге 69.
+			</li>
+		</ul>
+		<p>
+			Подпрограмму генерации случайного числа по адресам 85&hellip;92
+			можно, при желании, поменять. Тем более, что есть резерв ещё в две 
+			команды.
+		</p>
+	</details>
+</body>
+
+</html>
