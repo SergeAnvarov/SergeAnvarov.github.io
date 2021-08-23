@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta content="true" name="HandheldFriendly"/>
+	<meta content="width" name="MobileOptimized"/>
+	<meta content="yes" name="apple-mobile-web-app-capable"/>
+	<meta name="description" content="Морской бой. Игра. ПМК. МК-61"/>
+	<title>Морской бой</title>
+
+<style>
+
+span.but, span.but_f, span.but_k, span.but_cx, span.but_b, span.reg, span.op_f, span.op_k {
+	border:thin solid black;
+	border-radius:4px;
+	display:inline-block;
+	font-size:1.1em;
+	font-weight:bold;
+	font-family:monospace;
+	text-align:center;
+	min-width:2.3em;
+	white-space:nowrap;
+}
+
+sup {
+	line-height:0;
+}
+
+span.but {
+	background-color:#CCCCCC;
+	color:black;
+}
+
+span.but_f {
+	background-color:#F5E345;
+	color:black;
+}
+
+span.but_k {
+	background-color:LightSkyBlue;
+	color:white;
+}
+
+span.but_cx {
+	background-color:#F00505;
+	color:white;
+}
+
+span.but_b {
+	background-color:black;
+	color:white;
+}
+
+span.reg {
+	background-color:black;
+	color:white;
+}
+
+span.op_f {
+	background-color:black;
+	color:yellow;
+}
+
+span.op_k {
+	background-color:black;
+	color:#00BFFF;
+}
+
+.code {
+	background-color:#103810;
+	color:#77FF77;
+	font-size:1.1em;
+	font-family:monospace;
+	font-weight:bold;
+	padding:1px 2px 1px 2px;
+	white-space:pre;
+}
+
+table {
+	border-collapse:collapse;
+}
+
+table, th, td {
+	border:1px solid black;
+}
+
+.center {
+	text-align:center;
+}
+
+details summary {
+	cursor: pointer;
+}
+details summary > * {
+	display: inline;
+}
+
+a[target="_blank"] {
+	background: url(https://upload.wikimedia.org/wikipedia/commons/6/64/Icon_External_Link.png) center right no-repeat;
+    padding-right: 0.8em;
+}
+	
+</style>
+
+</head>
+
+<body>
+	<header>
+		<h1>Морской бой</h1>
+	</header>
+	<p>
+		Старый добрый Морской бой, с произвольным количеством однопалубных кораблей.
+	</p>
+	<h2>Задача</h2>
+	<p>
+		Как обычно, подбить все корабли первым. Вы играете против ПМК.
+	</p>
+	<h2>Общее описание</h2>
+	<p>
+		Поле 10x10 (0&hellip;9 x 0&hellip;9), стрельба по очереди, первым начинает ПМК. 
+		Что считать координатой X, а что Y решайте сами, главное, 
+		чтобы быть в этом последовательными.
+	</p>
+	<h2>Игровой процесс</h2>
+	<h3>Начало</h3>
+	<p>
+		Перед первым запуском пару констант в регистры:
+	</p>
+	<table>
+		<tr>
+			<th>Регистр</th>	
+			<th>Значение</th>
+		</tr>
+		<tr>
+			<th>Ra</th>
+			<td>33333331, признак победы ПМК.</td>
+		</tr>
+		<tr>
+			<th>Rb</th>
+			<td>
+				<span class="code"> -8CEC6-L-   </span> (ВСЁСБИЛИ).
+				Признак поражения ПМК. Вводиться как
+				<span class="but">3</span>,
+				<span class="but">3</span>,
+				<span class="but">1</span>,
+				<span class="but">3</span>,
+				<span class="but">9</span>,
+				<span class="but">5</span>,
+				<span class="but">4</span>,
+				<span class="but">5</span>,
+				<span class="but_k">К</span><span class="op_k">ИНВ</span>,
+				<span class="but">/-/</span>,
+				<span class="but">ВП</span>,
+				<span class="but">7</span>,
+				<span class="but_b">x&rarr;П</span><span class="reg">b</span>.
+			</td>
+		</tr>
+		<tr>
+			<th>Rс</th>
+			<td>Случайное число. Можно оставить пустым.</td>
+		</tr>
+	</table>
+	<p>
+		Начало игры: вводим количество кораблей у каждого (от 1 до 99)
+		<span class="but_b">В/О</span>
+		<span class="but_b">С/П</span>.
+	</p>
+	<h3>Игра</h3>
+	<p>
+		ПМК располагает свои корабли и отвечает координатами удара
+		(двузначное число, если ведущий ноль, то однозначное).
+		Если ПМК попал, то вводите любое отрицательное число и
+		<span class="but_b">С/П</span>, тогда ПМК сделает ещё ход.
+		Если он промазал, то вводите свои координаты удара и <span class="but_b">С/П</span>.
+	</p>
+	<p>
+		При попадании ПМК выдаст отрицательное число 
+		(его абсолютное значение - количество оставшихся у ПМК кораблей), 
+		иначе выдаст свой ход.
+	</p>
+	<h3>Окончание</h3>
+	<p>
+		Если вы ввели отрицательное число (сбили), и это уже последний ваш корабль, 
+		то ПМК выдаст признак его победы 33333331.
+		Если, наоборот, вы сбили все его корабли, 
+		то выдаст "-ВCЁСБИЛИ"(<span class="code"> -8CEC6-L-   </span>).
+	</p>
+	<p>
+		Для новой игры: новое количество кораблей В/О, С/П и далее как описано.
+	</p>
+	<h3>Контроль со стороны ПМК</h3>
+	<ul>
+		<li>
+			При начальном вводе (количество кораблей), если число содержит 
+			дробную часть, то она будет проигнорирована (отброшена).
+			Если число не в диапазоне 1&hellip;99, то выдаст
+			<span class="code"> ЕГГ0Г      </span>.
+			В этом случае нужно нажать заново
+			<span class="but_b">В/О</span>, правильное число,
+			<span class="but_b">С/П</span>.
+		</li>
+		<li>
+			Во время обычного хода: дробная часть так же будет отброшена.
+			Если координаты вашего удара не в диапазоне 0&hellip;99 
+			(кроме случая отрицательного числа), то тоже
+			<span class="code"> ЕГГ0Г      </span>.
+			В этом случае нужно ввести правильно и можно просто нажать
+			<span class="but_b">С/П</span> (уже будет ввод без проверки).
+			Или сделать предварительное
+			<span class="but_b">БП</span>&emsp;
+			<span class="but">02</span>, тогда будет с проверкой.
+		</li>
+	</ul>
+
+	<hr>
+
+	<details>
+		<summary>
+			<h2>Далее только для тех, кто не только играет&hellip;</h2>
+		</summary>
+		<h3>Текст программы</h3>
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_b">БП</span></td>
+				<td><span class="but">50</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&lt;0</span></td>
+				<td><span class="but">89</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L0</span></td>
+				<td><span class="but">68</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but_b">В/О</span></td>
+				<td><span class="but">4</span></td>
+				<td><span class="but_b">ПП</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;10&#8202;|&#8202;</th>
+				<td><span class="but">76</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">e</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but">7</span></td>
+				<td><span class="but_b">ПП</span></td>
+				<td><span class="but">76</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;20&#8202;|&#8202;</th>
+				<td><span class="but">8</span></td>
+				<td><span class="but">&divide;</span></td>
+				<td><span class="but">/-/</span></td>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but_f">F</span><span class="op_f">1/x</span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but">-</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="reg">e</span></td>
+				<td><span class="but_k">К</span><span class="op_k">&and;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;30&#8202;|&#8202;</th>
+				<td><span class="but_b">В/О</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+				<td><span class="but">7</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">&pi;</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+				<td><span class="but_b">ПП</span></td>
+				<td><span class="but">71</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;40&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">b</span></td>
+				<td><span class="but_k">К</span><span class="but_b">x=0</span><span class="reg">a</span></td>
+				<td><span class="but_f">F</span><span class="op_f">&orarr;</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="reg">e</span></td>
+				<td><span class="but_k">К</span><span class="op_k">&oplus;</span></td>
+				<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="reg">e</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="op_k">ЗН</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+				<td><span class="but_b">В/О</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;50&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Lg</span></td>
+				<td><span class="but">9</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+				<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">-</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+				<td><span class="but">54</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;60&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">a</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L1</span></td>
+				<td><span class="but">63</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+				<td><span class="but">5</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;70&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">a</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but">2</span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but_b">В/О</span></td>
+				<td><span class="but">3E</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;80&#8202;|&#8202;</th>
+				<td><span class="but">&divide;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but">В&uarr;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">&orarr;</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">-</span></td>
+				<td><span class="but">-</span></td>
+				<td><span class="but_b">В/О</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+			</tr>
+			<tr>
+				<th>&#8202;90&#8202;|&#8202;</th>
+				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">b</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+				<td><span class="but">68</span></td>
+				<td><span class="but_b">ПП</span></td>
+				<td><span class="but">42</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L1</span></td>
+				<td><span class="but">87</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;A0&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+				<td><span class="but_b">В/О</span></td>
+				<td colspan="8"></td>
+			</tr>
+		</table>
+		<h3>Распределение регистров</h3>
+		<table>
+			<tr>
+				<th>R0</th>
+				<td>Количество кораблей у игрока</td>
+			</tr>
+			<tr>
+				<th>R1</th>
+				<td>Количество кораблей у ПМК</td>
+			</tr>
+			<tr>
+				<th>R2&hellip;R5</th>
+				<td>Местоположение кораблей ПМК в битовом представлении</td>
+			</tr>
+			<tr>
+				<th>R6&hellip;R9</th>
+				<td>Местоположение <q>выстрелов</q> ПМК в битовом представлении</td>
+			</tr>
+			<tr>
+				<th>Ra</th>
+				<td>
+					33333331, признак победы ПМК. А также адрес процедуры
+					поиска свободного бита через генератор случайных чисел
+				</td>
+			</tr>
+			<tr>
+				<th>Rb</th>
+				<td>
+					<span class="code"> -8CEC6-L-   </span> (ВСЁСБИЛИ).	
+					Признак поражения ПМК. Также адрес процедуры (BA = 08)
+					преобразование целого числа (0&hellip;9) из регистра X в 
+					номер регистра (в Re) для определения бита для тестирования.
+				</td>
+			</tr>
+			<tr>
+				<th>Rc</th>
+				<td>Случайное число</td>
+			</tr>
+			<tr>
+				<th>Rd</th>
+				<td>
+					Число 1 или 5 &ndash; базовый адрес битовой карты, 
+					используемый процедурой генерации или проверки битов.
+					Т.&#8239;е. в процедуре будут задействованы регистры 
+					Rd+1&hellip;Rd+4.
+				</td>
+			</tr>
+			<tr>
+				<th>Re</th>
+				<td>Текущий регистр для проверки/установки бита</td>
+			</tr>
+		</table>
+		<h3>Объяснение работы программы</h3>
+		<p>
+			Основная идея программы: запомнить два поля (в битовом представлении)
+			10x10. Затем на одном, вначале пустом, расставить корабли (поставить биты).
+			А на другом (тоже пустом) <q>расставлять</q> свои ходы. При этом 
+			главное проверить, а не стоит ли там ещё корабль (установлен бит).
+		</p>
+		<p>
+			Теперь технические детали. Для операций с битами используются
+			шестнадцатеричные операции. Т.&#8239;к. одна шестнадцатеричная цифра может
+			представлять 4 бита, то 7 цифр (максимум в шестнадцатеричных операциях)
+			7 &times; 4 = 28. А в 4 регистрах 28 &times; 4 = 112, т.&#8239;е.
+			более, чем сто. Таким образом для хранения одного поля в битовом
+			представлении достаточно 4-х регистров памяти.
+			Теперь по используемым процедурам:
+		</p>
+		<ol>
+			<li>
+				Процедура целочисленного деление с остатком. Она начинается с 
+				адреса 76 (кодом <span class="but">3E</span>, см.
+				<a href="https://sergeanvarov.github.io/russian/mk61/Недокументированные%20возможности%20ПМК%20МК-61.html#id_x2" target="_blank">
+					Недокументированные возможности</a
+				>).
+				На входе некое число <q>A</q> в регистре X, и <q>B</q> 
+				в регистре Y. На выходе <q>A</q> mod <q>B</q> + 1 в X,
+				и [<q>A</q>/<q>B</q>] в Y.
+				<q>Плюс один</q> для удобства следующих операций.
+				Используется только стек.
+				Единственная деталь: вместо <span class="but">-</span> и
+				<span class="but">1</span>, <span class="but">+</span>
+				используется <span class="but">1</span>,
+				<span class="but">-</span>, <span class="but">-</span>.
+				Это связано с оптимизацией (пояснение ниже).
+			</li>
+			<li>
+				Преобразование целого числа (0&hellip;9) из регистра X в номер 
+				регистра (в Re) для определения бита для тестирования, и 
+				сам результат проверки битовой операции. Используется значения 
+				регистра Rd, как базовый адрес карты. Т.&#8239;е. в регистрах
+				Rd+1,&hellip;Rd+4 храниться проверяемое поле. Подпрограмма начинается
+				с адреса 08, или адрес BA, как часть фразы -8CEC6-L- (Всё сбили).
+				Сначала число целочисленно делиться на 4 (через процедуру 1).
+				Потом остаток от деления (1&hellip;4, т.&#8239;к. +1) используется как номер
+				регистра (+ смещение из регистра Rd). Затем целая часть (0&hellip;24)
+				делиться на 7. Остаток используется для определения разряда
+				(10 в степени 1&hellip;7), а целая часть (0&hellip;3)
+				преобразуется в номер бита.
+				Но т.&#8239;к. операция
+				<span class="but_f">F</span><span class="op_f">x<sup>y</sup></span>
+				очень долгая (по времени исполнения), то
+				делается преобразование: 0 &rarr; 1, 1 &rarr; 8, 2 &rarr; 4,
+				3 &rarr; 2. Делается это по формуле [1 / (N / 8)], т.&#8239;е.
+				1 / (1 / 8) = 8, 1 / (2 / 8) = 4, 1 / (3 / 8) = 2.6666666,
+				[2.6666666] = 2, а ноль преобразуется в единицу с помощью
+				особенностей команды <span class="but">ВП</span>.
+				Но так как она <q>хитрая</q>, то нужно сначала выполнить
+				X2-влияющую команду (см. недокументированные возможности).
+				В данном случае <span class="but">/-/</span>. И кстати, &minus;0
+				переходит в &minus;1 даже в ручном режиме, хотя при этом возле
+				нуля минус не отображается.
+				Поэтому в конце с большим числом делается не плюс, а минус.
+				Поясню, что для функции
+				<span class="but_f">F</span><span class="op_f">x<sup>y</sup></span>
+				пришлось бы ещё прибавлять малую величину и делать
+				<span class="but_k">К</span><span class="op_k">[x]</span>, т.&#8239;к.
+				даже 2<sup>2</sup> вычисляется неточно. Здесь получается на одну
+				команду длиннее, но намного	быстрее (и запутаннее от подглядывания).
+				Потом через Re поднимается существующая битовая маска, делается
+				тест и в конце 0 или не ноль. Важно, что в регистре Y остаётся
+				число с номером бита.
+				Ещё важная особенность &ndash; расстановка битов по регистрам
+				делается <q>хитро</q>, что даже видя число из регистра, трудно
+				понять, что и где.
+			</li>
+			<li>
+				Процедура поиска свободного бита через генератор случайных чисел.
+				Начинается с адреса 31 (адрес того самого 33333331 в Ra). Формула
+				для случайного числа N = {7 &times; N + &pi;}. Затем через
+				<span class="but_b">ПП</span> <span class="but">71</span> берётся 2
+				первые цифры (умножение на 100). Вызывается процедура 2.
+				Если <q>занято</q>, то повтор, если нет, используется сохранённые
+				ею значения Re и RY для установки бита, зачистки стека от битов
+				(операция <span class="but">+</span> и
+				<span class="but_k">К</span><span class="op_k">ЗН</span>, та же
+				защита от подглядывания), заодно сохраняя
+				в Rd смещение 1, т.&#8239;к. регистры R2&hellip;R5 используются для
+				хранения кораблей ПМК (R6&hellip;R9 &ndash; выстрелов ПМК), и
+				обычно первым делом проверяются в начале хода.
+			</li>
+			<li>
+				Процедура начальной инициализации. По команде
+				<span class="but_b">В/О</span>, <span class="but_b">С/П</span>,
+				как легко видеть, перейдёт на адрес 50. Тут 50 выбран потому,
+				что это код	команды <span class="but_b">С/П</span>. Т.&#8239;е.
+				фактически это и есть единственный <span class="but_b">С/П</span>,
+				на котором будет останавливаться программа. Итак (с адреса 50),
+				первым делом <q>отрубание</q> дробной части, сохранение 
+				количества кораблей в R0 и R1, затем проверка на то, что
+				больше нуля (<span class="but_f">F</span><span class="op_f">Lg</span>
+				для &le;0 выдаст ошибку). Затем девятка с
+				уменьшением (9&hellip;2) последовательно записывается в
+				регистры R9&hellip;R2. Сделано так вот почему: для очистки обоих
+				битовых карт (первый разряд в битовых операциях не участвует),
+				заодно в конце операции в Rd будет 1. Затем восстановление в
+				R1 количества кораблей, заодно проверяя верхнюю границу
+				(для x&ge;100 <span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>
+				выдаст ошибку). Затем очень	короткий (по длине, но не по времени)
+				цикл по вызову процедуры 3 (расстановка всех кораблей),
+				восстановление в X1 числа кораблей.
+				Далее R0 будет показывать оставшееся количество кораблей у игрока,
+				R1 &ndash; у ПМК. Потом сразу идёт процедура&hellip;
+			</li>
+			<li>
+				Ход ПМК (адрес 68). Заносит смещения (5) для выбора поля 
+				выстрелов. Вызывает процедуру 3, находя пустое <q>нестреляное</q>
+				поле, и последний удачный результат извлекает из регистра 
+				случайного числа, возвращаясь на адрес 01 (команда
+				<span class="but_b">С/П</span>).
+				Обратите внимание, что хвост этой операции используется в процедуре 3.
+			</li>
+			<li>
+				Осталась основная часть с адреса 02. Если ПМК подбил, то
+				уменьшается количество кораблей игрока, и если <q>всё</q>, то
+				извлекается Ra и возврат на остановку. Если нет, то далее на
+				адрес хода ПМК. Если это ход игрока, то с адреса 89 сначала
+				делается проверка на &le;99 (через
+				<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>),
+				затем берётся целая часть (такой порядок, чтобы в случае
+				<span class="code"> ЕГГ0Г      </span> можно
+				было продолжить, как раз остановка будет на команде
+				<span class="but_k">К</span><span class="op_k">[x]</span>).
+				Вызов процедуры 2, и если игрок не попал, то снова уход на выстрел
+				ПМК (адрес 68), а если попал, то вызов хвоста процедуры установки
+				бита (вот зачем была операция XOR, а не OR, чтобы стереть бит),
+				используя те же данные из Re и RY. Извлечение значения оставшихся
+				кораблей, проверка на всё ли подбили. Тут главное, это переход,
+				на 87, если не всё. После вызова процедуры 2 в RX останется
+				(уже в RY, после
+				<span class="but_b">П&rarr;x</span><span class="but">1</span>)
+				единица, а странно сделанное окончание
+				процедуры 1 вычтет её и вернёт на начало. Т&#8239;е. в итоге
+				отобразиться <q>&minusчисло оставшихся кораблей ПМК</q>.
+			</li>
+		</ol>
+	</details>
+</body>
+
+</html>
