@@ -8576,7 +8576,10 @@ a[target="_blank"] {
 					<span class="but_f">F</span><span class="op_f">tg<sup>-1</sup></span>
 				</td>
 				<td>Арктангенс</td>
-				<td></td>
+				<td>Для чисел x &ges; 1<sup>8</sup> результат выдаёт близкий к
+				<q>максимуму</q> &ndash; для радиан это почти &pi;/2, для градов 99.999999.
+				Может быть вычислен и для 1<sup>100</sup>
+				в радианах (из-за того, что порядок снижается), но не градусах.
 			</tr>
 			<tr>
 				<th>1C</th>
@@ -8584,7 +8587,10 @@ a[target="_blank"] {
 					<span class="but_f">F</span><span class="op_f">sin</span>
 				</td>
 				<td>Синус</td>
-				<td></td>
+				<td>
+					Аргументы (должно |X|&lt;1<sup>10</sup>) проверяется безусловно, а не при
+					X&rarr;X2.
+				</td>
 			</tr>
 			<tr>
 				<th>1D</th>
@@ -8592,7 +8598,10 @@ a[target="_blank"] {
 					<span class="but_f">F</span><span class="op_f">cos</span>
 				</td>
 				<td>Косинус</td>
-				<td></td>
+				<td>
+					Аргументы (должно |X|&lt;1<sup>10</sup>) проверяется безусловно, а не при
+					X&rarr;X2.
+				</td>
 			</tr>
 			<tr>
 				<th>1E</th>
@@ -8601,8 +8610,10 @@ a[target="_blank"] {
 				</td>
 				<td>Тангенс</td>
 				<td>
-					Аргументы проверяется безусловно, а не при X&rarr;X2.
-					При X = <span class="pi">&pi;</span>/2 + n &times; <span class="pi">&pi;</span> будет ошибка.
+					Аргументы (должно |X|&lt;1<sup>10</sup>) проверяется безусловно, а не при X&rarr;X2.
+					При X = <span class="pi">&pi;</span>/2 + n &times; <span class="pi">&pi;</span>
+					тоже будет ошибка.
+				<td>
 				</td>
 			</tr>
 			<tr>
