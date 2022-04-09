@@ -853,106 +853,228 @@
 	const ADDRESS_OF_RETURNS = [28, 22, 16, 10, 4]; // [0..4][offset in IK1302.R]
 	const ADDRESS_OF_COMMAND_COUNTER = 34;
 
-	// Undo analyze engine
-	const WAIT_INIT = 0;
-	const WAIT_F_IS_ON = 1;
-	const WAIT_K_IS_ON = 2;
-	const WAIT_REG = 3;
-	const WAIT_DONE = -1;
-	const WAIT_CANCEL = -2;
-	const ALL_DONE = [WAIT_DONE, WAIT_DONE, WAIT_DONE, WAIT_DONE];
-	// Fields .next and .hint indexed by not negative WAIT_xxx:
-	// ['After init', 'After F pressed', 'After K pressed', 'Waiting appearance of register']
+	/*
+	  Undo analyze engine
+	  Field xy used to set chip state by position of buttons on keyboard
+	  Other used to store sequence of keys as one for undo operation, like КБПе, or Fx<0 etc
+	  Every record contains four items:
+	    init - first time pressed key
+		keyF - key pressed after F
+		keyK - key pressed after K
+		wReg - waiting register char for sequence
+	  Each item contains hint for it, and possible next field, if it not last key in sequence
+	  If no next field, then sequence done
+	*/
 	const CALCULATOR_KEYS = {
-		bFKey: {
-			xy: [11, 9], hint: ['', '', '', ''], next: [WAIT_F_IS_ON, WAIT_F_IS_ON, WAIT_F_IS_ON, WAIT_F_IS_ON],
+		bfKey: {
+			xy: [11, 9],
+			init: {hint: '', next: 'keyF'},
+			keyF: {hint: '', next: 'keyF'},
+			keyK: {hint: '', next: 'keyF'},
+			wReg: {hint: '', next: 'keyF'},
 		},
 		bStepRight: {
-			xy: [7, 9],	hint: ['ШГ→', 'Fx<0', 'Kx<0', 'ШГ→'], next: [WAIT_DONE, WAIT_DONE, WAIT_REG, WAIT_DONE],
+			xy: [7, 9],
+			init: {hint: 'ШГ→'},
+			keyF: {hint: 'Fx<0'},
+			keyK: {hint: 'Kx<0', next: 'wReg'},
+			wReg: {hint: 'ШГ→'},
 		},
 		bStepLeft: {
-			xy: [9, 9], hint: ['ШГ←', 'Fx=0', 'Kx=0', 'ШГ←'], next: [WAIT_DONE, WAIT_DONE, WAIT_REG, WAIT_DONE],
+			xy: [9, 9],
+			init: {hint: 'ШГ←'},
+			keyF: {hint: 'Fx=0'},
+			keyK: {hint: 'Kx=0', next: 'wReg'},
+			wReg: {hint: 'ШГ←'},
 		},
 		bHome: {
-			xy: [4, 9],	hint: ['В/О', 'Fx≥0', 'Kx≥0', 'В/О'], next: [WAIT_DONE, WAIT_DONE, WAIT_REG, WAIT_DONE],
+			xy: [4, 9],
+			init: {hint: 'В/О'},
+			keyF: {hint: 'Fx≥0'},
+			keyK: {hint: 'Kx≥0', next: 'wReg'},
+			wReg: {hint: 'В/О'},
 		},
 		bRun: {
-			xy: [2, 9],	hint: ['С/П', 'Fx≠0', 'Kx≠0', 'С/П'], next: [WAIT_DONE, WAIT_DONE, WAIT_REG, WAIT_DONE],
+			xy: [2, 9],
+			init: {hint: 'С/П'},
+			keyF: {hint: 'Fx≠0'},
+			keyK: {hint: 'Kx≠0', next: 'wReg'},
+			wReg: {hint: 'С/П'},
 		},
 		bKKey: {
-			xy: [10, 9], hint: ['', '', '', ''], next: [WAIT_K_IS_ON, WAIT_K_IS_ON, WAIT_K_IS_ON, WAIT_K_IS_ON],
+			xy: [10, 9],
+			init: {hint: '', next: 'keyK'},
+			keyF: {hint: '', next: 'keyK'},
+			keyK: {hint: '', next: 'keyK'},
+			wReg: {hint: '', next: 'keyK'},
 		},
 		bRecall: {
-			xy: [8, 9], hint: ['П→x', 'FL0', 'KП→x', ''], next: [WAIT_REG, WAIT_DONE, WAIT_REG, WAIT_K_IS_ON],
+			xy: [8, 9],
+			init: {hint: 'П→x', next: 'wReg'},
+			keyF: {hint: 'FL0'},
+			keyK: {hint: 'KП→x', next: 'wReg'},
+			wReg: {hint: '', next: 'keyK'},
 		},
 		bStore: {
-			xy: [6, 9],	hint: ['x→П', 'FL1', 'Kx→П', ''], next: [WAIT_REG, WAIT_DONE, WAIT_REG, WAIT_K_IS_ON],
+			xy: [6, 9],
+			init: {hint: 'x→П', next: 'wReg'},
+			keyF: {hint: 'FL1'},
+			keyK: {hint: 'Kx→П', next: 'wReg'},
+			wReg: {hint: '', next: 'keyK'},
 		},
 		bGoTo: {
-			xy: [3, 9], hint: ['БП', 'FL2', 'КБП', 'БП'], next: [WAIT_DONE, WAIT_DONE, WAIT_REG, WAIT_DONE],
+			xy: [3, 9],
+			init: {hint: 'БП'},
+			keyF: {hint: 'FL2'},
+			keyK: {hint: 'КБП', next: 'wReg'},
+			wReg: {hint: 'БП'},
 		},
 		bSubStep: {
-			xy: [5, 9],	hint: ['ПП', 'FL3', 'КПП', 'ПП'], next: [WAIT_DONE, WAIT_DONE, WAIT_REG, WAIT_DONE],
+			xy: [5, 9],
+			init: {hint: 'ПП'},
+			keyF: {hint: 'FL3'},
+			keyK: {hint: 'КПП', next: 'wReg'},
+			wReg: {hint: 'ПП'},
 		},
 		b7: {
-			xy: [9, 1],	hint: ['7', 'Fsin', 'K[x]', '7'], next: ALL_DONE,
+			xy: [9, 1],
+			init: {hint: '7'},
+			keyF: {hint: 'Fsin'},
+			keyK: {hint: 'K[x]'},
+			wReg: {hint: '7'},
 		},
 		b8: {
-			xy: [10, 1], hint: ['8', 'Fcos', 'K{x}', '8'], next: ALL_DONE,
+			xy: [10, 1],
+			init: {hint: '8'},
+			keyF: {hint: 'Fcos'},
+			keyK: {hint: 'K{x}'},
+			wReg: {hint: '8'},
 		},
 		b9: {
-			xy: [11, 1], hint: ['9', 'Ftg', 'Kmax', '9'], next: ALL_DONE,
+			xy: [11, 1],
+			init: {hint: '9'},
+			keyF: {hint: 'Ftg'},
+			keyK: {hint: 'Kmax'},
+			wReg: {hint: '9'},
 		},
 		bMinus: {
-			xy: [3, 8],	hint: ['-', 'F√', 'K-', '1'], next: ALL_DONE,
+			xy: [3, 8],
+			init: {hint: '-'},
+			keyF: {hint: 'F√'},
+			keyK: {hint: 'K-'},
+			wReg: {hint: '1'},
 		},
 		bDivide: {
-			xy: [5, 8],	hint: ['÷', 'F1/x', 'K÷', '3'], next: ALL_DONE,
+			xy: [5, 8],
+			init: {hint: '÷'},
+			keyF: {hint: 'F1/x'},
+			keyK: {hint: 'K÷'},
+			wReg: {hint: '3'},
 		},
 		b4: {
-			xy: [6, 1],	hint: ['4', 'Fsinᐨ¹', 'K|x|', '4'], next: ALL_DONE,
+			xy: [6, 1],
+			init: {hint: '4'},
+			keyF: {hint: 'Fsinᐨ¹'},
+			keyK: {hint: 'K|x|'},
+			wReg: {hint: '4'},
 		},
 		b5: {
-			xy: [7, 1],	hint: ['5', 'Fcosᐨ¹', 'KЗН', '5'], next: ALL_DONE,
+			xy: [7, 1],
+			init: {hint: '5'},
+			keyF: {hint: 'Fcosᐨ¹'},
+			keyK: {hint: 'KЗН'},
+			wReg: {hint: '5'},
 		},
 		b6: {
-			xy: [8, 1],	hint: ['6', 'Ftgᐨ¹', 'КГ→М', '6'], next: ALL_DONE,
+			xy: [8, 1],
+			init: {hint: '6'},
+			keyF: {hint: 'Ftgᐨ¹'},
+			keyK: {hint: 'КГ→М'},
+			wReg: {hint: '6'},
 		},
 		bPlus: {
-			xy: [2, 8],	hint: ['+', 'Fπ', 'КМ→Г', '0'], next: ALL_DONE,
+			xy: [2, 8],
+			init: {hint: '+'},
+			keyF: {hint: 'Fπ'},
+			keyK: {hint: 'КМ→Г'},
+			wReg: {hint: '0'},
 		},
 		bMult: {
-			xy: [4, 8],	hint: ['×', 'Fx²', 'K×', '2'], next: ALL_DONE,
+			xy: [4, 8],
+			init: {hint: '×'},
+			keyF: {hint: 'Fx²'},
+			keyK: {hint: 'K×'},
+			wReg: {hint: '2'},
 		},
 		b1: {
-			xy: [3, 1],	hint: ['1', 'Feˣ', 'K1', '1'], next: ALL_DONE,
+			xy: [3, 1],
+			init: {hint: '1'},
+			keyF: {hint: 'Feˣ'},
+			keyK: {hint: 'K1'},
+			wReg: {hint: '1'},
 		},
 		b2: {
-			xy: [4, 1],	hint: ['2', 'Flg', 'K2', '2'], next: ALL_DONE,
+			xy: [4, 1],
+			init: {hint: '2'},
+			keyF: {hint: 'Flg'},
+			keyK: {hint: 'K2'},
+			wReg: {hint: '2'},
 		},
 		b3: {
-			xy: [5, 1],	hint: ['3', 'Fln', 'КЧ→М', '3'], next: ALL_DONE,
+			xy: [5, 1],
+			init: {hint: '3'},
+			keyF: {hint: 'Fln'},
+			keyK: {hint: 'КЧ→М'},
+			wReg: {hint: '3'},
 		},
 		bSwap: {
-			xy: [6, 8],	hint: ['<->', 'Fxʸ', 'КМ→Ч', '4'], next: ALL_DONE,
+			xy: [6, 8],
+			init: {hint: '<->'},
+			keyF: {hint: 'Fxʸ'},
+			keyK: {hint: 'КМ→Ч'},
+			wReg: {hint: '4'},
 		},
 		bEnter: {
-			xy: [11, 8], hint: ['В↑', 'FBx', 'КСЧ', 'e'], next: ALL_DONE,
+			xy: [11, 8],
+			init: {hint: 'В↑'},
+			keyF: {hint: 'FBx'},
+			keyK: {hint: 'КСЧ'},
+			wReg: {hint: 'e'},
 		},
 		b0: {
-			xy: [2, 1],	hint: ['0', 'F10ˣ', 'КНОП', '0'], next: ALL_DONE,
+			xy: [2, 1],
+			init: {hint: '0'},
+			keyF: {hint: 'F10ˣ'},
+			keyK: {hint: 'КНОП'},
+			wReg: {hint: '0'},
 		},
 		bPoint: {
-			xy: [7, 8],	hint: ['.', 'Fѻ', 'КɅ', 'a'], next: ALL_DONE,
+			xy: [7, 8],
+			init: {hint: '.'},
+			keyF: {hint: 'Fѻ'},
+			keyK: {hint: 'КɅ'},
+			wReg: {hint: 'a'},
 		},
 		bNeg: {
-			xy: [8, 8],	hint: ['/-/', 'FАВТ', 'КV', 'b'], next: ALL_DONE,
+			xy: [8, 8],
+			init: {hint: '/-/'},
+			keyF: {hint: 'FАВТ'},
+			keyK: {hint: 'КV'},
+			wReg: {hint: 'b'},
 		},
 		bPower: {
-			xy: [9, 8],	hint: ['ВП', 'FПРГ', 'К(+)', 'c'], next: ALL_DONE,
+			xy: [9, 8],
+			init: {hint: 'ВП'},
+			keyF: {hint: 'FПРГ'},
+			keyK: {hint: 'К(+)'},
+			wReg: {hint: 'c'},
 		},
 		bClear: {
-			xy: [10, 8], hint: ['Cx', '', 'КИНВ', 'd'], next: [WAIT_DONE, WAIT_CANCEL, WAIT_DONE, WAIT_DONE],
+			xy: [10, 8],
+			init: {hint: 'Cx'},
+			keyF: {hint: '', next: 'CF'},
+			keyK: {hint: 'КИНВ'},
+			wReg: {hint: 'd'},
 		},
 	};
 
@@ -1008,121 +1130,119 @@
 
 	/* Text to program conversion
 		code - command code
-		type - 1 - with registry, 2 - plus address after it, 0 - normal
+		type - 'REG' - with registry, 'JUMP' - plus address after it, '' - normal
 		color - hightlight color group (see color_x)
-		text - possible nemonic of command, first is used for out and prefer russian letters in it
+		text - array of possible nemonics of command, first is used for out and prefer russian letters in it
 	*/
-	const TYPE_REG = 1;
-	const TYPE_JUMP = 2;
 	const MNEMONICS = [
-		{code: 0x10, type: 0,         color: 'operation', text: ['+']},
-		{code: 0x11, type: 0,         color: 'operation', text: ['-']},
-		{code: 0x12, type: 0,         color: 'operation', text: ['×', '⋅', 'X', '*']},
-		{code: 0x13, type: 0,         color: 'operation', text: ['÷', '/', ':']},
-		{code: 0x0A, type: 0,         color: 'number',    text: ['.', ',', '•']},
-		{code: 0x0B, type: 0,         color: 'number',    text: ['/-/', '+/-']},
-		{code: 0x0C, type: 0,         color: 'number',    text: ['ВП', 'BП']},
-		{code: 0x0D, type: 0,         color: 'operation', text: ['Сx', 'CX']},
-		{code: 0x15, type: 0,         color: 'operation', text: ['F10ˣ', '10ˣ', 'F10^X', '10^X', 'F10X', '10X', 'F10**X', '10**X']},
-		{code: 0x16, type: 0,         color: 'operation', text: ['Feˣ', 'FEˣ', 'Eˣ', 'FE^X', 'E^X', 'FEX', 'EX', 'FE**X', 'E**X']},
-		{code: 0x22, type: 0,         color: 'operation', text: ['Fx²', 'FX²', 'X²', 'FX^2', 'X^2', 'FX2', 'X2', 'FX**2', 'X**2']},
-		{code: 0x24, type: 0,         color: 'operation', text: ['Fxʸ', 'FXʸ', 'Xʸ', 'FX^Y', 'X^Y', 'FXY']},
-		{code: 0x17, type: 0,         color: 'operation', text: ['Flg', 'FLG', 'LG']},
-		{code: 0x18, type: 0,         color: 'operation', text: ['Fln', 'FLN', 'LN']},
-		{code: 0x1D, type: 0,         color: 'operation', text: ['Fcos', 'FC0S', 'C0S']},
-		{code: 0x1A, type: 0,         color: 'operation', text: ['Fcosᐨ¹', 'FC0Sᐨ¹', 'C0Sᐨ¹', 'FC0S⁻¹', 'C0S⁻¹', 'FC0S-1', 'C0S-1', 'FARCC0S', 'ARCC0S']},
-		{code: 0x1C, type: 0,         color: 'operation', text: ['Fsin', 'FSIN', 'SIN']},
-		{code: 0x19, type: 0,         color: 'operation', text: ['Fsinᐨ¹', 'FSINᐨ¹', 'SINᐨ¹', 'FSIN⁻¹', 'SIN⁻¹', 'FSIN-1', 'SIN-1', 'FARCSIN', 'ARCSIN']},
-		{code: 0x1E, type: 0,         color: 'operation', text: ['Ftg', 'FTG', 'TG']},
-		{code: 0x1B, type: 0,         color: 'operation', text: ['Ftgᐨ¹', 'FTGᐨ¹', 'TGᐨ¹', 'FTG⁻¹', 'TG⁻¹', 'FTG-1', 'TG-1', 'FARCTG', 'ARCTG']},
-		{code: 0x20, type: 0,         color: 'operation', text: ['Fπ', 'FΠ', 'Π', 'FПИ', 'ПИ']},
-		{code: 0x21, type: 0,         color: 'operation', text: ['F√', '√', 'FKBK0P', 'KBK0P', 'FK0PEHЬ', 'K0PEHЬ', 'FKBK0PEHЬ', 'KBK0PEHЬ']},
-		{code: 0x23, type: 0,         color: 'operation', text: ['F1/x', 'F1/X', '1/X']},
-		{code: 0x0E, type: 0,         color: 'stack',     text: ['В↑', 'B↑', '↑', 'B^', '^']},
-		{code: 0x0F, type: 0,         color: 'stack',     text: ['FВх', 'FBX', 'BX']},
-		{code: 0x14, type: 0,         color: 'stack',     text: ['<->', '↔', 'XY', 'X↔Y', '⟷', '←→']},
-		{code: 0x25, type: 0,         color: 'stack',     text: ['Fѻ', 'FѺ', 'Ѻ', 'F↻', '↻', 'F->', '->', 'F→', '→']},
-		{code: 0x3E, type: 0,         color: 'stack',     text: ['x←y', 'X←Y']},
-		{code: 0x3B, type: 0,         color: 'operation', text: ['КCЧ', 'KCЧ', 'CЧ', 'KE']},
-		{code: 0x37, type: 0,         color: 'operation', text: ['КɅ', 'KɅ', 'Ʌ', 'K^', 'K⋀',  '⋀', 'K∧', '∧', 'K/\\', '/\\', 'KΛ', 'Λ', 'K.', 'KA']},
-		{code: 0x38, type: 0,         color: 'operation', text: ['КV', 'KV', 'V', 'K⋁', '⋁', 'K∨', '∨', 'K\\/', '\\/', 'K/-/', 'KB']},
-		{code: 0x39, type: 0,         color: 'operation', text: ['К(+)', 'K(+)', '(+)', 'K⊕', '⊕', 'KBП', 'KC']},
-		{code: 0x3A, type: 0,         color: 'operation', text: ['Кинв', 'KИHB', 'ИHB', 'KCX', 'KD']},
-		{code: 0x2A, type: 0,         color: 'operation', text: ['КМ→Ч', 'KM→Ч', 'M→Ч', 'KM→Ч', 'KMЧ', 'MЧ']},
-		{code: 0x30, type: 0,         color: 'operation', text: ['КЧ→М', 'KЧ→M', 'KЧM', 'ЧM', 'K3']},
-		{code: 0x26, type: 0,         color: 'operation', text: ['КМ→Г', 'KM→Г', 'M→Г', 'KMГ', 'MГ', 'K+']},
-		{code: 0x33, type: 0,         color: 'operation', text: ['КГ→М', 'KГ→M', 'Г→M', 'KГM', 'ГM', 'K6']},
-		{code: 0x32, type: 0,         color: 'operation', text: ['Кзн', 'K3H', '3H', 'K5']},
-		{code: 0x31, type: 0,         color: 'operation', text: ['К|x|', 'K|X|', '|X|', 'K4']},
-		{code: 0x34, type: 0,         color: 'operation', text: ['К[x]', 'K[X]', '[X]', 'K7']},
-		{code: 0x35, type: 0,         color: 'operation', text: ['К{x}', 'K{X}', '{X}', 'K(X)', '(X)', 'K8']},
-		{code: 0x36, type: 0,         color: 'operation', text: ['Кmax', 'KMAX', 'MAX', 'K9']},
-		{code: 0x27, type: 0,         color: 'error',     text: ['K-']},
-		{code: 0x28, type: 0,         color: 'error',     text: ['K×', 'KX', 'K*', 'K⋅']},
-		{code: 0x29, type: 0,         color: 'error',     text: ['K÷', 'K/', 'K:']},
-		{code: 0x52, type: 0,         color: 'flow',      text: ['В/О', 'B/0']},
-		{code: 0x50, type: 0,         color: 'flow',      text: ['С/П', 'C/П', 'CП']},
-		{code: 0x51, type: TYPE_JUMP, color: 'flow',      text: ['БП']},
-		{code: 0x80, type: TYPE_REG,  color: 'flow',      text: ['KБП']},
-		{code: 0x53, type: TYPE_JUMP, color: 'flow',      text: ['ПП']},
-		{code: 0xA0, type: TYPE_REG,  color: 'flow',      text: ['KПП']},
-		{code: 0x5E, type: TYPE_JUMP, color: 'flow',      text: ['Fx=0', 'FX=0', 'X=0']},
-		{code: 0xE0, type: TYPE_REG,  color: 'flow',      text: ['Kx=0', 'KX=0']},
-		{code: 0x57, type: TYPE_JUMP, color: 'flow',      text: ['Fx≠0', 'FX≠0', 'X≠0', 'FX#0', 'X#0', 'FX!=0', 'X!=0', 'FX<>0', 'X<>0']},
-		{code: 0x70, type: TYPE_REG,  color: 'flow',      text: ['Kx≠0', 'KX≠0', 'KX#0', 'KX!=0', 'KX<>0']},
-		{code: 0x59, type: TYPE_JUMP, color: 'flow',      text: ['Fx≥0', 'FX≥0', 'X≥0', 'FX>=0', 'X>=0', 'FX⩾0', 'X⩾0']},
-		{code: 0x90, type: TYPE_REG,  color: 'flow',      text: ['Kx≥0', 'KX≥0', 'KX⩾0', 'KX>=0']},
-		{code: 0x5C, type: TYPE_JUMP, color: 'flow',      text: ['Fx<0', 'FX<0', 'X<0']},
-		{code: 0xC0, type: TYPE_REG,  color: 'flow',      text: ['Kx<0', 'KX<0']},
-		{code: 0x5D, type: TYPE_JUMP, color: 'flow',      text: ['FL0', 'L0']},
-		{code: 0x5B, type: TYPE_JUMP, color: 'flow',      text: ['FL1', 'L1']},
-		{code: 0x58, type: TYPE_JUMP, color: 'flow',      text: ['FL2', 'L2']},
-		{code: 0x5A, type: TYPE_JUMP, color: 'flow',      text: ['FL3', 'L3']},
-		{code: 0x54, type: 0,         color: 'nop',       text: ['КНОП', 'KH0П', 'H0П', 'K0']},
-		{code: 0x55, type: 0,         color: 'nop',       text: ['K1']},
-		{code: 0x56, type: 0,         color: 'nop',       text: ['K2']},
-		{code: 0x40, type: TYPE_REG,  color: 'register',  text: ['xП', 'XП', 'П', 'X→П']},
-		{code: 0xB0, type: TYPE_REG,  color: 'register',  text: ['KxП', 'KXП', 'KX→П', 'KП']},
-		{code: 0x60, type: TYPE_REG,  color: 'register',  text: ['Пx', 'ПX', 'ИП', 'П→X']},
-		{code: 0xD0, type: TYPE_REG,  color: 'register',  text: ['КПx', 'KПX', 'KП→X', 'KИП']},
-		{code: 0xF0, type: 0,         color: 'nop',       text: ['F0']},
-		{code: 0x1F, type: 0,         color: 'nop',       text: ['1F']},
-		{code: 0x2F, type: 0,         color: 'nop',       text: ['2F']},
-		{code: 0x2B, type: 0,         color: 'error',     text: ['2B']},
-		{code: 0x2C, type: 0,         color: 'error',     text: ['2C']},
-		{code: 0x2D, type: 0,         color: 'error',     text: ['2D']},
-		{code: 0x2E, type: 0,         color: 'error',     text: ['2E']},
-		{code: 0x2F, type: 0,         color: 'nop',       text: ['2F']},
-		{code: 0x3C, type: 0,         color: 'error',     text: ['3C']},
-		{code: 0x3D, type: 0,         color: 'operation', text: ['3D']},
-		{code: 0x3F, type: 0,         color: 'nop',       text: ['3F']},
-		{code: 0x4F, type: 0,         color: 'register',  text: ['4F']},
-		{code: 0x5F, type: 0,         color: 'error',     text: ['5F']},
-		{code: 0x6F, type: 0,         color: 'register',  text: ['6F']},
-		{code: 0x7F, type: 0,         color: 'flow',      text: ['7F']},
-		{code: 0x8F, type: 0,         color: 'flow',      text: ['8F']},
-		{code: 0x9F, type: 0,         color: 'flow',      text: ['9F']},
-		{code: 0xAF, type: 0,         color: 'flow',      text: ['AF']},
-		{code: 0xBF, type: 0,         color: 'register',  text: ['BF']},
-		{code: 0xCF, type: 0,         color: 'flow',      text: ['CF']},
-		{code: 0xDF, type: 0,         color: 'register',  text: ['DF']},
-		{code: 0xEF, type: 0,         color: 'flow',      text: ['EF']},
-		{code: 0xF0, type: 0,         color: 'nop',       text: ['F0']},
-		{code: 0xF1, type: 0,         color: 'nop',       text: ['F1']},
-		{code: 0xF2, type: 0,         color: 'nop',       text: ['F2']},
-		{code: 0xF3, type: 0,         color: 'nop',       text: ['F3']},
-		{code: 0xF4, type: 0,         color: 'nop',       text: ['F4']},
-		{code: 0xF5, type: 0,         color: 'nop',       text: ['F5']},
-		{code: 0xF6, type: 0,         color: 'nop',       text: ['F6']},
-		{code: 0xF7, type: 0,         color: 'nop',       text: ['F7']},
-		{code: 0xF8, type: 0,         color: 'nop',       text: ['F8']},
-		{code: 0xF9, type: 0,         color: 'nop',       text: ['F9']},
-		{code: 0xFA, type: 0,         color: 'nop',       text: ['FA']},
-		{code: 0xFB, type: 0,         color: 'nop',       text: ['FB']},
-		{code: 0xFC, type: 0,         color: 'nop',       text: ['FC']},
-		{code: 0xFD, type: 0,         color: 'nop',       text: ['FD']},
-		{code: 0xFE, type: 0,         color: 'nop',       text: ['FE']},
-		{code: 0xFF, type: 0,         color: 'nop',       text: ['FF']},
+		{code: 0x10, type: '',     color: 'operation', text: ['+']},
+		{code: 0x11, type: '',     color: 'operation', text: ['-']},
+		{code: 0x12, type: '',     color: 'operation', text: ['×', '⋅', 'X', '*']},
+		{code: 0x13, type: '',     color: 'operation', text: ['÷', '/', ':']},
+		{code: 0x0A, type: '',     color: 'number',    text: ['.', ',', '•']},
+		{code: 0x0B, type: '',     color: 'number',    text: ['/-/', '+/-']},
+		{code: 0x0C, type: '',     color: 'number',    text: ['ВП', 'BП']},
+		{code: 0x0D, type: '',     color: 'operation', text: ['Сx', 'CX']},
+		{code: 0x15, type: '',     color: 'operation', text: ['F10ˣ', '10ˣ', 'F10^X', '10^X', 'F10X', '10X', 'F10**X', '10**X']},
+		{code: 0x16, type: '',     color: 'operation', text: ['Feˣ', 'FEˣ', 'Eˣ', 'FE^X', 'E^X', 'FEX', 'EX', 'FE**X', 'E**X']},
+		{code: 0x22, type: '',     color: 'operation', text: ['Fx²', 'FX²', 'X²', 'FX^2', 'X^2', 'FX2', 'X2', 'FX**2', 'X**2']},
+		{code: 0x24, type: '',     color: 'operation', text: ['Fxʸ', 'FXʸ', 'Xʸ', 'FX^Y', 'X^Y', 'FXY']},
+		{code: 0x17, type: '',     color: 'operation', text: ['Flg', 'FLG', 'LG']},
+		{code: 0x18, type: '',     color: 'operation', text: ['Fln', 'FLN', 'LN']},
+		{code: 0x1D, type: '',     color: 'operation', text: ['Fcos', 'FC0S', 'C0S']},
+		{code: 0x1A, type: '',     color: 'operation', text: ['Fcosᐨ¹', 'FC0Sᐨ¹', 'C0Sᐨ¹', 'FC0S⁻¹', 'C0S⁻¹', 'FC0S-1', 'C0S-1', 'FARCC0S', 'ARCC0S']},
+		{code: 0x1C, type: '',     color: 'operation', text: ['Fsin', 'FSIN', 'SIN']},
+		{code: 0x19, type: '',     color: 'operation', text: ['Fsinᐨ¹', 'FSINᐨ¹', 'SINᐨ¹', 'FSIN⁻¹', 'SIN⁻¹', 'FSIN-1', 'SIN-1', 'FARCSIN', 'ARCSIN']},
+		{code: 0x1E, type: '',     color: 'operation', text: ['Ftg', 'FTG', 'TG']},
+		{code: 0x1B, type: '',     color: 'operation', text: ['Ftgᐨ¹', 'FTGᐨ¹', 'TGᐨ¹', 'FTG⁻¹', 'TG⁻¹', 'FTG-1', 'TG-1', 'FARCTG', 'ARCTG']},
+		{code: 0x20, type: '',     color: 'operation', text: ['Fπ', 'FΠ', 'Π', 'FПИ', 'ПИ']},
+		{code: 0x21, type: '',     color: 'operation', text: ['F√', '√', 'FKBK0P', 'KBK0P', 'FK0PEHЬ', 'K0PEHЬ', 'FKBK0PEHЬ', 'KBK0PEHЬ']},
+		{code: 0x23, type: '',     color: 'operation', text: ['F1/x', 'F1/X', '1/X']},
+		{code: 0x0E, type: '',     color: 'stack',     text: ['В↑', 'B↑', '↑', 'B^', '^']},
+		{code: 0x0F, type: '',     color: 'stack',     text: ['FВх', 'FBX', 'BX']},
+		{code: 0x14, type: '',     color: 'stack',     text: ['<->', '↔', 'XY', 'X↔Y', '⟷', '←→']},
+		{code: 0x25, type: '',     color: 'stack',     text: ['Fѻ', 'FѺ', 'Ѻ', 'F↻', '↻', 'F->', '->', 'F→', '→']},
+		{code: 0x3E, type: '',     color: 'stack',     text: ['x←y', 'X←Y']},
+		{code: 0x3B, type: '',     color: 'operation', text: ['КCЧ', 'KCЧ', 'CЧ', 'KE']},
+		{code: 0x37, type: '',     color: 'operation', text: ['КɅ', 'KɅ', 'Ʌ', 'K^', 'K⋀',  '⋀', 'K∧', '∧', 'K/\\', '/\\', 'KΛ', 'Λ', 'K.', 'KA']},
+		{code: 0x38, type: '',     color: 'operation', text: ['КV', 'KV', 'V', 'K⋁', '⋁', 'K∨', '∨', 'K\\/', '\\/', 'K/-/', 'KB']},
+		{code: 0x39, type: '',     color: 'operation', text: ['К(+)', 'K(+)', '(+)', 'K⊕', '⊕', 'KBП', 'KC']},
+		{code: 0x3A, type: '',     color: 'operation', text: ['Кинв', 'KИHB', 'ИHB', 'KCX', 'KD']},
+		{code: 0x2A, type: '',     color: 'operation', text: ['КМ→Ч', 'KM→Ч', 'M→Ч', 'KM→Ч', 'KMЧ', 'MЧ']},
+		{code: 0x30, type: '',     color: 'operation', text: ['КЧ→М', 'KЧ→M', 'KЧM', 'ЧM', 'K3']},
+		{code: 0x26, type: '',     color: 'operation', text: ['КМ→Г', 'KM→Г', 'M→Г', 'KMГ', 'MГ', 'K+']},
+		{code: 0x33, type: '',     color: 'operation', text: ['КГ→М', 'KГ→M', 'Г→M', 'KГM', 'ГM', 'K6']},
+		{code: 0x32, type: '',     color: 'operation', text: ['Кзн', 'K3H', '3H', 'K5']},
+		{code: 0x31, type: '',     color: 'operation', text: ['К|x|', 'K|X|', '|X|', 'K4']},
+		{code: 0x34, type: '',     color: 'operation', text: ['К[x]', 'K[X]', '[X]', 'K7']},
+		{code: 0x35, type: '',     color: 'operation', text: ['К{x}', 'K{X}', '{X}', 'K(X)', '(X)', 'K8']},
+		{code: 0x36, type: '',     color: 'operation', text: ['Кmax', 'KMAX', 'MAX', 'K9']},
+		{code: 0x27, type: '',     color: 'error',     text: ['K-']},
+		{code: 0x28, type: '',     color: 'error',     text: ['K×', 'KX', 'K*', 'K⋅']},
+		{code: 0x29, type: '',     color: 'error',     text: ['K÷', 'K/', 'K:']},
+		{code: 0x52, type: '',     color: 'flow',      text: ['В/О', 'B/0']},
+		{code: 0x50, type: '',     color: 'flow',      text: ['С/П', 'C/П', 'CП']},
+		{code: 0x51, type: 'JUMP', color: 'flow',      text: ['БП']},
+		{code: 0x80, type: 'REG',  color: 'flow',      text: ['KБП']},
+		{code: 0x53, type: 'JUMP', color: 'flow',      text: ['ПП']},
+		{code: 0xA0, type: 'REG',  color: 'flow',      text: ['KПП']},
+		{code: 0x5E, type: 'JUMP', color: 'flow',      text: ['Fx=0', 'FX=0', 'X=0']},
+		{code: 0xE0, type: 'REG',  color: 'flow',      text: ['Kx=0', 'KX=0']},
+		{code: 0x57, type: 'JUMP', color: 'flow',      text: ['Fx≠0', 'FX≠0', 'X≠0', 'FX#0', 'X#0', 'FX!=0', 'X!=0', 'FX<>0', 'X<>0']},
+		{code: 0x70, type: 'REG',  color: 'flow',      text: ['Kx≠0', 'KX≠0', 'KX#0', 'KX!=0', 'KX<>0']},
+		{code: 0x59, type: 'JUMP', color: 'flow',      text: ['Fx≥0', 'FX≥0', 'X≥0', 'FX>=0', 'X>=0', 'FX⩾0', 'X⩾0']},
+		{code: 0x90, type: 'REG',  color: 'flow',      text: ['Kx≥0', 'KX≥0', 'KX⩾0', 'KX>=0']},
+		{code: 0x5C, type: 'JUMP', color: 'flow',      text: ['Fx<0', 'FX<0', 'X<0']},
+		{code: 0xC0, type: 'REG',  color: 'flow',      text: ['Kx<0', 'KX<0']},
+		{code: 0x5D, type: 'JUMP', color: 'flow',      text: ['FL0', 'L0']},
+		{code: 0x5B, type: 'JUMP', color: 'flow',      text: ['FL1', 'L1']},
+		{code: 0x58, type: 'JUMP', color: 'flow',      text: ['FL2', 'L2']},
+		{code: 0x5A, type: 'JUMP', color: 'flow',      text: ['FL3', 'L3']},
+		{code: 0x54, type: '',     color: 'nop',       text: ['КНОП', 'KH0П', 'H0П', 'K0']},
+		{code: 0x55, type: '',     color: 'nop',       text: ['K1']},
+		{code: 0x56, type: '',     color: 'nop',       text: ['K2']},
+		{code: 0x40, type: 'REG',  color: 'register',  text: ['xП', 'XП', 'П', 'X→П']},
+		{code: 0xB0, type: 'REG',  color: 'register',  text: ['KxП', 'KXП', 'KX→П', 'KП']},
+		{code: 0x60, type: 'REG',  color: 'register',  text: ['Пx', 'ПX', 'ИП', 'П→X']},
+		{code: 0xD0, type: 'REG',  color: 'register',  text: ['КПx', 'KПX', 'KП→X', 'KИП']},
+		{code: 0xF0, type: '',     color: 'nop',       text: ['F0']},
+		{code: 0x1F, type: '',     color: 'nop',       text: ['1F']},
+		{code: 0x2F, type: '',     color: 'nop',       text: ['2F']},
+		{code: 0x2B, type: '',     color: 'error',     text: ['2B']},
+		{code: 0x2C, type: '',     color: 'error',     text: ['2C']},
+		{code: 0x2D, type: '',     color: 'error',     text: ['2D']},
+		{code: 0x2E, type: '',     color: 'error',     text: ['2E']},
+		{code: 0x2F, type: '',     color: 'nop',       text: ['2F']},
+		{code: 0x3C, type: '',     color: 'error',     text: ['3C']},
+		{code: 0x3D, type: '',     color: 'operation', text: ['3D']},
+		{code: 0x3F, type: '',     color: 'nop',       text: ['3F']},
+		{code: 0x4F, type: '',     color: 'register',  text: ['4F']},
+		{code: 0x5F, type: '',     color: 'error',     text: ['5F']},
+		{code: 0x6F, type: '',     color: 'register',  text: ['6F']},
+		{code: 0x7F, type: '',     color: 'flow',      text: ['7F']},
+		{code: 0x8F, type: '',     color: 'flow',      text: ['8F']},
+		{code: 0x9F, type: '',     color: 'flow',      text: ['9F']},
+		{code: 0xAF, type: '',     color: 'flow',      text: ['AF']},
+		{code: 0xBF, type: '',     color: 'register',  text: ['BF']},
+		{code: 0xCF, type: '',     color: 'flow',      text: ['CF']},
+		{code: 0xDF, type: '',     color: 'register',  text: ['DF']},
+		{code: 0xEF, type: '',     color: 'flow',      text: ['EF']},
+		{code: 0xF0, type: '',     color: 'nop',       text: ['F0']},
+		{code: 0xF1, type: '',     color: 'nop',       text: ['F1']},
+		{code: 0xF2, type: '',     color: 'nop',       text: ['F2']},
+		{code: 0xF3, type: '',     color: 'nop',       text: ['F3']},
+		{code: 0xF4, type: '',     color: 'nop',       text: ['F4']},
+		{code: 0xF5, type: '',     color: 'nop',       text: ['F5']},
+		{code: 0xF6, type: '',     color: 'nop',       text: ['F6']},
+		{code: 0xF7, type: '',     color: 'nop',       text: ['F7']},
+		{code: 0xF8, type: '',     color: 'nop',       text: ['F8']},
+		{code: 0xF9, type: '',     color: 'nop',       text: ['F9']},
+		{code: 0xFA, type: '',     color: 'nop',       text: ['FA']},
+		{code: 0xFB, type: '',     color: 'nop',       text: ['FB']},
+		{code: 0xFC, type: '',     color: 'nop',       text: ['FC']},
+		{code: 0xFD, type: '',     color: 'nop',       text: ['FD']},
+		{code: 0xFE, type: '',     color: 'nop',       text: ['FE']},
+		{code: 0xFF, type: '',     color: 'nop',       text: ['FF']},
 	];
 
 	const BASE38_CHARS = 'АБВГҐДЕЄЁЖЗИІЇЙКЛМНОПРСТУЎФХЦЧШЩЪЫЬЭЮЯ'; // For compress '0' in string of state
@@ -1418,11 +1538,6 @@
 
 	// End of classes
 
-	const ANGLE_IN_RADIAN = 10;
-	const ANGLE_IN_GRAD = 12;
-	const ANGLE_IN_DEGREE = 11;
-	let angleMeasure = ANGLE_IN_RADIAN;
-
 	const IR2_1 = new IR2();
 	const IR2_2 = new IR2();
 	const IK1302 = new IK13(ROM.IK1302);
@@ -1561,6 +1676,11 @@
 			DIGIT_CHARS[IK1302.R[ADDRESS_OF_COMMAND_COUNTER - 3]];
 	};
 
+	const ANGLE_IN_RADIAN = 10;
+	const ANGLE_IN_GRAD = 12;
+	const ANGLE_IN_DEGREE = 11;
+	let angleMeasure = ANGLE_IN_RADIAN;
+
 	const stepExec = (forceUpdateRegs = true) => {
 		IK1303.keybY = 1;
 		IK1303.keybX = angleMeasure;
@@ -1600,8 +1720,8 @@
 
 	const undoStack = new SizeLimitedStack(1000);
 	const undoButton = document.getElementById('undo_button');
-	let waitKeyIndex = WAIT_INIT;
 	let lastSignificantState; // = undefined;
+	let lastKeyState = '';
 	let lastHintForUndo = '';
 	let lastKeyPressed = '';
 
@@ -1622,48 +1742,48 @@
 
 	const initUndoState = () => {
 		lastSignificantState = undefined;
-		waitKeyIndex = WAIT_INIT;
+		lastKeyState = '';
 		lastHintForUndo = '';
 		lastKeyPressed = '';
 	};
 
 	const prepareUndo = (key, keyInfo) => {
-		if (waitKeyIndex === WAIT_INIT) {
+		if (lastKeyState === '') {
 			lastSignificantState = getCalcState();
+			lastKeyState = 'init';
 		}
-		const newWaitKeyIndex = keyInfo.next[waitKeyIndex];
-		let hint = keyInfo.hint[waitKeyIndex];
-		switch (newWaitKeyIndex) {
-			case WAIT_K_IS_ON:
+		const item = keyInfo[lastKeyState];
+		const newKeyState = ('next' in item) ? item.next : 'done';
+		switch (newKeyState) {
+			case 'keyK':
 				if (((key === 'bRecall') || (key === 'bStore')) && (key !== lastKeyPressed)) {
 					// For хП and Пх used "last" rule: K + хП + Пх + 8 = КПх8
-					lastHintForUndo = keyInfo.hint[WAIT_K_IS_ON];
-					waitKeyIndex = WAIT_REG;
+					lastHintForUndo = keyInfo.keyK.hint;
+					lastKeyState = 'wReg';
 					break;
+					// For equal used "ignore" rule: K + хП + хП + 8 = K{x}
 				}
 				/* falls through */
-				// For other used "ignore" rule: K + хП + хП + 8 = K{x}
-			case WAIT_F_IS_ON:
-			case WAIT_REG:
-				lastHintForUndo = hint;
-				waitKeyIndex = newWaitKeyIndex;
+			case 'keyF':
+			case 'wReg':
+				lastHintForUndo = item.hint;
+				lastKeyState = newKeyState;
 				break;
-			case WAIT_DONE:
-				if ((waitKeyIndex === WAIT_REG) && (hint.length === 1)) {
-					hint = lastHintForUndo + hint; // Sample 'Kx=0' + 'c'
-				}
+			case 'done':
 				undoStack.push({
 					state: lastSignificantState,
 					hint: undoButton.textContent});
-				undoButton.textContent = `Отменить "${hint}"`;
+				// For reg sequence add reg prefix. Sample 'Kx=0' + 'c'
+				const hintPrefix = ((lastKeyState === 'wReg') && (item.hint.length === 1)) ? lastHintForUndo : '';
+				undoButton.textContent = `Отменить "${hintPrefix + item.hint}"`;
 				undoButton.hidden = false;
 				initUndoState();
 				break;
-			case WAIT_CANCEL:
+			case 'CF':
 				initUndoState();
 				break;
 			default:
-				throw `Unexpected wait index "${newWaitKeyIndex}" in prepareUndo()`;
+				throw `Unexpected wait index "${newKeyState}" in prepareUndo()`;
 		}
 		lastKeyPressed = key;
 	};
@@ -1682,14 +1802,18 @@
 	let isPowerOn = false;
 	let isPaused = false;
 
-	const pressing = (buttonId) => {
+	const pressing = (buttonId, execNow = false) => {
 		if (!isPowerOn || isPaused || !(buttonId in CALCULATOR_KEYS)) {
 			return;
 		}
 		const keyInfo = CALCULATOR_KEYS[buttonId];
 		prepareUndo(buttonId, keyInfo);
 		[IK1302.keybX, IK1302.keybY] = keyInfo.xy;
-		queueMicrotask(stepExec);
+		if (execNow) {
+			stepExec(true);
+		} else {
+			queueMicrotask(stepExec);
+		}
 	};
 
 	const changeAngleMeasure = (value, onlyWhenOn = true) => {
@@ -1823,16 +1947,13 @@
 
 		const parseCommand = (commandText) => {
 			const mnemonic = MNEMONICS.find((item) =>
-				((item.type !== TYPE_REG) && item.text.includes(commandText)) ||
-				((item.type === TYPE_REG) && item.text.includes(commandText.slice(0, -1)))
+  				((item.type === 'REG') && item.text.includes(commandText.slice(0, -1))) ||
+				((item.type !== 'REG') && item.text.includes(commandText))
 			);
 			if (mnemonic === undefined) { // Numeric code
 				return fromHex(commandText.replace(/[-.]/g, 'A'));
 			}
-			if (mnemonic.type !== TYPE_REG) {
-				return mnemonic.code;
-			}
-			return mnemonic.code + fromHex(commandText.slice(-1));
+			return mnemonic.code + ((mnemonic.type === 'REG') ? fromHex(commandText.slice(-1)) : 0);
 		};
 
 		// Set all commands to default 0
@@ -1912,8 +2033,8 @@
 				continue;
 			}
 			const mnemonic = MNEMONICS.find((item) =>
-				((item.type !== TYPE_REG) && (code === item.code)) ||
-				((item.type === TYPE_REG) && (codeDiv16 === item.code / 0x10) && (codeMod16 !== 0xF))
+				((item.type !== 'REG') && (code === item.code)) ||
+				((item.type === 'REG') && (codeDiv16 === item.code / 16) && (codeMod16 !== 0xF))
 			);
 			if (mnemonic === undefined) {
 				if ((code < 10) && useTextMnemonic) { // 0..9 without leading 0
@@ -1923,9 +2044,9 @@
 				continue;
 			}
 			colorGroups[iAddr] = mnemonic.color;
-			isJumpCode = (mnemonic.type === TYPE_JUMP);
+			isJumpCode = (mnemonic.type === 'JUMP');
 			if (useTextMnemonic) {
-				commands[iAddr] = mnemonic.text[0] + ((mnemonic.type !== TYPE_REG) ? '' : hexChar(codeMod16));
+				commands[iAddr] = mnemonic.text[0] + ((mnemonic.type === 'REG') ? hexChar(codeMod16) : '');
 			}
 		}
 
@@ -2020,24 +2141,25 @@
 		if (text === null) {
 			return;
 		}
-		const textLength = text.length;
 		let stateStr = '';
-		let iText = 0;
-		while (iText < textLength) {
-			const packet = [];
-			while ((iText < textLength) && (BASE38_CHARS.indexOf(text[iText]) !== -1)) {
-				packet.push(text[iText]);
-				iText++;
-			}
-			if (packet.length > 0) {
+		const textLength = text.length;
+		let textPos = 0;
+		while (textPos < textLength) {
+			let textChar = text[textPos];
+			if (BASE38_CHARS.includes(textChar)) {
+				const packet = [];
+				do {
+					packet.push(textChar);
+					textPos++;
+					textChar = (textPos < textLength) ? text[textPos] : ' ';
+				} while (BASE38_CHARS.includes(textChar));
 				const repCount = packet.reduce((result, chr, index) => (
 					result + BASE38_CHARS.indexOf(chr) * (BASE38_CHARS.length ** index)
 				), 0);
 				stateStr += '0'.repeat(repCount);
-			} else {
-				stateStr += text[iText];
-				iText++;
 			}
+			stateStr += textChar;
+			textPos++;
 		}
 		turnOff();
 		changeAngleMeasure(fromHex(stateStr[0]));
@@ -2080,6 +2202,32 @@
 			chipIK13.needUpdateDisplay = parseInt(stateStr[350 + 162 * iChip], 10) !== 0;
 		}
 		turnOn();
+	};
+
+	const pasteFromClipboard = (event) => {
+		event.preventDefault();
+		const text = event.clipboardData.getData('text');
+		for (const chr of text) {
+			stepExec(true);
+			if (chr >= '0' && chr <= '9') {
+				pressing(`b${chr}`, true);
+				continue;
+			}
+			switch (chr) {
+				case ' ':
+					// ignore
+					break;
+				case '.':
+				case ',':
+					pressing('bPoint', true);
+					break;
+				case '^':
+					pressing('bPower', true);
+					break;
+				default:
+					return;
+			}
+		}
 	};
 
 	// Main script body
@@ -2145,8 +2293,14 @@
 	});
 
 	document.body.addEventListener('keydown', (event) => {
-		if (isPowerOn && (document.activeElement !== programMemo)) {
+		if (isPowerOn && (document.activeElement !== programMemo) && !event.shiftKey) { // Skip shift prevent Shift+Ins as Ins
 			keyboardHook(event.keyCode);
+		}
+	});
+
+	document.body.addEventListener('paste', (event) => {
+		if (isPowerOn && (document.activeElement !== programMemo)) {
+			pasteFromClipboard(event);
 		}
 	});
 
