@@ -2206,6 +2206,8 @@
 	const pasteFromClipboard = (event) => {
 		event.preventDefault();
 		const text = event.clipboardData.getData('text');
+		let useNeg = false; // /-/ must be pressed after digits to take effect
+		forLoop:
 		for (const chr of text) {
 			stepExec(true);
 			if (chr >= '0' && chr <= '9') {
@@ -2220,12 +2222,24 @@
 				case ',':
 					pressing('bPoint', true);
 					break;
+				case '-':
+					useNeg = true;
+					break;
 				case '^':
+					if (useNeg) {
+						pressing('bNeg', true);
+						useNeg = false;
+						stepExec(true);
+					}
 					pressing('bPower', true);
 					break;
 				default:
-					return;
+					break forLoop; // Unexpected char
 			}
+		}
+		if (useNeg) {
+			stepExec(true);
+			pressing('bNeg', true);
 		}
 	};
 
