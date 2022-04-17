@@ -1861,7 +1861,7 @@
 
 	const NORMAL_DELAY = 300;
 	const SHORT_DELAY = 4;
-	let execDelay = NORMAL_DELAY;
+	let execDelay = (document.getElementById('change_speed').checked) ? SHORT_DELAY : NORMAL_DELAY;
 
 	const execLoop = async () => {
 		while (isPowerOn) {
