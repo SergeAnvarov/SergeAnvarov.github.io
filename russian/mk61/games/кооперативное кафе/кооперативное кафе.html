@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta content="true" name="HandheldFriendly"/>
+	<meta content="width" name="MobileOptimized"/>
+	<meta content="yes" name="apple-mobile-web-app-capable"/>
+	<meta name="description" content="Кооперативное кафе. Игра. ПМК. МК-61"/>
+	<title>Кооперативное кафе</title>
+
+<style>
+
+span.but, span.but_f, span.but_k, span.but_cx, span.but_b, span.reg, span.op_f, span.op_k {
+	border:thin solid black;
+	border-radius:4px;
+	display:inline-block;
+	font-size:1.1em;
+	font-weight:bold;
+	font-family:monospace;
+	text-align:center;
+	min-width:2.3em;
+	white-space:nowrap;
+}
+
+sup {
+	line-height:0;
+}
+
+span.but {
+	background-color:#CCCCCC;
+	color:black;
+}
+
+span.but_f {
+	background-color:#F5E345;
+	color:black;
+}
+
+span.but_k {
+	background-color:LightSkyBlue;
+	color:white;
+}
+
+span.but_cx {
+	background-color:#F00505;
+	color:white;
+}
+
+span.but_b {
+	background-color:black;
+	color:white;
+}
+
+span.reg {
+	background-color:black;
+	color:white;
+}
+
+span.op_f {
+	background-color:black;
+	color:yellow;
+}
+
+span.op_k {
+	background-color:black;
+	color:#00BFFF;
+}
+
+.code {
+	background-color:#103810;
+	color:#77FF77;
+	font-size:1.1em;
+	font-family:monospace;
+	font-weight:bold;
+	padding:1px 2px 1px 2px;
+	white-space:pre;
+}
+
+table {
+	border-collapse:collapse;
+}
+
+table, th, td {
+	border:1px solid black;
+}
+
+.center {
+	text-align:center;
+}
+
+details summary {
+	cursor: pointer;
+}
+details summary > * {
+	display: inline;
+}
+
+a[target="_blank"] {
+	background: url(https://upload.wikimedia.org/wikipedia/commons/6/64/Icon_External_Link.png) center right no-repeat;
+    padding-right: 0.8em;
+}
+
+</style>
+
+</head>
+
+<body>
+	<header>
+		<h1>Кооперативное кафе</h1>
+	</header>
+
+	<p>
+		Экономический симулятор.
+	</p>
+
+	<h2>Пролог</h2>
+
+	<blockquote>
+		<p>
+			Предположим, что вы, подобно сотням тысяч советских граждан, получили разрешение
+			на индивидуальную трудовую деятельность, и открыли маленькую пищевую <q>точку</q> &ndash;
+			кафетерий или бутербродную.
+		</p>
+		<p>
+			В ежедневном обороте имеется, для начала, 250 рублей.
+			Каждое утро необходимо съездить на рынок и купить свежих продуктов из расчёта примерно
+			5 рублей на одного предполагаемого клиента. Чем больше покупаете, тем продукты дешевле:
+			скидка оптовому покупателю &ndash; закон рынка. Но если вы приобретёте их больше,
+			чем заглянет к вам посетителей, то назавтра нереализованные товары частично испортятся.
+			Если же еды на всех не хватит, то обиженные вряд ли придут к вам ещё раз. В любом
+			случае вы останетесь в проигрыше, так что надо искать оптимум.
+		</p>
+		<p>
+			После рынка заезжаете в кооператив по рекламе, которая, как известно, двигатель торговли.
+			Каким образом коллеги кооператоры будут вести свою рекламную атаку на население, не
+			суть важно. Главное &ndash; они честно отработают полученные от вас деньги. Впрочем,
+			и у них возможности не безграничны: если репутация вашего заведения подпорчена, то
+			никакой рекламой народ туда не заманишь.
+		</p>
+		<p>
+			Наконец вы вернулись к себе. Можно заняться приготовлением разносолов и расстегаев,
+			куличей и калачей, карасей в сметане и мясо в горшочках. И, разумеется, безалкогольного
+			сбитня и ячменного кофе. Электричество, газ, вода, бензин (на доставку продуктов)
+			тоже не бесплатны, поэтому придётся добавить к вашим тратам накладные расходы
+			по полтиннику на среднестатистического клиента.
+		</p>
+		<p>
+			Итак, деньги заплачены, работа идёт полным ходом. А итоги дня определит
+			Его Величество Покупатель.
+		</p>
+	</blockquote>
+
+	Скопировано из текста журнала
+	<a href="http://zhurnalko.net/=nauka-i-tehnika/tehnika-molodezhi/1988-05--num46" target="_blank">
+		Техника Молодёжи №5 за 1988.
+	</a>
+
+	<h2>Задача</h2>
+	<p>
+		Постепенно увеличивать доход предприятия за счёт привлечения новых клиентов, при этом
+		соблюдая баланс интересов клиентов и собственной выгоды.
+	</p>
+
+	<h2>Игровой процесс</h2>
+	<p>
+		Здесь используется немного модифицированная мной версия программы. Она полностью
+		совпадает с исходной по логике работы, почти полностью по используемым
+		регистрам, но короче на 13 команд.
+	</p>
+
+	<h3>Распределение регистров</h3>
+	<table>
+		<tr>
+			<th>Регистр</th>
+			<th>Значение</th>
+		</tr>
+		<tr>
+			<th>R0</th>
+			<td>Не используется.</td>
+		</tr>
+		<tr>
+			<th>R1</th>
+			<td>Рабочий.</td>
+		</tr>
+		<tr>
+			<th>R2</th>
+			<td>Рабочий. Будет содержать сумму, потраченную на продукты.</td>
+		</tr>
+		<tr>
+			<th>R3</th>
+			<td>
+				Рыночная стоимость для одного клиента без учёта скидки.
+				<span class="code"> 5.           </span>.
+			</td>
+		</tr>
+		<tr>
+			<th>R4</th>
+			<td>
+				Рабочий. В конце игрового дня будет содержать фактическую
+				сумму, затраченную в среднем одним посетителем.
+			</td>
+		</tr>
+		<tr>
+			<th>R5</th>
+			<td>
+				Деньги, которые посетитель рассчитывает оставить у вас.
+				<span class="code"> 7.           </span>.
+			</td>
+		</tr>
+		<tr>
+			<th>R6</th>
+			<td>Не используется.</td>
+		</tr>
+		<tr>
+			<th>R7</th>
+			<td>
+				Буква <span class="code"> E.           </span>
+				Получается как
+				<span class="but">1</span>,
+				<span class="but_k">К</span><span class="but">-</span>,
+				<span class="but">ВП</span>,
+				<span class="but_b">x&rarr;П</span><span class="but">7</span>.
+			</td>
+		</tr>
+		<tr>
+			<th>R8</th>
+			<td>
+				Процент, который вы пускаете в оборот от дохода. В оригинале
+				было 3% отчисления на собственные нужды, т.&#8239;е. используется 100 - 3 = 97%.
+				<span class="code"> 0.97         </span>.
+			</td>
+		</tr>
+		<tr>
+			<th>R9</th>
+			<td>
+				Адрес начала <q>дня</q> программы.
+				<span class="code"> 72.          </span>.
+			</td>
+		</tr>
+		<tr>
+			<th>Ra</th>
+			<td>
+				Нереализованные остатки продукции.
+				<span class="code"> 0.           </span>.
+			</td>
+		</tr>
+		<tr>
+			<th>Rb</th>
+			<td>
+				Если это положительное число, то количество людей, пришедших в кафе,
+				но не обслуженных. Если отрицательное, то количество пустых мест
+				в зале.
+				<span class="code"> 0.           </span>.
+			</td>
+		</tr>
+		<tr>
+			<th>Rc</th>
+			<td>
+				Постоянные клиенты. Наша опора. Для начала
+				<span class="code"> 30.          </span>.
+			</td>
+		</tr>
+		<tr>
+			<th>Rd</th>
+			<td>
+				Деньги.
+				<span class="code"> 250.         </span>.
+			</td>
+		</tr>
+		<tr>
+			<th>Re</th>
+			<td>
+				Адрес процедуры ввода суммы.
+				<span class="code"> 74.          </span>.
+			</td>
+		</tr>
+	</table>
+
+	<h3>Игра</h3>
+
+	<p>
+		Переключатель Р-ГРД-Г в положении Р. Игра начинается командой
+		<span class="but_b">В/О</span>, <span class="but_b">С/П</span>.
+		На индикаторе <span class="code"> Е.           </span>. В регистре
+		Y имеющиеся в наличии 250 рублей. Пора выделять средства на
+		приобретения продуктов. Напомним, что на одного предполагаемого
+		клиента надо потратить 5 рублей. Имеем 30 завсегдатаев, человек
+		8&ndash;10 привлечёт реклама, возможно, 1&ndash;2 заглянут с улицы.
+		Выделяем для обслуживания 40 посетителей 200 рублей.
+		<span class="code"> 200.         </span>, <span class="but_b">С/П</span>.
+	</p>
+	<p>
+		Загорается <span class="code"> Г.           </span>. В регистре Y 64
+		рубля с копейками (скидка за оптовость была ощутимой). Теперь самое
+		время платить за рекламу. Выделим на это дело, скажем, десятку:
+		<span class="code"> 10.          </span>, <span class="but_b">С/П</span>.
+	</p>
+	<p>
+		На индикаторе <span class="code"> С.           </span>.  А в регистре Y
+		оставшиеся у нас 54 рубля и 14 копеек. Рассчитываем на 40 клиентов,
+		значит, достаточно 20 рублей накладных расходов:
+		<span class="code"> 20.          </span>, <span class="but_b">С/П</span>.
+	</p>
+	<p>
+		ПМК подводит итоги дня. Через некоторое время узнаём, что в кассе
+		теперь 265 рублей 91 копейка (на экранчике
+		<span class="code"> Е.           </span> в регистре Y &ndash; деньги).
+		Обслужили мы, как и намеревались, 40 человек
+		(<span class="but_b">П&rarr;x</span><span class="reg">c</span>). Зато
+		17 потенциальных клиентов ушли из заведения не солоно хлебавши
+		(<span class="but_b">П&rarr;x</span><span class="reg">b</span>).
+		Это плохо &ndash; завтра ни они, ни их друзья и знакомые к нам
+		уже не заглянут. С другой стороны, обеды обошлись едокам по 6
+		рублей (<span class="but_b">П&rarr;x</span><span class="but">4</span>),
+		дешевле, чем они рассчитывали, так что добрый слух о нашем кафе
+		тоже распространится. В общем первый день завершился вполне
+		удовлетворительно.
+	</p>
+	<p>
+		ПМК ждёт новой информации (новый день). Повторим:
+		<span class="code"> 200.         </span>, <span class="but_b">С/П</span>,
+		<span class="code"> 10.          </span>, <span class="but_b">С/П</span>,
+		<span class="code"> 20.          </span>, <span class="but_b">С/П</span>.
+		Результат: 259 рублей 26 копеек. Почему снижение? В регистре Rb &ndash;
+		минус 3.795. Почти 4 обеденные порции остались не востребованными,
+		причём большая часть этих продуктов испортилась &ndash; остатки
+		полноценной  пищи (1.26) располагаются в регистре Ra. В регистре Rc
+		число 36.2, т.&#8239;е. пообедало у нас всего 36 человек и ещё
+		кто-то перехватил какую-то мелочь. Вот ведь как отыгрались вчерашние
+		обиженные клиенты!
+	</p>
+	<p>
+		Но продолжим свою трудовую деятельность. Как быть? Неужели репутация
+		кафе упала бесповоротно? Была не была, повторяем прежнюю стратегию:
+		<span class="code"> 200.         </span>, <span class="but_b">С/П</span>,
+		<span class="code"> 10.          </span>, <span class="but_b">С/П</span>,
+		<span class="code"> 20.          </span>, <span class="but_b">С/П</span>.
+		Результат неожиданный: в кассе 274 рубля, стало быть, наблюдался наплыв
+		(а с другой стороны, это естественно, ведь накануне были свободные места).
+		Мы, как и намечали, накормили 40 клиентов&hellip; Смотрим Rb. О ужас!
+		Почти столько же ушло ни с чем. Можно закрывать лавочку &ndash; завтра
+		никого не будет. Население таких очередей не прощает. По крайней мере
+		в кооперативном секторе.
+	</p>
+	<h3>Новая игра</h3>
+	<p>
+		Перед началом очередной игры нужно будет обнулить регистры Ra, Rb.
+		Задать начальное количество постоянных клиентов в Rc, и
+		прописать начальный баланс в Rd.
+	</p>
+
+	<hr>
+
+	<h3>Текст программы</h3>
+	<table class="center">
+		<tr>
+			<th>&#8202;#&#8202;|&#8202;</th>
+			<th>00</th>
+			<th>01</th>
+			<th>02</th>
+			<th>03</th>
+			<th>04</th>
+			<th>05</th>
+			<th>06</th>
+			<th>07</th>
+			<th>08</th>
+			<th>09</th>
+		</tr>
+		<tr>
+			<th>&#8202;00&#8202;|&#8202;</th>
+			<td><span class="but_k">К</span><span class="but_b">БП</span><span class="but">9</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
+			<td><span class="but_f">F</span><span class="op_f">&radic;</span></td>
+			<td><span class="but">+</span></td>
+			<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but_f">F</span><span class="op_f">&radic;</span></td>
+			<td><span class="but_f">F</span><span class="op_f">tg<sup>-1</sup></span></td>
+			<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+			<td><span class="but">&times;</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;10&#8202;|&#8202;</th>
+			<td><span class="but">2</span></td>
+			<td><span class="but">&divide;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+			<td><span class="but">+</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+			<td><span class="but">-</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+			<td><span class="but">-</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+			<td><span class="but">&times;</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;20&#8202;|&#8202;</th>
+			<td><span class="but_f">F</span><span class="op_f">x&lt;0</span></td>
+			<td><span class="but">23</span></td>
+			<td><span class="but_cx">Cx</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">4</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but">2</span></td>
+			<td><span class="but">&times;</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;30&#8202;|&#8202;</th>
+			<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+			<td><span class="but">&divide;</span></td>
+			<td><span class="but">+</span></td>
+			<td><span class="but">&lt;-&gt;</span></td>
+			<td><span class="but">-</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x&lt;0</span></td>
+			<td><span class="but">40</span></td>
+			<td><span class="but">+</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+			<td><span class="but_cx">Cx</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;40&#8202;|&#8202;</th>
+			<td><span class="but_f">F</span><span class="op_f">&pi;</span></td>
+			<td><span class="but">&divide;</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">a</span></td>
+			<td><span class="but">&lt;-&gt;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+			<td><span class="but">+</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+			<td><span class="but">&divide;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+			<td><span class="but">&lt;-&gt;</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;50&#8202;|&#8202;</th>
+			<td><span class="but_b">x&rarr;П</span><span class="but">4</span></td>
+			<td><span class="but">&divide;</span></td>
+			<td><span class="but">В&uarr;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+			<td><span class="but">-</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">b</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x&lt;0</span></td>
+			<td><span class="but">64</span></td>
+			<td><span class="but">/-/</span></td>
+			<td><span class="but">3</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;60&#8202;|&#8202;</th>
+			<td><span class="but">&divide;</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">a</span></td>
+			<td><span class="but">&lt;-&gt;</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+			<td><span class="but">&times;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+			<td><span class="but">+</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">8</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;70&#8202;|&#8202;</th>
+			<td><span class="but">&times;</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+			<td><span class="but_b">С/П</span></td>
+			<td><span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="reg">e</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+			<td><span class="but">&lt;-&gt;</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;80&#8202;|&#8202;</th>
+			<td><span class="but">-</span></td>
+			<td><span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="reg">e</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+			<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+			<td><span class="but_b">В/О</span></td>
+			<td colspan="5"></td>
+		</tr>
+	</table>
+
+</body>
+
+</html>
