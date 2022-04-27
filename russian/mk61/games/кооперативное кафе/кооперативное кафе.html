@@ -162,7 +162,7 @@ a[target="_blank"] {
 	<p>
 		Здесь используется немного модифицированная мной версия программы. Она полностью
 		совпадает с исходной по логике работы, почти полностью по используемым
-		регистрам, но короче на 14 команд.
+		регистрам, но короче на 15 команд.
 	</p>
 
 	<h3>Распределение регистров</h3>
@@ -435,31 +435,30 @@ a[target="_blank"] {
 			<th>&#8202;40&#8202;|&#8202;</th>
 			<td><span class="but">&divide;</span></td>
 			<td><span class="but_b">x&rarr;П</span><span class="reg">a</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
 			<td><span class="but">+</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
 			<td><span class="but">&divide;</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
-			<td><span class="but">&lt;-&gt;</span></td>
 			<td><span class="but_b">x&rarr;П</span><span class="but">4</span></td>
+			<td><span class="but">&divide;</span></td>
 		</tr>
 		<tr>
 			<th>&#8202;50&#8202;|&#8202;</th>
-			<td><span class="but">&divide;</span></td>
 			<td><span class="but">В&uarr;</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
 			<td><span class="but">-</span></td>
 			<td><span class="but_b">x&rarr;П</span><span class="reg">b</span></td>
 			<td><span class="but_f">F</span><span class="op_f">x&lt;0</span></td>
-			<td><span class="but">63</span></td>
+			<td><span class="but">62</span></td>
 			<td><span class="but">/-/</span></td>
 			<td><span class="but">3</span></td>
 			<td><span class="but">&divide;</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">a</span></td>
 		</tr>
 		<tr>
 			<th>&#8202;60&#8202;|&#8202;</th>
-			<td><span class="but_b">x&rarr;П</span><span class="reg">a</span></td>
 			<td><span class="but">&lt;-&gt;</span></td>
 			<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
@@ -469,10 +468,10 @@ a[target="_blank"] {
 			<td><span class="but">+</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="but">8</span></td>
 			<td><span class="but">&times;</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
 		</tr>
 		<tr>
 			<th>&#8202;70&#8202;|&#8202;</th>
-			<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
 			<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
@@ -482,14 +481,14 @@ a[target="_blank"] {
 			<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
 			<td><span class="but">&lt;-&gt;</span></td>
 			<td><span class="but">-</span></td>
+			<td><span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="reg">e</span></td>
 		</tr>
 		<tr>
 			<th>&#8202;80&#8202;|&#8202;</th>
-			<td><span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="reg">e</span></td>
 			<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
 			<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
 			<td><span class="but_b">В/О</span></td>
-			<td colspan="6"></td>
+			<td colspan="7"></td>
 		</tr>
 	</table>
 
