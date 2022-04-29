@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta content="true" name="HandheldFriendly"/>
+	<meta content="width" name="MobileOptimized"/>
+	<meta content="yes" name="apple-mobile-web-app-capable"/>
+	<meta name="description" content="Кооперативное кафе 2. Игра. ПМК. МК-61"/>
+	<title>Кооперативное кафе</title>
+
+<style>
+
+span.but, span.but_f, span.but_k, span.but_cx, span.but_b, span.reg, span.op_f, span.op_k {
+	border:thin solid black;
+	border-radius:4px;
+	display:inline-block;
+	font-size:1.1em;
+	font-weight:bold;
+	font-family:monospace;
+	text-align:center;
+	min-width:2.3em;
+	white-space:nowrap;
+}
+
+sup {
+	line-height:0;
+}
+
+span.but {
+	background-color:#CCCCCC;
+	color:black;
+}
+
+span.but_f {
+	background-color:#F5E345;
+	color:black;
+}
+
+span.but_k {
+	background-color:LightSkyBlue;
+	color:white;
+}
+
+span.but_cx {
+	background-color:#F00505;
+	color:white;
+}
+
+span.but_b {
+	background-color:black;
+	color:white;
+}
+
+span.reg {
+	background-color:black;
+	color:white;
+}
+
+span.op_f {
+	background-color:black;
+	color:yellow;
+}
+
+span.op_k {
+	background-color:black;
+	color:#00BFFF;
+}
+
+.code {
+	background-color:#103810;
+	color:#77FF77;
+	font-size:1.1em;
+	font-family:monospace;
+	font-weight:bold;
+	padding:1px 2px 1px 2px;
+	white-space:pre;
+}
+
+table {
+	border-collapse:collapse;
+}
+
+table, th, td {
+	border:1px solid black;
+}
+
+.center {
+	text-align:center;
+}
+
+a[target="_blank"] {
+	background: url(https://upload.wikimedia.org/wikipedia/commons/6/64/Icon_External_Link.png) center right no-repeat;
+    padding-right: 0.8em;
+}
+
+</style>
+
+</head>
+
+<body>
+	<header>
+		<h1>Кооперативное кафе 2</h1>
+	</header>
+
+	<p>
+		Экономический симулятор.
+	</p>
+
+	<h2>
+		Предыстория
+	</h2>
+
+	<p>
+		На самом деле это немного модифицированная версия программы
+		<a href="https://sergeanvarov.github.io/russian/mk61/games/кооперативное%20кафе/кооперативное%20кафе.html" target="_blank">
+			Кооперативное кафе</a
+		>.
+		Поэтому все подробности задач и плана игры смотрите там. Здесь приведены только
+		отличия и сама программа.
+	</p>
+
+	<h3>Отличия</h3>
+
+	<ul>
+		<li>
+			<strong>Скидки при покупке продуктов</strong>. В исходной версии
+			скидки были тем больше, чем меньше сумма покупки. Это не очень похоже
+			на реальность. Поэтому в этой версии скидки увеличиваются (в %), при
+			увеличении суммы закупки.
+		</li>
+		<li>
+			<strong>Реклама</strong>. В исходной версии отдача от рекламы
+			влияла на количество посетителей очень нелинейно. Бывало разница между
+			частью копейки (!) и нулём была просто огромной. Конечно, это придаёт
+			игре взрывной характер, и, возможно, и привлекает,
+			но тяжело что-то считать рекламой за 0.001 рубля.
+			В этой версии зависимость сделана почти линейная - сколько потратили,
+			столько и привлекли. Соответственно, состояние переключателя Р-ГРД-Г
+			уже не влияет на работу программы.
+		</li>
+		<li>
+			<strong>Округление суммы</strong>. Сумма округляется до копеек. В том
+			числе фактическая цена за одну порцию.
+		</li>
+		<li>
+			<strong>Целое число клиентов</strong>. Клиенты тоже округляются до целых.
+			Как число постоянных, так и количество необслуженных (или пустых мест).
+		</li>
+	</ul>
+
+	<p>
+		Программа всё так же совместима с ПМК БЗ-34. Поэтому регистр R0 не используется.
+		Но R6 уже задействован, куда перекочевала константа
+		<span class="code"> E.           </span>.
+	</p>
+	<p>
+		Далее приведены только отличия от исходного варианта. Остальное как в оригинале.
+	</p>
+
+	<h3>Распределение регистров</h3>
+	<table>
+		<tr>
+			<th>Регистр</th>
+			<th>Значение</th>
+		</tr>
+		<tr>
+			<th>R6</th>
+			<td>
+				Буква <span class="code"> E.           </span>
+				Получается как
+				<span class="but">1</span>,
+				<span class="but_k">К</span><span class="but">-</span>,
+				<span class="but">ВП</span>,
+				<span class="but_b">x&rarr;П</span><span class="but">7</span>.
+			</td>
+		</tr>
+		<tr>
+			<th>R7</th>
+			<td>
+				<span class="code"> 89.          </span>.
+				Адрес процедуры округления. А также коэффициент для расчёта скидки:
+				S &times; Ln(S) / R7.
+			</td>
+		</tr>
+		<tr>
+			<th>R9</th>
+			<td>
+				Адрес начала <q>дня</q> программы. Смысл как в оригинале,
+				но значение поменялось.
+				<span class="code">-75.          </span>.
+				Минус используется, чтобы после косвенной адресации
+				число было 8-значным. Это используется для округления
+				до целых.
+			</td>
+		</tr>
+		<tr>
+			<th>Re</th>
+			<td>
+				Адрес процедуры ввода суммы.
+				<span class="code"> 777777.      </span>.
+				Значение 6-значное (для перехода важны только две последние цифры).
+				Шестизначность используется для округления до копеек.
+			</td>
+		</tr>
+	</table>
+
+	<hr>
+
+	<h2>Текст программы</h2>
+
+	<table class="center">
+		<tr>
+			<th>&#8202;#&#8202;|&#8202;</th>
+			<th>00</th>
+			<th>01</th>
+			<th>02</th>
+			<th>03</th>
+			<th>04</th>
+			<th>05</th>
+			<th>06</th>
+			<th>07</th>
+			<th>08</th>
+			<th>09</th>
+		</tr>
+		<tr>
+			<th>&#8202;00&#8202;|&#8202;</th>
+			<td><span class="but_k">К</span><span class="but_b">БП</span><span class="but">9</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
+			<td><span class="but_f">F</span><span class="op_f">Ln</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
+			<td><span class="but">&divide;</span></td>
+			<td><span class="but">&times;</span></td>
+			<td><span class="but">+</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">7</span></td>
+			<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;10&#8202;|&#8202;</th>
+			<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+			<td><span class="but">+</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+			<td><span class="but">-</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+			<td><span class="but">-</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+			<td><span class="but">&times;</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x&lt;0</span></td>
+			<td><span class="but">21</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;20&#8202;|&#8202;</th>
+			<td><span class="but_cx">Cx</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">4</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but">+</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">b</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+			<td><span class="but">&divide;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+			<td><span class="but">+</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;30&#8202;|&#8202;</th>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">a</span></td>
+			<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+			<td><span class="but">-</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x&ge;0</span></td>
+			<td><span class="but">29</span></td>
+			<td><span class="but_f">F</span><span class="op_f">&pi;</span></td>
+			<td><span class="but">&divide;</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">a</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;40&#8202;|&#8202;</th>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+			<td><span class="but">+</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+			<td><span class="but">&divide;</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">7</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">4</span></td>
+			<td><span class="but">&divide;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+			<td><span class="but_b">ПП</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;50&#8202;|&#8202;</th>
+			<td><span class="but">90</span></td>
+			<td><span class="but">В&uarr;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+			<td><span class="but_b">ПП</span></td>
+			<td><span class="but">90</span></td>
+			<td><span class="but">-</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">b</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x&lt;0</span></td>
+			<td><span class="but">65</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;60&#8202;|&#8202;</th>
+			<td><span class="but">/-/</span></td>
+			<td><span class="but">3</span></td>
+			<td><span class="but">&divide;</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">a</span></td>
+			<td><span class="but_cx">Cx</span></td>
+			<td><span class="but">-</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+			<td><span class="but">&times;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;70&#8202;|&#8202;</th>
+			<td><span class="but">+</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">8</span></td>
+			<td><span class="but">&times;</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">7</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+			<td><span class="but_b">С/П</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;80&#8202;|&#8202;</th>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">7</span></td>
+			<td><span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="reg">e</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+			<td><span class="but">&lt;-&gt;</span></td>
+			<td><span class="but">-</span></td>
+			<td><span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="reg">e</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+			<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+			<td><span class="but">В&uarr;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">e</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;90&#8202;|&#8202;</th>
+			<td><span class="but">+</span></td>
+			<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+			<td><span class="but">-</span></td>
+			<td><span class="but_b">В/О</span></td>
+			<td colspan="6"></td>
+		</tr>
+	</table>
+
+</body>
+
+</html>
