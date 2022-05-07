@@ -399,6 +399,11 @@ a[target="_blank"] {
 					<a href="#id_commands">Приложение. Все команды</a>
 					<ul>
 						<li>
+							<a href="#id_command_times" open="open">
+								Среднее время выполнения некоторых команд
+							</a>
+						</li>
+						<li>
 							<a href="#id_F_commands">Команды с кодом F</a>
 						</li>
 					</ul>
@@ -9432,6 +9437,100 @@ a[target="_blank"] {
 			10.<sup>|+64</sup> попадёт в X1, а команда <span class="but">/-/</span>
 			только проявит ошибку на экране.
 		</p>
+
+		<hr>
+
+		<details id="id_command_times" open="open">
+			<summary><h3>Среднее время выполнения некоторых команд</h3></summary>
+			<p>
+				Среднее время выполнения некоторых команд на реальном ПМК для ориентировки.
+				Фактически может отличаться до 10% в зависимости от партии контроллеров,
+				которые использовались при монтаже калькулятора.
+			</p>
+			<table>
+				<tr>
+					<th>Время в секундах</th>
+					<th>Команды</th>
+				</tr>
+				<tr>
+					<th>0.20</th>
+					<td>
+						<span class="but">+</span>,
+						<span class="but">-</span>,
+						<span class="but">&times;</span>,
+						<span class="but">&divide;</span>,
+						<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>,
+						<span class="but_f">F</span><span class="op_f">&pi;</span>,
+						<span class="but_f">F</span><span class="op_f">1/x</span>,
+						<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span> при целом X,
+						<span class="but_k">K</span><span class="op_k">[x]</span>,
+						<span class="but_k">K</span><span class="op_k">{x}</span>,
+						<span class="but_k">K</span><span class="op_k">|x|</span>,
+						<span class="but_k">K</span><span class="op_k">max</span>,
+						<span class="but_k">K</span><span class="op_k">&or;</span>,
+						<span class="but_k">K</span><span class="op_k">&and;</span>,
+						<span class="but_k">K</span><span class="op_k">ИНВ</span>,
+						<span class="but_k">K</span><span class="op_k">&oplus;</span>.
+					</td>
+				</tr>
+				<tr>
+					<th>0.22</th>
+					<td>
+						<span class="but_f">F</span><span class="op_f">&radic;</span>.
+					</td>
+				</tr>
+				<tr>
+					<th>0.26</th>
+					<td>
+						Ввод чисел в RX (явно или через извлечение из регистра), а
+						также операции
+						<span class="but_f">F</span><span class="op_f">Bx</span> и
+						<span class="but">В&uarr;</span>.
+					</td>
+				</tr>
+				<tr>
+					<th>0.31</th>
+					<td>
+						<span class="but_f">F</span><span class="op_f">x<sup>y</sup></span>
+						если X и Y целые &gt; 0.
+					</td>
+				</tr>
+				<tr>
+					<th>0.40</th>
+					<td>
+						<span class="but_k">K</span><span class="op_k">Сч</span>,
+						<span class="but_f">F</span><span class="op_f">L0</span>
+						&hellip;
+						<span class="but_f">F</span><span class="op_f">L3</span>.
+					</td>
+				</tr>
+				<tr>
+					<th>1.20</th>
+					<td>
+						<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>,
+						<span class="but_f">F</span><span class="op_f">e<sup>x</sup></span>,
+						<span class="but_f">F</span><span class="op_f">Lg</sup></span>,
+						<span class="but_f">F</span><span class="op_f">Ln</sup></span>.
+					</td>
+				</tr>
+				<tr>
+					<th>1.50</th>
+					<td>
+						Тригонометрические функции.
+					</td>
+				</tr>
+				<tr>
+					<th>2.00</th>
+					<td>
+						<span class="but_f">F</span><span class="op_f">x<sup>y</sup></span>.
+					</td>
+				</tr>
+			</table>
+			<p>
+				Нужно ещё учитывать, что при выполнении время чтения команд с дальних
+				адресов немного (1&hellip;4%) медленнее, чем с начальных.
+			</p>
+		</details>
 
 		<hr>
 
