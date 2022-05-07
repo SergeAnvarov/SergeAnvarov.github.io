@@ -1859,9 +1859,13 @@
 		initUndoState();
 	};
 
+	const calcChangeSpeed = () => {
+		execDelay = (document.getElementById('change_speed').checked) ? SHORT_DELAY : NORMAL_DELAY;
+	}
+
 	const NORMAL_DELAY = 300;
 	const SHORT_DELAY = 4;
-	let execDelay = (document.getElementById('change_speed').checked) ? SHORT_DELAY : NORMAL_DELAY;
+	let execDelay = NORMAL_DELAY;
 
 	const execLoop = async () => {
 		while (isPowerOn) {
@@ -2283,9 +2287,7 @@
 	const powerSwitch = () => ((isPowerOn) ? turnOff : turnOn)();
 	document.querySelectorAll('.power_switch').forEach(elem => elem.addEventListener('click', powerSwitch));
 
-	document.getElementById('change_speed').addEventListener('change', (event) => {
-		execDelay = (event.target.checked) ? SHORT_DELAY : NORMAL_DELAY;
-	});
+	document.getElementById('change_speed').addEventListener('change', calcChangeSpeed);
 	undoButton.addEventListener('click', undoLast);
 	document.getElementById('state_to_text').addEventListener('click', showStateAsText);
 	document.getElementById('text_to_state').addEventListener('click', setStateByText);
@@ -2319,6 +2321,7 @@
 
 	window.addEventListener('load', turnOff);
 	window.addEventListener('popstate', turnOff);
+	window.addEventListener('pageshow', calcChangeSpeed); // Update when page restored from cache
 </script>
 
 </body></html>
