@@ -399,7 +399,7 @@ a[target="_blank"] {
 					<a href="#id_commands">Приложение. Все команды</a>
 					<ul>
 						<li>
-							<a href="#id_command_times" open="open">
+							<a href="#id_command_times">
 								Среднее время выполнения некоторых команд
 							</a>
 						</li>
@@ -4450,7 +4450,7 @@ a[target="_blank"] {
 					<p>
 						<strong>Хвосты 0C-оборотней</strong>. В этом случае используются знания
 						Еггогологии. 0С-оборотни &ndash; это числа в диапазоне
-						1.<sup>|+400</sup>&hellip;9.9999999<sup>|+499</sup>.
+						&plusmn;1.<sup>|+400</sup>&hellip;&plusmn;9.9999999<sup>|+499</sup>.
 						Для получения таких чисел (точнее <q>хвостов</q>) воспользуемся программой:
 					</p>
 					<table class="center">
@@ -4551,7 +4551,7 @@ a[target="_blank"] {
 							восстановление X2 с заменой первой цифры на цифру из числа в X
 						</a>
 						можно и первую цифру сделать шестнадцатеричной.
-						Введем простую программу:
+						Введём простую программу:
 					</p>
 					<table class="center">
 						<tr>
@@ -4599,6 +4599,169 @@ a[target="_blank"] {
 					</p>
 				</li>
 			</ol>
+			<p>
+				Тут стоит сделать отступление и сказать, что в принципе на месте знака можно
+				сделать и шестнадцатеричный символ, но это будет только <q>видимость</q>. Т.&#8239;е. просто
+				индикатор будет отображать нестандартное число, но как числом
+				им невозможно пользоваться (сохранить, восстановить и т.&#8239;п.).
+			</p>
+			<p>
+				Для этого можно использовать знания Еггогологии, где
+				<q>Длинные монстры</q>
+				(&plusmn;1.<sup>|+700</sup>&hellip;&plusmn;9.9999999<sup>|+799</sup>)
+				смещают разряды знака, а <q>C-ЕГГ0Г-оборотни</q>
+				(&plusmn;1.<sup>|+600</sup>&hellip;&plusmn;9.9999999<sup>|+699</sup>)
+				вытаскивают	вместо себя содержимое регистра Rc.
+				Для начала введем программу, которая создаст оба
+				<q>монстра</q> и сохранит их в регистры Rd и Rb.
+			</p>
+			<table class="center">
+				<tr>
+					<th>&#8202;#&#8202;|&#8202;</th>
+					<th>00</th>
+					<th>01</th>
+					<th>02</th>
+					<th>03</th>
+					<th>04</th>
+					<th>05</th>
+					<th>06</th>
+					<th>07</th>
+					<th>08</th>
+					<th>09</th>
+				</tr>
+				<tr>
+					<th>&#8202;00&#8202;|&#8202;</th>
+					<td><span class="but_cx">Cx</span></td>
+					<td><span class="but">1</span></td>
+					<td><span class="but">4</span></td>
+					<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+					<td><span class="but">9</span></td>
+					<td><span class="but">5</span></td>
+					<td><span class="but_b">ПП</span></td>
+					<td><span class="but">12</span></td>
+					<td><span class="but">8</span></td>
+					<td><span class="but">5</span></td>
+				</tr>
+				<tr>
+					<th>&#8202;10&#8202;|&#8202;</th>
+					<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">0</span></td>
+					<td><span class="but_b">С/П</span></td>
+					<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+					<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+					<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+					<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+					<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+					<td><span class="but_cx">Cx</span></td>
+					<td><span class="but_b">В/О</span></td>
+					<td colspan="1"></td>
+				</tr>
+			</table>
+			<p>
+				После выполнения содержимое регистров будет следующее:
+			</p>
+			<table>
+				<tr>
+					<th>Регистр</th>
+					<th>Значение</th>
+				</tr>
+				<tr>
+					<th>Rb</th>
+					<td><span class="code"> 1.       680</span></td>
+				</tr>
+				<tr>
+					<th>Rd</th>
+					<td><span class="code"> 1.       760</span></td>
+				</tr>
+			</table>
+			<p>
+				Если теперь в регистре Rc сохранить какое-либо число, с нестандартным
+				порядком, то можно заставить этих монстров <q>прикрыть</q> себя изменённым
+				значением Rc.
+			</p>
+			<table>
+				<tr>
+					<th>Операция</th>
+					<th>Индикатор</th>
+					<th>Пояснение</th>
+				</tr>
+				<tr>
+					<td>33304</td>
+					<td><span class="code"> 33304.      </span></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td><span class="but_k">К</span><span class="op_k">ИНВ</span></td>
+					<td><span class="code"> 8.CC L      </span></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+					<td><span class="code"> C.C L    -01</span></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td><span class="but">ВП</span></td>
+					<td><span class="code"> C.C L     00</span></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td><span class="but">2</span></td>
+					<td><span class="code"> C.C L     02</span></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+					<td><span class="code">-5.6974148 СГ</span></td>
+					<td>Пример числа с нестандартным порядком. Даже отрицательное (шестнадцатеричная арифметика).</td>
+				</tr>
+				<tr>
+					<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+					<td><span class="code">-5.6974148 СГ</span></td>
+					<td>Важно сохранить именно в Rc!</td>
+				</tr>
+				<tr>
+					<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+					<td><span class="code">00.10000000 6</span></td>
+					<td>Так выглядит <q>Длинный монстр</q>, с нулём на месте знака (последняя цифра порядка).</td>
+				</tr>
+				<tr>
+					<td><span class="but_b">Пx&rarr;</span><span class="reg">c</span></td>
+					<td><span class="code"> Г.С 00 00 77</span></td>
+					<td>Реакция <q>монстра</q> &ndash; перевод ПМК в режим ПРГ.</td>
+				</tr>
+				<tr>
+					<td><span class="but_f">F</span><span class="op_f">АВТ</span></td>
+					<td><span class="code">00.10000000 6</span></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td><span class="but_b">Пx&rarr;</span><span class="reg">b</span></td>
+					<td><span class="code"> 0.          </span></td>
+					<td>
+						Содержимое R1, которое является косвенным значением для Rb.
+						Кстати, Rb тоже меняется в соответствии с правилами косвенной
+						адресации на 0.0000001<sup>|+687</sup>.
+					</td>
+				</tr>
+				<tr>
+					<td><span class="but_b">Пx&rarr;</span><span class="reg">b</span></td>
+					<td><span class="code"> 6.8 00 00 69</span></td>
+					<td>Реакция этого <q>монстра</q> на попытку его вытащить аналогична предыдущему.</td>
+				</tr>
+				<tr>
+					<td><span class="but_f">F</span><span class="op_f">АВТ</span></td>
+					<td><span class="code">СГ.9569741480</span></td>
+					<td></td>
+				</tr>
+			</table>
+			<p>
+				Получившееся число фактически является тем же <q>C-ЕГГ0Г-оборотнем</q>, который
+				<q>прикрылся</q> содержимым Rс, перетащив порядок числа в начало, затем
+				цифра знака &minus; 1 (=9), затем сами цифры мантиссы (кроме последней), наезжая
+				на знак порядка. А две цифры порядка (80) &ndash; две последние цифры порядка самого <q>монстра</q>.
+				Понятно, что ничего с этим числом сделать нельзя, т.&#8239;к. это только <q>видимость</q>
+				<q>монстра</q> из Rb. Не забудьте его уничтожить двойным <span class="but_cx">Cx</span>.
+			</p>
 		</details>
 
 		<hr>
@@ -9508,8 +9671,8 @@ a[target="_blank"] {
 					<td>
 						<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>,
 						<span class="but_f">F</span><span class="op_f">e<sup>x</sup></span>,
-						<span class="but_f">F</span><span class="op_f">Lg</sup></span>,
-						<span class="but_f">F</span><span class="op_f">Ln</sup></span>.
+						<span class="but_f">F</span><span class="op_f">Lg</span>,
+						<span class="but_f">F</span><span class="op_f">Ln</span>.
 					</td>
 				</tr>
 				<tr>
