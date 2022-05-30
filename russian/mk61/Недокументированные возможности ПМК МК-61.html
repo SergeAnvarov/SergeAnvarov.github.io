@@ -2867,6 +2867,51 @@ a[target="_blank"] {
 					где первый символ &ndash; это шестнадцатеричное A,
 					т.&#8239;к. 9 + 1 = 10.
 				</p>
+				<p>
+					Кстати, команды
+					<span class="but_f">F</span><span class="op_f">Lx</span>
+					тоже являются аналогом команд косвенного условного перехода
+					(только	по регистрам R0&hellip;R3). И для них это правило
+					тоже работает. Например, введём программу
+				</p>
+				<table class="center">
+					<tr>
+						<th>&#8202;#&#8202;|&#8202;</th>
+						<th>00</th>
+						<th>01</th>
+						<th>02</th>
+						<th>03</th>
+						<th>04</th>
+						<th>05</th>
+						<th>06</th>
+						<th>07</th>
+						<th>08</th>
+						<th>09</th>
+					</tr>
+					<tr>
+						<th>&#8202;00&#8202;|&#8202;</th>
+						<td><span class="but_f">F</span><span class="op_f">&pi;</span></td>
+						<td><span class="but">В&uarr;</span></td>
+						<td><span class="but">ВП</span></td>
+						<td><span class="but_f">F</span><span class="op_f">L0</span></td>
+						<td><span class="but">02</span></td>
+						<td><span class="but_b">С/П</span></td>
+						<td colspan="4"></td>
+					</tr>
+				</table>
+				<p>
+					Если ввести 1 в R0 и выполнить программу, то всё будет
+					как обычно и выдаст &pi;, поскольку оно запоминается в X2.
+					Но если в R0 ввести 2 и выполнить программу, то будет уже
+					<span class="code"> 7.1415926   </span>, т.&#8239;к.
+					один раз <span class="but_f">F</span><span class="op_f">L0</span>
+					успеет отбросить назад (косвенный условный
+					переход	по регистру R0), на наше <span class="but">ВП</span>, которое
+					и заменит первую цифру на 7. Легко проверить, что если вставить
+					по адресу 02 другую команду (например
+					<span class="but_k">К</span><span class="op_k">НОП</span>), сдвинув
+					остальную часть программы, то <q>фокус</q> уже не получится.
+				</p>
 			</details>
 
 			<hr>
