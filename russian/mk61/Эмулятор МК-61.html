@@ -1969,13 +1969,9 @@
 			return mnemonic.code + ((mnemonic.type === 'REG') ? fromHex(commandText.slice(-1)) : 0);
 		};
 
-		// Set all commands to default 0
-		for (let iAddr = 0; iAddr < 105; iAddr++) {
-			writeSingleCommand(iAddr, 0);
-		}
 		// Add spaces to the tags to separate them later
 		programMemo.innerHTML = programMemo.innerHTML.replace(/(<)(br|div|td|p)/g, ' <$2');
-		const commands = programMemo.textContent
+		const programText = programMemo.textContent
 			.trim()
 			.replace(/#\s*\|\s*00\s*01\s*02\s*03\s*04\s*05\s*06\s*07\s*08\s*09\s*/g, '') // Remove header with addresses
 			.replace(/\s+\|\s+/g, '.') // If exists '|', remove it also. Example '20 | FL1' -> '20.FL1'
@@ -1995,10 +1991,16 @@
 			.replace(/–/g, '-') // En dash to hyphen
 			.replace(/—/g, '-') // Em dash to hyphen
 			.replace(/−/g, '-') // Minus to hyphen
-			.replace(/Х/g, 'X') // All russian Х to english X
-			.split(/\s+/)
-			.slice(0, 105);
+			.replace(/Х/g, 'X'); // All russian Х to english X
+		if (!(/\S/.test(programText))) {
+			exit; // Only empty string - don't change program
+		}
 
+		const commands = programText.split(/\s+/).slice(0, 105);
+		// Set all commands to default 0
+		for (let iAddr = 0; iAddr < 105; iAddr++) {
+			writeSingleCommand(iAddr, 0);
+		}
 		let addrIndex = 0;
 		commands.some((cmd) => {
 			if ((cmd.length > 2) && (cmd[2] === '.')) {
