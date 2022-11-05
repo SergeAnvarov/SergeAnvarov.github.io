@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>Числа с отрицательной нулевой степенью</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta content="true" name="HandheldFriendly"/>
+	<meta content="width" name="MobileOptimized"/>
+	<meta content="yes" name="apple-mobile-web-app-capable"/>
+	<meta name="description" content="Недокументированные возможности программируемого микрокалькулятора МК-61. Числа с отрицательной нулевой степенью."/>
+	<link rel="stylesheet" href="../styles/buttons.css">
+	<link rel="stylesheet" href="../styles/tables.css">
+	<link rel="stylesheet" href="../styles/other.css">
+</head>
+
+<body>
+	<section>
+		<header><h1>Числа с отрицательной нулевой степенью</h1></header>
+		<p>
+			Из раздела по косвенной адресации мы знаем о правиле <q>сумма = 160</q> для
+			отрицательных степеней, которые содержат шестнадцатеричные цифры. Есть
+			интересный эффект, когда порядок доводится до &minus;160 и в результате
+			сложения по правилу получается не нулевая степень, а минус нулевая.
+			Оказывается числа с такой степенью тоже имеют необычные свойства.
+		</p>
+
+	</section>
+
+	<hr>
+
+	<section id="id_get">
+		<header><h2>Способ получения</h2></header>
+		<p>
+			Как можно получить число в такой степенью? Для начала получим число
+			с отрицательной степенью, содержащей шестнадцатеричные цифры. Например,
+			1.<sup>|&minus;E0</sup>
+			(<span class="code"> 1.       -E0</span>):
+			<span class="but">1</span>&ensp;
+			<span class="but">0</span>&ensp;
+			<span class="but">/-/</span>&ensp;
+			<span class="but_k">К</span><span class="but">-</span>&ensp;
+			<span class="but">ВП</span>&ensp;
+			<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>.
+			Получилось число как 1.<sup>|&minus;140</sup> или по правилу 160 = 1.<sup>|+20</sup>.
+			Теперь если убрать ещё 20 из порядка:
+			<span class="but">ВП</span>&ensp;
+			<span class="but">2</span>&ensp;
+			<span class="but">0</span>&ensp;
+			<span class="but">/-/</span>&ensp;
+			<span class="but_b">x&rarr;П</span><span class="but">1</span>.
+			то мы получим 1.<sup>|&minus;00</sup>
+			(<span class="code"> 1.       -00</span>).
+		</p>
+		<p>
+			Если вы думаете, что мантисса может быть только единица, то обрадую, что
+			можно и другие. Для исследования чисел с разными мантиссами приведём
+			программу, которая регистры R1&hellip;Re заполняет числами с нулевой
+			отрицательной степенью, а на месте первой цифры будет стоять номер
+			регистра (да, да, для последнего это будет E.<sup>|&minus;00</sup>).
+		</p>
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">3</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">8</span></td>
+				<td><span class="but_k">К</span><span class="op_k">&or;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but">/-/</span></td>
+				<td><span class="but">ВП</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;10&#8202;|&#8202;</th>
+				<td><span class="but">2</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but">В&uarr;</span></td>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but">/-/</span></td>
+				<td><span class="but">5</span></td>
+				<td><span class="but">0</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+				<td><span class="but">0</span></td>
+				<td><span class="but">&larr;&rarr;</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;20&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but">&larr;&rarr;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">e</span></td>
+				<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="reg">e</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L0</span></td>
+				<td><span class="but">18</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;30&#8202;|&#8202;</th>
+				<td><span class="but_b">С/П</span></td>
+				<td colspan="9"></td>
+			</tr>
+		</table>
+		<p>
+			Тут тоже используются недокументированные возможности. Большую часть
+			(адреса с 00 по 17) это получение (документированное)
+			той же 1.<sup>|&minus;00</sup>, что
+			мы сделали руками, только без ЕГГ0Га. Причём не через E0, а через L0
+			(просто число 13 нужно для цикла по оставшимся регистрам R2&hellip;Re).
+			Из-за особенностей поведения <span class="but">ВП</span> в программном
+			режиме X нужно копировать в X2. Первый раз нам помогает
+			<span class="but">/-/</span> по адресу 08, второй раз уже явно делаем
+			<span class="but">В&uarr;</span> по адресу 12. А вот с 18 адреса начинается
+			<q>шаманство</q>. Фрагмент программы 18&hellip;21 увеличивает текущую цифру
+			(в шестнадцатеричном смысле). Эта особенность была рассказана в разделе
+			про регистр X2 и команду <span class="but">ВП</span>. А фрагмент
+			22&hellip;25 (тот же раздел) подставляет эту цифру в число из R1.
+			Потом с помощью регистра Re мы сохраняем это в нужном месте и повторяем.
+		</p>
+		<p>
+			Обозначим такое число с необычной степенью как N. В общем случае,
+			нулевая степень (пусть с минусом) в математическом смысле ничего не меняет,
+			т.&#8239;е. число должно быть как бы без степени. И большинство операций так
+			его и воспринимают, но есть исключения. Пройдёмся по всем
+			операциям/функциям, использую значения регистров, внесённые программой выше.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_plus">
+		<header><h2>Сложение и вычитание</h2></header>
+		<p>
+			Тут порядок операндов неважен. Правило такое: если целая
+			часть второго операнда состоит только из одной цифры (сюда же попадают
+			шестнадцатеричные цифры и дробная часть может быть любая), то этот
+			операнд (т.&#8239;е. всё число) сначала умножается на 10 (то же и для
+			шестнадцатеричных чисел), а затем выполняется операция с N. Примеры:
+		</p>
+		<p>
+			2.<sup>|&minus;00</sup> + 5.1 = 53:
+			<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
+			<span class="but">5</span>&ensp;
+			<span class="but">.</span>&ensp;
+			<span class="but">1</span>&ensp;
+			<span class="but">+</span> =
+			<span class="code"> 53.         </span>.
+		</p>
+		<p>
+			2.1 &minus; 3.<sup>|&minus;00</sup> = 18:
+			<span class="but">2</span>&ensp;
+			<span class="but">.</span>&ensp;
+			<span class="but">1</span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">3</span>&ensp;
+			<span class="but">-</span> =
+			<span class="code"> 18.         </span>.
+		</p>
+		<p>
+			<span class="pi">&pi;</span> &minus; 3.<sup>|&minus;00</sup> = 28.415926;
+			<span class="but_f">F</span><span class="op_f">&pi;</span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">3</span>&ensp;
+			<span class="but">-</span> =
+			<span class="code"> 28.415926   </span>.
+		</p>
+		<p>
+			E.1 + 2.<sup>|&minus;00</sup> = 43:
+			<span class="but">1</span>&ensp;
+			<span class="but">.</span>&ensp;
+			<span class="but">1</span>&ensp;
+			<span class="but_k">К</span><span class="but">-</span>&ensp;
+			<span class="but">ВП</span>&ensp;
+			<span class="but_k">К</span><span class="op_k">НОП</span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
+			<span class="but">+</span> =
+			<span class="code"> 43.         </span>.
+		</p>
+		<p>
+			Для двух и более значных операндов, выполняется как обычно. Примеры:
+		</p>
+		<p>
+			2.<sup>|&minus;00</sup> + 51 = 53:
+			<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
+			<span class="but">5</span>&ensp;
+			<span class="but">1</span>&ensp;
+			<span class="but">+</span> =
+			<span class="code"> 53.         </span>.
+		</p>
+		<p>
+			21 &minus; 3.<sup>|&minus;00</sup> = 18:
+			<span class="but">2</span>&ensp;
+			<span class="but">1</span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">3</span>&ensp;
+			<span class="but">-</span> =
+			<span class="code"> 18.         </span>.
+		</p>
+		<p>
+			e<sup>&pi;</sup> &minus; 3.<sup>|&minus;00</sup> = 20.14069:
+			<span class="but_f">F</span><span class="op_f">&pi;</span>&ensp;
+			<span class="but_f">F</span><span class="op_f">e<sup>x</sup></span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">3</span>&ensp;
+			<span class="but">-</span> =
+			<span class="code"> 20.14069    </span>.
+		</p>
+		<p>
+			E1 + 2.<sup>|&minus;00</sup> = 43:
+			<span class="but">1</span>&ensp;
+			<span class="but">1</span>&ensp;
+			<span class="but_k">К</span><span class="but">-</span>&ensp;
+			<span class="but">ВП</span>&ensp;
+			<span class="but_k">К</span><span class="op_k">НОП</span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
+			<span class="but">+</span> =
+			<span class="code"> 43.         </span>.
+		</p>
+		<p>
+			Если дробное число (целая часть нулевая), то выполняется как обычно.
+			Примеры:
+		</p>
+		<p>
+			0.5 + 4.<sup>|&minus;00</sup> = 4.5:
+			<span class="but">0</span>&ensp;
+			<span class="but">.</span>&ensp;
+			<span class="but">5</span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">4</span>&ensp;
+			<span class="but">+</span> =
+			<span class="code"> 4.5         </span>.
+		</p>
+		<p>
+			E.1<sup>|&minus;01</sup> + 4.<sup>|&minus;00</sup> = 5.41:
+			<span class="but">0</span>&ensp;
+			<span class="but">.</span>&ensp;
+			<span class="but">9</span>&ensp;
+			<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>&ensp;
+			<span class="but_k">К</span><span class="but">-</span>&ensp;
+			<span class="but">ВП</span>&ensp;
+			<span class="but_k">К</span><span class="op_k">НОП</span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">4</span>&ensp;
+			<span class="but">+</span> =
+			<span class="code"> 5.41        </span>.
+		</p>
+		<p>
+			Сами с собой числа N правила умножения на 10 не придерживаются и выполняются
+			как обычно.
+		</p>
+		<p>
+			5.<sup>|&minus;00</sup> + 2.<sup>|&minus;00</sup> = 7:
+			<span class="but_b">П&rarr;x</span><span class="but">5</span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
+			<span class="but">+</span> =
+			<span class="code"> 7.          </span>.
+		</p>
+		<p>
+			2.<sup>|&minus;00</sup> &minus; 3.<sup>|&minus;00</sup> = &minus;1:
+			<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">3</span>&ensp;
+			<span class="but">-</span> =
+			<span class="code">-1.          </span>.
+		</p>
+		<p>
+			Так же, как обычно, работает, если второй операнд нулевой.
+			9.<sup>|&minus;00</sup> + 0 = 9:
+			<span class="but_b">П&rarr;x</span><span class="but">9</span>&ensp;
+			<span class="but">0</span>&ensp;
+			<span class="but">+</span> =
+			<span class="code"> 9.          </span>.
+		</p>
+		<p>
+			Для сравнения:
+			9.<sup>|&minus;00</sup> + 1 = 19:
+			<span class="but_b">П&rarr;x</span><span class="but">9</span>&ensp;
+			<span class="but">1</span>&ensp;
+			<span class="but">+</span> =
+			<span class="code"> 19.         </span>.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_mult">
+		<header><h2>Умножение и деление</h2></header>
+		<p>
+			При <strong>умножении</strong>, когда число N перед операцией
+			находится в регистре
+			Y, а число в регистре X меньше единицы (в абсолютном значении), то
+			получается число со степенью &minus;160, т.&#8239;е. само число N в операции
+			воспринимается как число в степени &minus;160 (кстати, с учётом цикличности
+			ПМК на 1000 степени можно считать это числом в 840 степени).
+			В остальных случаях ведёт как обычное умножение. Пример:
+		</p>
+		<p>
+			1.5 &times; 2.<sup>|&minus;00</sup> = 3:
+			<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
+			<span class="but">1</span>&ensp;
+			<span class="but">.</span>&ensp;
+			<span class="but">5</span>&ensp;
+			<span class="but">&times;</span> =
+			<span class="code"> 3.          </span>.
+		</p>
+		<p>
+			0.7 &times; 2.<sup>|&minus;00</sup> = 1.4<sup>|&minus;160</sup>:
+			<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
+			<span class="but">0</span>&ensp;
+			<span class="but">.</span>&ensp;
+			<span class="but">7</span>&ensp;
+			<span class="but">&times;</span> =
+			<span class="code"> 0.          </span>.
+			Вроде бы ноль, но это потому, что при нормализации числа в степени такого
+			порядка преобразуются в ноль. Для проверки составим программу, которая
+			полученное число умножит на 1.<sup>|+80</sup>:
+		</p>
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+				<td><span class="but">0</span></td>
+				<td><span class="but">.</span></td>
+				<td><span class="but">7</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but">8</span></td>
+				<td><span class="but">0</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_b">С/П</span></td>
+			</tr>
+		</table>
+		<p>
+			После <span class="but_b">В/0</span>&ensp;
+			<span class="but_b">С/П</span> на экране будет
+			<span class="code"> 1.4      -80</span>
+		</p>
+		<p>
+			Если число в X меньше единицы, но имеет порядок меньше &minus;40, то
+			умножение снова проводится как обычно:
+		</p>
+		<p>
+			1.<sup>|&minus;43</sup> &times; 6.<sup>|&minus;00</sup> = 6.<sup>|&minus;43</sup>:
+			<span class="but_b">П&rarr;x</span><span class="but">6</span>&ensp;
+			<span class="but">4</span>&ensp;
+			<span class="but">3</span>&ensp;
+			<span class="but">/-/</span>&ensp;
+			<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>&ensp;
+			<span class="but">&times;</span> =
+			<span class="code"> 6.       -43</span>.
+		</p>
+		<p>
+			1.<sup>|&minus;40</sup> &times; 6.<sup>|&minus;00</sup> = 6.<sup>|&minus;200</sup>:
+			<span class="but_b">П&rarr;x</span><span class="but">6</span>&ensp;
+			<span class="but">4</span>&ensp;
+			<span class="but">0</span>&ensp;
+			<span class="but">/-/</span>&ensp;
+			<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>&ensp;
+			<span class="but">&times;</span> =
+			<span class="code"> 0.          </span>.
+		</p>
+		<p>
+			&minus;1.<sup>|&minus;99</sup> &times; 6.<sup>|&minus;00</sup> = &minus;6.<sup>|&minus;99</sup>:
+			<span class="but_b">П&rarr;x</span><span class="but">6</span>&ensp;
+			<span class="but">9</span>&ensp;
+			<span class="but">9</span>&ensp;
+			<span class="but">/-/</span>&ensp;
+			<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>&ensp;
+			<span class="but">/-/</span>&ensp;
+			<span class="but">&times;</span> =
+			<span class="code">-6.       -99</span>.
+		</p>
+		<p>
+			Если число в X больше единицы, но имеет порядок не меньше 60, то число
+			N снова воспринимается, как число в степени &minus;160.
+		</p>
+		<p>
+			1.<sup>|+62</sup> &times; 7.<sup>|&minus;00</sup> = 7.<sup>|&minus;98</sup>:
+			<span class="but_b">П&rarr;x</span><span class="but">7</span>&ensp;
+			<span class="but">6</span>&ensp;
+			<span class="but">2</span>&ensp;
+			<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>&ensp;
+			<span class="but">&times;</span> =
+			<span class="code"> 7.       -98</span>.
+		</p>
+		<p>
+			1.<sup>|+60</sup> &times; 7.<sup>|&minus;00</sup> = 7.<sup>|&minus;100</sup>:
+			<span class="but_b">П&rarr;x</span><span class="but">7</span>&ensp;
+			<span class="but">6</span>&ensp;
+			<span class="but">0</span>&ensp;
+			<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>&ensp;
+			<span class="but">&times;</span> =
+			<span class="code"> 0.          </span>.
+		</p>
+		<p>
+			&minus;1.<sup>|+99</sup> &times; 7.<sup>|&minus;00</sup> = &minus;7.<sup>|&minus;61</sup>:
+			<span class="but_b">П&rarr;x</span><span class="but">7</span>&ensp;
+			<span class="but">9</span>&ensp;
+			<span class="but">9</span>&ensp;
+			<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>&ensp;
+			<span class="but">/-/</span>&ensp;
+			<span class="but">&times;</span> =
+			<span class="code">-7.       -61</span>.
+		</p>
+		<p>
+			Напомню, если число N находится в регистре X, то происходит обычное
+			умножение, но если в Y тоже N (может другое),
+			то будет как выше степень &minus;160.
+		</p>
+		<p>
+			3.<sup>|&minus;00</sup> &times; 7.<sup>|&minus;00</sup> = 2.1<sup>|&minus;159</sup>:
+			<span class="but_b">П&rarr;x</span><span class="but">3</span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">7</span>&ensp;
+			<span class="but">&times;</span> =
+			<span class="code"> 0.          </span>.
+			Для проверки
+		</p>
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but">8</span></td>
+				<td><span class="but">0</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td colspan="2"></td>
+			</tr>
+		</table>
+		<p>
+			= <span class="code"> 2.1      -79</span>.
+		</p>
+		<p>
+			Для <strong>деления</strong> ситуация похожая. Необычность возникает,
+			только когда
+			делят на N (N в регистре X). Если число в регистре Y по модулю в
+			диапазоне 1 &les; Y &lt; 10 (сюда же попадают шестнадцатеричные цифры),
+			то в операциях деления N выглядит как число со степенью &minus;160.
+		</p>
+		<p>
+			8.<sup>|&minus;00</sup> &divide; 2 = 4:
+			<span class="but_b">П&rarr;x</span><span class="but">8</span>&ensp;
+			<span class="but">2</span>&ensp;
+			<span class="but">&divide;</span> =
+			<span class="code"> 4.          </span>.
+		</p>
+		<p>
+			18 &divide; 2.<sup>|&minus;00</sup> = 9:
+			<span class="but">1</span>&ensp;
+			<span class="but">8</span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
+			<span class="but">&divide;</span> =
+			<span class="code"> 9.          </span>.
+		</p>
+		<p>
+			0.8 &divide; 2.<sup>|&minus;00</sup> = 0.4:
+			<span class="but">0</span>&ensp;
+			<span class="but">.</span>&ensp;
+			<span class="but">8</span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
+			<span class="but">&divide;</span> =
+			<span class="code"> 4.       -01</span>.
+		</p>
+		<p>
+			8 &divide; 2.<sup>|&minus;00</sup> = 4.<sup>|+160</sup>:
+			<span class="but">8</span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
+			<span class="but">&divide;</span> =
+			<span class="code"> ЕГГ0Г      </span>.
+			Для проверки составим программу:
+		</p>
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_cx">Cx</span></td>
+				<td><span class="but">8</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+				<td><span class="but">&divide;</span></td>
+				<td><span class="but">7</span></td>
+				<td><span class="but">0</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but">&divide;</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td colspan="1"></td>
+			</tr>
+		</table>
+		<p>
+			После <span class="but_b">В/0</span>&ensp;
+			<span class="but_b">С/П</span> на экране будет
+			<span class="code"> 4.        90</span>.
+		</p>
+		<p>
+			Единственное исключение – это когда в Y тоже число N. Тогда
+			деление снова проходит как обычно.
+			<br>
+			8.<sup>|&minus;00</sup> &divide; 2.<sup>|&minus;00</sup> = 4:
+			<span class="but_b">П&rarr;x</span><span class="but">8</span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
+			<span class="but">&divide;</span> =
+			<span class="code"> 4.          </span>.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_func_F">
+		<header><h2><q>Жёлтые</q> функции</h2></header>
+		<p>
+			<q>Жёлтые</q> функции – те, которые вызываются через кнопку
+			<span class="but_f">F</span>.
+		</p>
+		<ul>
+			<li>
+				<p>
+					<span class="but_f">F</span><span class="op_f">&radic;</span>.
+					При взятии корня вычисляется, как обычно, но результат делится на
+					10.<sup>|+48</sup>, т.&#8239;е. степень числа будет &minus;48. Пример:
+				</p>
+				<p>
+					&radic;(4.<sup>|&minus;00</sup>) = 2.<sup>|&minus;48</sup>:
+					<span class="but_b">П&rarr;x</span><span class="but">4</span>&ensp;
+					<span class="but_f">F</span><span class="op_f">&radic;</span> =
+					<span class="code"> 2.       -48</span>.
+				</p>
+				<p>
+					&radic;(E.<sup>|&minus;00</sup>) = 3.7416573<sup>|&minus;48</sup>:
+					<span class="but_b">П&rarr;x</span><span class="reg">e</span>&ensp;
+					<span class="but_f">F</span><span class="op_f">&radic;</span> =
+					<span class="code"> 3.7416573-48</span>.
+				</p>
+			</li>
+			<li>
+				<p>
+					<span class="but_f">F</span><span class="op_f">1/x</span>.
+					Обратная величина считает число N числом в степени &minus;160.
+				</p>
+				<p>
+					1 / (2.<sup>|&minus;00</sup>) = 5.<sup>|+159</sup>:
+					<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
+					<span class="but_f">F</span><span class="op_f">1/x</span> =
+					<span class="code"> ЕГГ0Г      </span>.
+				</p>
+				<p>
+					Для проверки составим программу:
+				</p>
+				<table class="center">
+					<tr>
+						<th>&#8202;#&#8202;|&#8202;</th>
+						<th>00</th>
+						<th>01</th>
+						<th>02</th>
+						<th>03</th>
+						<th>04</th>
+						<th>05</th>
+						<th>06</th>
+						<th>07</th>
+						<th>08</th>
+						<th>09</th>
+					</tr>
+					<tr>
+						<th>&#8202;00&#8202;|&#8202;</th>
+						<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+						<td><span class="but_f">F</span><span class="op_f">1/x</span></td>
+						<td><span class="but">7</span></td>
+						<td><span class="but">0</span></td>
+						<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+						<td><span class="but">&divide;</span></td>
+						<td><span class="but_b">С/П</span></td>
+						<td colspan="3"></td>
+					</tr>
+				</table>
+				<p>
+					После <span class="but_b">В/0</span>&ensp;
+					<span class="but_b">С/П</span> на экране будет
+					<span class="code"> 5.        89</span>.
+				</p>
+			</li>
+			<li>
+				<p>
+					Тригонометрические функции рассмотрим только на нескольких значениях.
+				</p>
+				<p>
+					Для <span class="but_f">F</span><span class="op_f">sin</span> только
+					в радианах будут отличия:
+				</p>
+				<table class="center">
+					<tr>
+						<td>X</td><th>Р</th><th>ГРД</th><th>Г</th>
+					</tr>
+					<tr>
+						<th>1.<sup>|&minus;00</sup></th>
+						<td>8.4147098<sup>|&minus;01</sup></td>
+						<td>1.5707317<sup>|&minus;02</sup></td>
+						<td>1.7452405<sup>|&minus;02</sup></td>
+					</tr>
+					<tr>
+						<th>1</th>
+						<td>8.4147103<sup>|&minus;01</sup></td>
+						<td>1.5707317<sup>|&minus;02</sup></td>
+						<td>1.7452405<sup>|&minus;02</sup></td>
+					</tr>
+				</table>
+			</li>
+			<li>
+				<p>
+					Для <span class="but_f">F</span><span class="op_f">cos</span> тоже:
+				</p>
+				<table class="center">
+					<tr>
+						<td>X</td><th>Р</th><th>ГРД</th><th>Г</th>
+					</tr>
+					<tr>
+						<th>2.<sup>|&minus;00</sup></th>
+						<td>4.4721363<sup>|&minus;01</sup></td>
+						<td>9.9950656<sup>|&minus;01</sup></td>
+						<td>9.9939082<sup>|&minus;01</sup></td>
+					</tr>
+					<tr>
+						<th>2</th>
+						<td>&minus;4.1614688<sup>|&minus;01</sup></td>
+						<td>9.9950656<sup>|&minus;01</sup></td>
+						<td>9.9939082<sup>|&minus;01</sup></td>
+					</tr>
+				</table>
+			</li>
+			<li>
+				<p>
+					Для <span class="but_f">F</span><span class="op_f">tg</span> тоже:
+				</p>
+				<table class="center">
+					<tr>
+						<td>X</td><th>Р</th><th>ГРД</th><th>Г</th>
+					</tr>
+					<tr>
+						<th>3.<sup>|&minus;00</sup></th>
+						<td>3</td>
+						<td>4.7158802<sup>|&minus;02</sup></td>
+						<td>5.2407778<sup>|&minus;02</sup></td>
+					</tr>
+					<tr>
+						<th>3</th>
+						<td>&minus;1.4254648<sup>|&minus;01</sup></td>
+						<td>4.7158802<sup>|&minus;02</sup></td>
+						<td>5.2407778<sup>|&minus;02</sup></td>
+					</tr>
+				</table>
+			</li>
+			<li>
+				<p>
+					Для <span class="but_f">F</span><span class="op_f">sin<sup>-1</sup></span>
+					все отличаются:
+				</p>
+				<table class="center">
+					<tr>
+						<td>X</td><th>Р</th><th>ГРД</th><th>Г</th>
+					</tr>
+					<tr>
+						<th>1.<sup>|&minus;00</sup></th>
+						<td>7.853981<sup>|&minus;01</sup></td>
+						<td>50.000003</td>
+						<td>45.000002</td>
+					</tr>
+					<tr>
+						<th>1</th>
+						<td>1.5707963</td>
+						<td>100</td>
+						<td>90</td>
+					</tr>
+					<tr>
+						<th>2.<sup>|&minus;00</sup></th>
+						<td>1.1071486</td>
+						<td>70.483276</td>
+						<td>63.434949</td>
+					</tr>
+					<tr>
+						<th>2</th>
+						<td>ЕГГ0Г</td>
+						<td>ЕГГ0Г</td>
+						<td>ЕГГ0Г</td>
+					</tr>
+				</table>
+			</li>
+			<li>
+				<p>
+					Для <span class="but_f">F</span><span class="op_f">cos<sup>-1</sup></span>
+					все отличаются:
+				</p>
+				<table class="center">
+					<tr>
+						<td>X</td><th>Р</th><th>ГРД</th><th>Г</th>
+					</tr>
+					<tr>
+						<th>1.<sup>|&minus;00</sup></th>
+						<td>7.8539812<sup>|&minus;01</sup></td>
+						<td>49.999997</td>
+						<td>44.999998</td>
+					</tr>
+					<tr>
+						<th>1</th>
+						<td>0</td>
+						<td>00</td>
+						<td>00</td>
+					</tr>
+					<tr>
+						<th>2.<sup>|&minus;00</sup></th>
+						<td>4.6364761<sup>|&minus;01</sup></td>
+						<td>29.516724</td>
+						<td>26.565051</td>
+					</tr>
+					<tr>
+						<th>2</th>
+						<td>ЕГГ0Г</td>
+						<td>ЕГГ0Г</td>
+						<td>ЕГГ0Г</td>
+					</tr>
+				</table>
+			</li>
+			<li>
+				<p>
+					<span class="but_f">F</span><span class="op_f">tg<sup>-1</sup></span>
+					для чисел N всегда даёт ноль:
+				</p>
+				<table class="center">
+					<tr>
+						<td>X</td><th>Р</th><th>ГРД</th><th>Г</th>
+					</tr>
+					<tr>
+						<th>1.<sup>|&minus;00</sup></th>
+						<td>0</td>
+						<td>0</td>
+						<td>00</td>
+					</tr>
+					<tr>
+						<th>1</th>
+						<td>7.853981<sup>|&minus;01</sup></td>
+						<td>50.000003</td>
+						<td>45.000002</td>
+					</tr>
+					<tr>
+						<td colspan="4"></td>
+					</tr>
+					<tr>
+						<th>8.<sup>|&minus;00</sup></th>
+						<td>0</td>
+						<td>0</td>
+						<td>00</td>
+					</tr>
+					<tr>
+						<th>8</th>
+						<td>1.4464413</td>
+						<td>92.083315</td>
+						<td>82.874983</td>
+					</tr>
+				</table>
+			</li>
+			<li>
+				<p>
+					<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>
+					вычисляет, как обычно, но порядок числа при этом уменьшается на 160.
+					При нормализации получается ноль:
+				</p>
+				<p>
+					(2.<sup>|&minus;00</sup>)<sup>2</sup> = 4.<sup>|&minus;160</sup>:
+					<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
+					<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>
+					даёт <span class="code"> 0.          </span>.
+				</p>
+				<p>
+					(8.<sup>|&minus;00</sup>)<sup>2</sup> = 6.4<sup>|&minus;159</sup>:
+					<span class="but_b">П&rarr;x</span><span class="but">8</span>&ensp;
+					<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>
+					даёт <span class="code"> 0.          </span>.
+				</p>
+				<p>
+					Но небольшая проверка показывает истинную картину:
+				</p>
+				<table class="center">
+					<tr>
+						<th>&#8202;#&#8202;|&#8202;</th>
+						<th>00</th>
+						<th>01</th>
+						<th>02</th>
+						<th>03</th>
+						<th>04</th>
+						<th>05</th>
+						<th>06</th>
+						<th>07</th>
+						<th>08</th>
+						<th>09</th>
+					</tr>
+					<tr>
+						<th>&#8202;00&#8202;|&#8202;</th>
+						<td><span class="but_b">П&rarr;x</span><span class="but">8</span></td>
+						<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+						<td><span class="but">7</span></td>
+						<td><span class="but">0</span></td>
+						<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+						<td><span class="but">&times;</span></td>
+						<td><span class="but_b">С/П</span></td>
+						<td colspan="3"></td>
+					</tr>
+				</table>
+				<p>
+					После <span class="but_b">В/0</span>&ensp;
+					<span class="but_b">С/П</span> на экране будет
+					<span class="code"> 6.4      -89</span>.
+				</p>
+			</li>
+			<li>
+				<p>
+					<span class="but_f">F</span><span class="op_f">e<sup>x</sup></span>
+					вычисляется как обычно.
+				</p>
+			</li>
+			<li>
+				<p>
+					<span class="but_f">F</span><span class="op_f">lg</span>
+					выдаёт так:
+				</p>
+				<table class="center">
+					<tr>
+						<td>X</td>
+						<td><span class="but_f">F</span><span class="op_f">lg</span></td>
+					</tr>
+					<tr>
+						<th>1.<sup>|&minus;00</sup></th>
+						<td>0</td>
+					</tr>
+					<tr>
+						<th>2.<sup>|&minus;00</sup></th>
+						<td>&minus;43.128418</td>
+					</tr>
+					<tr>
+						<th>3.<sup>|&minus;00</sup></th>
+						<td>&minus;42.952326</td>
+					</tr>
+					<tr>
+						<th>4.<sup>|&minus;00</sup></th>
+						<td>&minus;42.827388</td>
+					</tr>
+					<tr>
+						<th>5.<sup>|&minus;00</sup></th>
+						<td>&minus;42.730478</td>
+					</tr>
+					<tr>
+						<th>6.<sup>|&minus;00</sup></th>
+						<td>&minus;42.651297</td>
+					</tr>
+					<tr>
+						<th>7.<sup>|&minus;00</sup></th>
+						<td>&minus;42.58435</td>
+					</tr>
+					<tr>
+						<th>8.<sup>|&minus;00</sup></th>
+						<td>&minus;42.526358</td>
+					</tr>
+					<tr>
+						<th>9.<sup>|&minus;00</sup></th>
+						<td>&minus;42.475205</td>
+					</tr>
+					<tr>
+						<th>A.<sup>|&minus;00</sup></th>
+						<td>&minus;42.429448</td>
+					</tr>
+					<tr>
+						<th>B.<sup>|&minus;00</sup></th>
+						<td>&minus;1.6057671</td>
+					</tr>
+					<tr>
+						<th>C.<sup>|&minus;00</sup></th>
+						<td>&minus;1.0267076</td>
+					</tr>
+					<tr>
+						<th>D.<sup>|&minus;00</sup></th>
+						<td>&minus;6.1309386<sup>|&minus;01</sup></td>
+					</tr>
+					<tr>
+						<th>E.<sup>|&minus;00</sup></th>
+						<td>&minus;3.0288357<sup>|&minus;01</sup></td>
+					</tr>
+				</table>
+			</li>
+			<li>
+				<p>
+					<span class="but_f">F</span><span class="op_f">ln</span>
+					тоже начиная с B.<sup>|&minus;00</sup> выдаёт другой порядок:
+				</p>
+				<table class="center">
+					<tr>
+						<td>X</td>
+						<td><span class="but_f">F</span><span class="op_f">ln</span></td>
+					</tr>
+					<tr>
+						<th>1.<sup>|&minus;00</sup></th>
+						<td>0</td>
+					</tr>
+					<tr>
+						<th>2.<sup>|&minus;00</sup></th>
+						<td>&minus;99.306853</td>
+					</tr>
+					<tr>
+						<th>3.<sup>|&minus;00</sup></th>
+						<td>&minus;98.901388</td>
+					</tr>
+					<tr>
+						<th>4.<sup>|&minus;00</sup></th>
+						<td>&minus;98.613706</td>
+					</tr>
+					<tr>
+						<th>5.<sup>|&minus;00</sup></th>
+						<td>&minus;98.390562</td>
+					</tr>
+					<tr>
+						<th>6.<sup>|&minus;00</sup></th>
+						<td>&minus;98.208241</td>
+					</tr>
+					<tr>
+						<th>7.<sup>|&minus;00</sup></th>
+						<td>&minus;98.05409</td>
+					</tr>
+					<tr>
+						<th>8.<sup>|&minus;00</sup></th>
+						<td>&minus;97.920559</td>
+					</tr>
+					<tr>
+						<th>9.<sup>|&minus;00</sup></th>
+						<td>&minus;97.802776</td>
+					</tr>
+					<tr>
+						<th>A.<sup>|&minus;00</sup></th>
+						<td>&minus;97.697415</td>
+					</tr>
+					<tr>
+						<th>B.<sup>|&minus;00</sup></th>
+						<td>&minus;3.6974155</td>
+					</tr>
+					<tr>
+						<th>C.<sup>|&minus;00</sup></th>
+						<td>&minus;2.3640818</td>
+					</tr>
+					<tr>
+						<th>D.<sup>|&minus;00</sup></th>
+						<td>&minus;1.4117008</td>
+					</tr>
+					<tr>
+						<th>E.<sup>|&minus;00</sup></th>
+						<td>&minus;6.974152<sup>|&minus;01</sup></td>
+					</tr>
+				</table>
+			</li>
+			<li>
+				<p>
+					<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>
+					выдаёт ошибку не из-за переполнения, а как обычно: порядок вне
+					диапазона. Хотя отрицательные значения как результат возведения
+					в степень конечно удивляют.
+				</p>
+				<table class="center">
+					<tr>
+						<td>X</td>
+						<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+					</tr>
+					<tr>
+						<th>1.<sup>|&minus;00</sup></th>
+						<td>ЕГГ0Г</td>
+					</tr>
+					<tr>
+						<th>2.<sup>|&minus;00</sup></th>
+						<td>&minus;13.02585</td>
+					</tr>
+					<tr>
+						<th>3.<sup>|&minus;00</sup></th>
+						<td>&minus;36.051703</td>
+					</tr>
+					<tr>
+						<th>4.<sup>|&minus;00</sup></th>
+						<td>&minus;59.077562</td>
+					</tr>
+					<tr>
+						<th>5.<sup>|&minus;00</sup></th>
+						<td>&minus;7.0398713</td>
+					</tr>
+					<tr>
+						<th>6.<sup>|&minus;00</sup></th>
+						<td>&minus;6.4318666</td>
+					</tr>
+					<tr>
+						<th>7.<sup>|&minus;00</sup></th>
+						<td>&minus;5.5095304</td>
+					</tr>
+					<tr>
+						<th>8.<sup>|&minus;00</sup></th>
+						<td>&minus;3.9441377</td>
+					</tr>
+					<tr>
+						<th>9.<sup>|&minus;00</sup></th>
+						<td>&minus;7.0326326<sup>|&minus;01</sup></td>
+					</tr>
+					<tr>
+						<th>A.<sup>|&minus;00</sup></th>
+						<td>ЕГГ0Г</td>
+					</tr>
+					<tr>
+						<th>B.<sup>|&minus;00</sup></th>
+						<td>ЕГГ0Г</td>
+					</tr>
+					<tr>
+						<th>C.<sup>|&minus;00</sup></th>
+						<td>ЕГГ0Г</td>
+					</tr>
+					<tr>
+						<th>D.<sup>|&minus;00</sup></th>
+						<td>ЕГГ0Г</td>
+					</tr>
+					<tr>
+						<th>E.<sup>|&minus;00</sup></th>
+						<td>1</td>
+					</tr>
+				</table>
+			</li>
+			<li>
+				<p>
+					<span class="but_f">F</span><span class="op_f">x<sup>y</sup></span>
+					ведёт себя тоже нестандартно.
+					Если число N показатель степени, т.&#8239;е. в регистре Y, то нормально
+					работает, только если число в X не меньше числа e (экспонента), а
+					иначе даёт единицу.
+				</p>
+				<table class="center">
+					<tr>
+						<td><span class="but_f">F</span><span class="op_f">x<sup>y</sup></span></td>
+						<td>1.<sup>|&minus;00</sup></td><td>1</td><td>2.<sup>|&minus;00</sup></td><td>2</td><td>3.<sup>|&minus;00</sup></td><td>3</td>
+					</tr>
+					<tr>
+						<td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td>
+					</tr>
+					<tr>
+						<td>2</td><td>1</td><td>2</td><td>1</td><td>4</td><td>1</td><td>7.9999993</td>
+					</tr>
+					<tr>
+						<td>2.7182817</td>
+						<td>1</td><td>2.7182817</td>
+						<td>1</td><td>7.3890551</td>
+						<td>1</td><td>20.085531</td>
+					</tr>
+					<tr>
+						<td>2.7182818</td>
+						<td>2.7182818</td><td>2.7182818</td>
+						<td>7.3890557</td><td>7.3890557</td>
+						<td>20.085535</td><td>20.085535</td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>2.9999994</td><td>2.9999994</td>
+						<td>8.9999984</td><td>8.9999984</td>
+						<td>26.999992</td><td>26.999992</td>
+					</tr>
+				</table>
+				<p>
+					Если N основание, т.&#8239;е. в регистре X, то ситуация печальней.
+					<br>
+					1.<sup>|&minus;00</sup> работает, как обычно, т.&#8239;е. даёт единицу при любом показателе.
+					<br>
+					2.<sup>|&minus;00</sup> быстро скатывается в ошибку:
+				</p>
+				<table class="center">
+					<tr>
+						<td><span class="but_f">F</span><span class="op_f">x<sup>y</sup></span></td>
+						<td>2</td><td>2.29</td><td>2.30</td><td>2.31</td><td>2.32</td>
+					</tr>
+					<tr>
+						<td>2.<sup>|&minus;00</sup></td>
+						<td>5.5355546<sup>|&minus;87</sup></td>
+						<td>1.7215634<sup>|&minus;99</sup></td>
+						<td>0(=6.3773317<sup>|&minus;100</sup>)</td>
+						<td>ЕГГ0Г(=2.3624032<sup>|&minus;100</sup>)</td>
+						<td>ЕГГ0Г(просто ошибка аргумента)</td>
+					</tr>
+				</table>
+				<p>
+					Для остальных показателей и степеней выдаёт ошибку, кроме степени 1.
+					Причём опять идёт изменение уровня начиная с B.<sup>|&minus;00</sup>.
+				</p>
+				<table class="center">
+					<tr>
+						<td><span class="but_f">F</span><span class="op_f">x<sup>y</sup></span></td>
+						<td>1</td>
+					</tr>
+					<tr>
+						<td>2.<sup>|&minus;00</sup></td><td>7.4401479<sup>|&minus;44</sup></td>
+					</tr>
+					<tr>
+						<td>3.<sup>|&minus;00</sup></td><td>1.1160242<sup>|&minus;43</sup></td>
+					</tr>
+					<tr>
+						<td>4.<sup>|&minus;00</sup></td><td>1.4880297<sup>|&minus;43</sup></td>
+					</tr>
+					<tr>
+						<td>5.<sup>|&minus;00</sup></td><td>1.8600371<sup>|&minus;43</sup></td>
+					</tr>
+					<tr>
+						<td>6.<sup>|&minus;00</sup></td><td>2.2320432<sup>|&minus;43</sup></td>
+					</tr>
+					<tr>
+						<td>7.<sup>|&minus;00</sup></td><td>2.6040517<sup>|&minus;43</sup></td>
+					</tr>
+					<tr>
+						<td>8.<sup>|&minus;00</sup></td><td>2.9760592<sup>|&minus;43</sup></td>
+					</tr>
+					<tr>
+						<td>9.<sup>|&minus;00</sup></td><td>3.3480707<sup>|&minus;43</sup></td>
+					</tr>
+					<tr>
+						<td>A.<sup>|&minus;00</sup></td><td>3.7200738<sup>|&minus;43</sup></td>
+					</tr>
+					<tr>
+						<td>B.<sup>|&minus;00</sup></td><td>2.478751<sup>|&minus;02</sup></td>
+					</tr>
+					<tr>
+						<td>C.<sup>|&minus;00</sup></td><td>9.4035621<sup>|&minus;02</sup></td>
+					</tr>
+					<tr>
+						<td>D.<sup>|&minus;00</sup></td><td>2.437284<sup>|&minus;01</sup></td>
+					</tr>
+					<tr>
+						<td>E.<sup>|&minus;00</sup></td><td>4.9787053<sup>|&minus;01</sup></td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+	</section>
+
+	<hr>
+
+	<section id="id_func_K">
+		<header><h2><q>Синие</q> функции</h2></header>
+		<p>
+			<q>Синие</q> функции – те, которые вызываются через кнопку
+			<span class="but_k">К</span>.
+		</p>
+		<ul>
+			<li>
+				<span class="but_k">К</span><span class="op_k">[x]</span>
+				считает числа N дробными, и выдаёт ноль.
+			</li>
+			<li>
+				<span class="but_k">К</span><span class="op_k">{x}</span>
+				считает так же, и соответственно, не меняет их, даже
+				шестнадцатеричные.
+			</li>
+			<li>
+				<span class="but_k">К</span><span class="op_k">max</span>
+				работает, как обычно, причём она, например,
+				числа 8 и 8.<sup>|&minus;00</sup> считает равными.
+			</li>
+			<li>
+				<span class="but_k">К</span><span class="op_k">|x|</span>
+				тоже работает, как обычно, т.&#8239;е. если отрицательное, то минус уберёт,
+				а мантиссу и порядок не трогает.
+			</li>
+			<li>
+				<span class="but_k">К</span><span class="op_k">ЗН</span>
+				тоже работает, как обычно, т.&#8239;е. даёт &plusmn;1.
+			</li>
+			<li>
+				<p>
+					Набор функций
+					<span class="but_k">К</span><span class="op_k">&deg;&rarr;&prime;</span>,
+					<span class="but_k">К</span><span class="op_k">&deg;&rarr;&prime;&quot;</span>,
+					<span class="but_k">К</span><span class="op_k">&deg;&larr;&prime;&quot;</span>,
+					<span class="but_k">К</span><span class="op_k">&deg;&larr;&prime;</span>,
+					которые обычно редко используются, здесь помогают расширить
+					диапазон мантисс для чисел N. Дело в том, что они так же считают
+					такие числа дробными, но в отличии от остальных функций при
+					обработке не трогают порядок. Это значит, что число по-прежнему
+					остаётся с нулевой отрицательной степенью (если конечно в результате
+					не понизится порядок). Пример:
+					<br>
+					<span class="but_b">П&rarr;x</span><span class="but">3</span>&ensp;
+					<span class="but_k">К</span><span class="op_k">&deg;&rarr;&prime;&quot;</span>&ensp;
+					<span class="but_k">К</span><span class="op_k">&deg;&larr;&prime;</span>&ensp;
+					<span class="but_k">К</span><span class="op_k">&deg;&larr;&prime;</span>
+					выдаст
+					<span class="code"> 2.9999999-00</span>, если чуть изменить:
+					<span class="but_b">П&rarr;x</span><span class="but">3</span>&ensp;
+					<span class="but_k">К</span><span class="op_k">&deg;&rarr;&prime;&quot;</span>&ensp;
+					<span class="but_k">К</span><span class="op_k">&deg;&larr;&prime;&quot;</span>&ensp;
+					<span class="but_k">К</span><span class="op_k">&deg;&larr;&prime;&quot;</span>,
+					то уже <span class="code"> 2.9945599-00</span>
+					<br>
+					Или
+					<span class="but_b">П&rarr;x</span><span class="reg">e</span>&ensp;
+					<span class="but_k">К</span><span class="op_k">&deg;&larr;&prime;</span>&ensp;
+					<span class="but_k">К</span><span class="op_k">&deg;&larr;&prime;</span>&ensp;
+					<span class="but">/-/</span>
+					даст <span class="code">--.16     -00</span>.
+				</p>
+				<p>
+					Понятно, что таким образом набор мантисс ограничен, но всё-таки
+					позволяет разнообразить набор чисел N.
+				</p>
+			</li>
+			<li>
+				<p>
+					Логические функции, как обычно, вообще не обращают внимание на
+					порядок и делают свою обычную работу, убирая всё лишнее.
+				</p>
+			</li>
+		</ul>
+	</section>
+
+	<hr>
+
+	<section id="id_sum">
+		<header><h2>Итог</h2></header>
+		<p>
+			На практике такие числа могут быть использованы своей двойственностью
+			при выполнении вычислений. Т.&#8239;е. в обычном случае как обычная константа,
+			но при определённых условиях вдруг меняющая свое поведение. Главным
+			выглядят умножения и деления, и пусть там выходят числа с большим
+			отрицательным порядком, фактически любая X2 влияющая команда тут же
+			превратит их в обычный ноль.
+		</p>
+	</section>
+
+	<footer>
+		<a href="../Недокументированные%20возможности%20ПМК%20МК-61.html">К оглавлению</a>
+	</footer>
+
+</body>
+</html>

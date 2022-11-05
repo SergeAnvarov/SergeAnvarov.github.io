@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>Программное адресное пространство</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta content="true" name="HandheldFriendly"/>
+	<meta content="width" name="MobileOptimized"/>
+	<meta content="yes" name="apple-mobile-web-app-capable"/>
+	<meta name="description" content="Недокументированные возможности программируемого микрокалькулятора МК-61. Программное адресное пространство"/>
+	<link rel="stylesheet" href="../styles/buttons.css">
+	<link rel="stylesheet" href="../styles/tables.css">
+	<link rel="stylesheet" href="../styles/other.css">
+</head>
+
+<body>
+
+	<section>
+		<header><h1>Программное адресное пространство</h1></header>
+		<p>
+			Документированное значение для адресов программы – 105 ячеек.
+			На практике сложнее. Напомним, что адресация ячеек использует только
+			две цифры, поэтому для адресов свыше адреса 99 используются
+			шестнадцатеричные цифры..
+		</p>
+		<table class="center">
+			<tr><th>Адрес формальный</th><th>Адрес фактический</th><th>Доп. адрес</th></tr>
+			<tr><td>00</td><td>00</td><td></td></tr>
+			<tr><td>01</td><td>01</td><td></td></tr>
+			<tr><td colspan="3">&hellip;</td></tr>
+			<tr><td>99</td><td>99</td><td></td></tr>
+			<tr><td>A0</td><td>A0</td><td></td></tr>
+			<tr><td>A1</td><td>A1</td><td></td></tr>
+			<tr><td>A2</td><td>A2</td><td></td></tr>
+			<tr><td>A3</td><td>A3</td><td></td></tr>
+			<tr><td>A4</td><td>A4</td><td></td></tr>
+			<tr><td colspan="3"></td></tr>
+			<tr><td>A5</td><td>00</td><td></td></tr>
+			<tr><td>A6</td><td>01</td><td></td></tr>
+			<tr><td>A7</td><td>02</td><td></td></tr>
+			<tr><td>A8</td><td>03</td><td></td></tr>
+			<tr><td>A9</td><td>04</td><td></td></tr>
+			<tr><td>B0</td><td>05</td><td></td></tr>
+			<tr><td>B1</td><td>06</td><td></td></tr>
+			<tr><td colspan="3"></td></tr>
+			<tr><td>B2</td><td>00</td><td></td></tr>
+			<tr><td>B3</td><td>01</td><td></td></tr>
+			<tr><td>B4</td><td>02</td><td></td></tr>
+			<tr><td>B5</td><td>03</td><td></td></tr>
+			<tr><td>B6</td><td>04</td><td></td></tr>
+			<tr><td>B7</td><td>05</td><td></td></tr>
+			<tr><td>B8</td><td>06</td><td></td></tr>
+			<tr><td>B9</td><td>07</td><td></td></tr>
+			<tr class="trblack"><td>C0</td><td>08</td><td></td></tr>
+			<tr class="trblack"><td>C1</td><td>09</td><td></td></tr>
+			<tr class="trblack"><td>C2</td><td>10</td><td></td></tr>
+			<tr class="trblack"><td>C3</td><td>11</td><td></td></tr>
+			<tr class="trblack"><td>C4</td><td>12</td><td></td></tr>
+			<tr class="trblack"><td>C5</td><td>13</td><td></td></tr>
+			<tr class="trblack"><td>C6</td><td>14</td><td></td></tr>
+			<tr class="trblack"><td>C7</td><td>15</td><td></td></tr>
+			<tr class="trblack"><td>C8</td><td>16</td><td></td></tr>
+			<tr class="trblack"><td>C9</td><td>17</td><td></td></tr>
+			<tr class="trblack"><td>D0</td><td>18</td><td></td></tr>
+			<tr class="trblack"><td>D1</td><td>19</td><td></td></tr>
+			<tr class="trblack"><td>D2</td><td>20</td><td></td></tr>
+			<tr class="trblack"><td>D3</td><td>21</td><td></td></tr>
+			<tr class="trblack"><td>D4</td><td>22</td><td></td></tr>
+			<tr class="trblack"><td>D5</td><td>23</td><td></td></tr>
+			<tr class="trblack"><td>D6</td><td>24</td><td></td></tr>
+			<tr class="trblack"><td>D7</td><td>25</td><td></td></tr>
+			<tr class="trblack"><td>D8</td><td>26</td><td></td></tr>
+			<tr class="trblack"><td>D9</td><td>27</td><td></td></tr>
+			<tr class="trblack"><td>E0</td><td>28</td><td></td></tr>
+			<tr class="trblack"><td>E1</td><td>29</td><td></td></tr>
+			<tr class="trblack"><td>E2</td><td>30</td><td></td></tr>
+			<tr class="trblack"><td>E3</td><td>31</td><td></td></tr>
+			<tr class="trblack"><td>E4</td><td>32</td><td></td></tr>
+			<tr class="trblack"><td>E5</td><td>33</td><td></td></tr>
+			<tr class="trblack"><td>E6</td><td>34</td><td></td></tr>
+			<tr class="trblack"><td>E7</td><td>35</td><td></td></tr>
+			<tr class="trblack"><td>E8</td><td>36</td><td></td></tr>
+			<tr class="trblack"><td>E9</td><td>37</td><td></td></tr>
+			<tr class="trblack"><td>F0</td><td>38</td><td></td></tr>
+			<tr class="trblack"><td>F1</td><td>39</td><td></td></tr>
+			<tr class="trblack"><td>F2</td><td>40</td><td></td></tr>
+			<tr class="trblack"><td>F3</td><td>41</td><td></td></tr>
+			<tr class="trblack"><td>F4</td><td>42</td><td></td></tr>
+			<tr class="trblack"><td>F5</td><td>43</td><td></td></tr>
+			<tr class="trblack"><td>F6</td><td>44</td><td></td></tr>
+			<tr class="trblack"><td>F7</td><td>45</td><td></td></tr>
+			<tr class="trblack"><td>F8</td><td>46</td><td></td></tr>
+			<tr class="trblack"><td>F9</td><td>47</td><td></td></tr>
+			<tr><td colspan="3"></td></tr>
+			<tr class="trblack_black"><td>FA</td><td>48</td><td>01</td></tr>
+			<tr class="trblack_black"><td>FB</td><td>49</td><td>02</td></tr>
+			<tr class="trblack_black"><td>FC</td><td>50</td><td>03</td></tr>
+			<tr class="trblack_black"><td>FD</td><td>51</td><td>04</td></tr>
+			<tr class="trblack_black"><td>FE</td><td>52</td><td>05</td></tr>
+			<tr class="trblack_black"><td>FF</td><td>53</td><td>06</td></tr>
+		</table>
+		<p>
+			Первая побочная ветвь (с возвратом на нулевой адрес) короткая –
+			адреса A5&hellip;B1, которые отображаются на адреса 00&hellip;06.
+		</p>
+		<p>
+			Вторая побочная ветвь длинней – адреса B2&hellip;F9, которые
+			отображаются на адреса 00&hellip;47.
+			Причём адреса C0&hellip;F9 <a href="glossary.html#glos_shadow">тёмные</a>.
+			Например, если выполнить
+			<span class="but_b">БП</span>&ensp;
+			<span class="but">10</span>&ensp;
+			<span class="but_f">F</span><span class="op_f">ПРГ</span>, и
+			по адресам 10&hellip;12 ввести команды
+			<span class="but_k">К</span><span class="op_k">НОП</span>&ensp;
+			<span class="but_k">К</span><span class="op_k">НОП</span>&ensp;
+			<span class="but_k">К</span><span class="op_k">НОП</span>,
+			то увидим
+			<span class="code"> 54 54 54 13</span>.
+			Но если затем перейти на адрес C5
+			(<span class="but_f">F</span><span class="op_f">АВТ</span>&ensp;
+			<span class="but_b">БП</span>&ensp;
+			<span class="but">C5</span>&ensp;
+			<span class="but_f">F</span><span class="op_f">ПРГ</span>),
+			то визуально получим
+			<span class="code">          C5</span>, как будто без кода,
+			хотя это будет тот же программный код, только затенённый.
+		</p>
+		<p>
+			На <dfn>супертёмные</dfn> адреса FA&hellip;FF возможно перейти
+			только косвенно,
+			т.&#8239;к. впрямую адрес, который начинается с цифры F не вбить.
+			Впрочем, некоторые нестандартные последовательности команд,
+			описанные в конце <a href="#commands.html">приложения</a>,
+			вставляют команды, начинающиеся с F.
+			А также для владельцев МК-52 есть штатный способ –
+			сделать <q>or</q> команд с отдельного модуля, с получением кодов с цифрой F.
+			<br>
+			Так вот, особенность супертёмного адреса такая, что после перехода на
+			него выполняется только одна (!) команда, а затем идёт переход на
+			дополнительный адрес, который указан в последней колонке.
+		</p>
+		<p>
+			Если в адресе перехода вторая цифра тоже шестнадцатеричная, то как
+			указано в предисловии, она прибавляется как есть (E = 14 и т.&#8239;п.).
+			Таким образом переход на адреса 9F (90 + 15) или A5 (100 + 5) или
+			AC (100 + 12 = 110 + 2 = B2) или B2, будет
+			эквивалентен переходу на адрес 00, только потом порядок команд
+			будет отличаться.
+		</p>
+		<p>
+			Если сама команда двойная, т.&#8239;е. с адресом перехода, например,
+			<span class="but_b">БП</span>,
+			<span class="but_f">F</span><span class="op_f">x&lt;0</span>,
+			<span class="but_f">F</span><span class="op_f">L1</span>,
+			и при этом идёт <q>разрыв</q> адресации, то вторая часть команды
+			(адрес перехода) считывается из нового места. Т.&#8239;е. если по адресу 06
+			стоит команда <span class="but_b">БП</span>,
+			то в обычном потоке адрес перехода будет по адресу 07, но если
+			попали сюда как на адрес B1, то адрес перехода будет по адресу 00.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_using">
+		<header><h2>Практическое применение</h2></header>
+		<ul>
+			<li>
+				Расположение управляющих потоком выполнения команд по начальным
+				адресам, чтобы в конце программы, или в середине, в зависимости от
+				побочной ветви, их не использовать для сокращения длины программы,
+				ввиду автоматического перехода на начало основной ветви.
+				Чаще в этом качестве выступает
+				<span class="but_b">В/О</span>, но можно и условные переходы,
+				<span class="but_b">С/П</span> и др.
+			</li>
+			<li>
+				Использование разных значений для фактического перехода по одному и
+				тому же адресу. Нестандартное ветвление.
+			</li>
+			<li>
+				Изменение адреса перехода сдвоенной команды, в зависимости от
+				формального адреса. Так же нестандартное ветвление.
+			</li>
+		</ul>
+	</section>
+
+	<footer>
+		<a href="../Недокументированные%20возможности%20ПМК%20МК-61.html">К оглавлению</a>
+	</footer>
+
+</body>
+</html>

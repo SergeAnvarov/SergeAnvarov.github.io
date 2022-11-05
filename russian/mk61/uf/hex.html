@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>Шестнадцатеричная арифметика</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta content="true" name="HandheldFriendly"/>
+	<meta content="width" name="MobileOptimized"/>
+	<meta content="yes" name="apple-mobile-web-app-capable"/>
+	<meta name="description" content="Недокументированные возможности программируемого микрокалькулятора МК-61. Шестнадцатеричная арифметика"/>
+	<link rel="stylesheet" href="../styles/buttons.css">
+	<link rel="stylesheet" href="../styles/tables.css">
+	<link rel="stylesheet" href="../styles/other.css">
+</head>
+
+<body>
+
+	<section>
+		<header><h1>Шестнадцатеричная арифметика</h1></header>
+		<p>
+			Речь идёт об обычных арифметических операциях, но в ситуации, когда
+			операнд представляет собой число, содержащее шестнадцатеричные цифры
+			A&hellip;E (F убрано из рассмотрения как опасное, по крайней мере в качестве
+			первой цифры).
+		</p>
+		<p>
+			Для простоты рассмотрим ситуации, когда число состоит из одной
+			шестнадцатеричной цифры. Далее будем её обозначать буквой H. Для более
+			ясного порядка операндов будем использовать стандартные обозначения X и Y.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_h_plus_y">
+		<header><h2>Операция H <span class="but">+</span> Y</h2></header>
+		<table class="center">
+			<tr>
+				<td><sub>Y</sub>&Backslash;<sup>H</sup></td>
+				<th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>
+			</tr>
+			<tr>
+				<th>0</th>
+				<td>0</td><td>1</td><td>2</td><td>3</td><td>4</td>
+			</tr>
+			<tr>
+				<th>1</th>
+				<td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
+			</tr>
+			<tr>
+				<th>2</th>
+				<td>2</td><td>3</td><td>4</td><td>5</td><td>0</td>
+			</tr>
+			<tr>
+				<th>3</th>
+				<td>3</td><td>4</td><td>5</td><td>0</td><td>1</td>
+			</tr>
+			<tr>
+				<th>4</th>
+				<td>4</td><td>5</td><td>0</td><td>1</td><td>2</td>
+			</tr>
+			<tr>
+				<th>5</th>
+				<td>5</td><td>0</td><td>1</td><td>2</td><td>3</td>
+			</tr>
+			<tr>
+				<th>6</th>
+				<td>0</td><td>1</td><td>2</td><td>3</td><td>4</td>
+			</tr>
+			<tr>
+				<th>7</th>
+				<td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
+			</tr>
+			<tr>
+				<th>8</th>
+				<td>2</td><td>3</td><td>4</td><td>5</td><td>6</td>
+			</tr>
+			<tr>
+				<th>9</th>
+				<td>3</td><td>4</td><td>5</td><td>6</td><td>7</td>
+			</tr>
+			<tr>
+				<th>A</th>
+				<td>4</td><td>5</td><td>6</td><td>7</td><td>8</td>
+			</tr>
+			<tr>
+				<th>B</th>
+				<td>5</td><td>6</td><td>7</td><td>8</td><td>9</td>
+			</tr>
+			<tr>
+				<th>C</th>
+				<td>6</td><td>7</td><td>8</td><td>9</td><td>10</td>
+			</tr>
+			<tr>
+				<th>D</th>
+				<td>7</td><td>8</td><td>9</td><td>10</td><td>11</td>
+			</tr>
+			<tr>
+				<th>E</th>
+				<td>8</td><td>9</td><td>10</td><td>11</td><td>12</td>
+			</tr>
+			<tr>
+				<td colspan="6"></td>
+			</tr>
+			<tr>
+				<th>10</th>
+				<td>10</td><td>21</td><td>22</td><td>24</td><td>24</td>
+			</tr>
+			<tr>
+				<th>11</th>
+				<td>21</td><td>22</td><td>23</td><td>24</td><td>25</td>
+			</tr>
+			<tr>
+				<th>12</th>
+				<td>22</td><td>23</td><td>24</td><td>25</td><td>26</td>
+			</tr>
+			<tr>
+				<th>13</th>
+				<td>23</td><td>24</td><td>25</td><td>26</td><td>27</td>
+			</tr>
+			<tr>
+				<th>14</th>
+				<td>24</td><td>25</td><td>26</td><td>27</td><td>28</td>
+			</tr>
+			<tr>
+				<th>15</th>
+				<td>25</td><td>26</td><td>27</td><td>28</td><td>29</td>
+			</tr>
+			<tr>
+				<th>16</th>
+				<td>26</td><td>27</td><td>28</td><td>29</td><td>30</td>
+			</tr>
+			<tr>
+				<th>17</th>
+				<td>27</td><td>28</td><td>29</td><td>30</td><td>31</td>
+			</tr>
+			<tr>
+				<th>18</th>
+				<td>28</td><td>29</td><td>30</td><td>31</td><td>32</td>
+			</tr>
+			<tr>
+				<th>19</th>
+				<td>29</td><td>30</td><td>31</td><td>32</td><td>33</td>
+			</tr>
+			<tr>
+				<th>1A</th>
+				<td>30</td><td>31</td><td>32</td><td>33</td><td>34</td>
+			</tr>
+			<tr>
+				<th>1B</th>
+				<td>31</td><td>32</td><td>33</td><td>34</td><td>35</td>
+			</tr>
+			<tr>
+				<th>1C</th>
+				<td>32</td><td>33</td><td>34</td><td>35</td><td>20</td>
+			</tr>
+			<tr>
+				<th>1D</th>
+				<td>33</td><td>34</td><td>35</td><td>20</td><td>21</td>
+			</tr>
+			<tr>
+				<th>1E</th>
+				<td>34</td><td>35</td><td>20</td><td>21</td><td>22</td>
+			</tr>
+			<tr>
+				<th>1F</th>
+				<td>35</td><td>20</td><td>21</td><td>22</td><td>23</td>
+			</tr>
+		</table>
+		<p>
+			Вычисление идёт как шестнадцатеричное, остаток по модулю 16, а от
+			него берётся последняя цифра (чтобы осталась одна).
+			X = ((X + Y) mod 16) mod 10.
+			<br>
+			Если <strong>Y двузначное</strong>, то уже две цифры X = ((X + Y) mod 256)
+			mod 100, а значит получается <strong>как
+			обычное сложение</strong>, если число двузначное.
+			<br>
+			Если <strong>Y дробное</strong>, то целая часть как выше,
+			а дробная сохраняется.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_x_plus_h">
+		<header><h2>Операция X <span class="but">+</span> H</h2></header>
+		<p>
+			В этом случае осуществляется обычное сложение, только результат
+			нормализуется. Например: 0 + A = 10, 9 + E = 23. В случае
+			шестнадцатеричного X см. таблицу выше.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_y_minus_h">
+		<header><h2>Операция Y <span class="but">-</span> H</h2></header>
+		<table class="center">
+			<tr>
+				<td><sub>Y</sub>&Backslash;<sup>H</sup></td>
+				<th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>
+			</tr>
+			<tr>
+				<th>0</th>
+				<td>&minus;10</td><td>&minus;1</td><td>&minus;2</td><td>&minus;3</td><td>&minus;4</td>
+			</tr>
+			<tr>
+				<th>1</th>
+				<td>&minus;9</td><td>&minus;10</td><td>&minus;1</td><td>&minus;2</td><td>&minus;3</td>
+			</tr>
+			<tr>
+				<th>2</th>
+				<td>&minus;8</td><td>&minus;9</td><td>&minus;10</td><td>&minus;1</td><td>&minus;2</td>
+			</tr>
+			<tr>
+				<th>3</th>
+				<td>&minus;7</td><td>&minus;8</td><td>&minus;9</td><td>&minus;10</td><td>&minus;1</td>
+			</tr>
+			<tr>
+				<th>4</th>
+				<td>&minus;6</td><td>&minus;7</td><td>&minus;8</td><td>&minus;9</td><td>&minus;10</td>
+			</tr>
+			<tr>
+				<th>5</th>
+				<td>&minus;5</td><td>&minus;6</td><td>&minus;7</td><td>&minus;8</td><td>&minus;9</td>
+			</tr>
+			<tr>
+				<th>6</th>
+				<td>&minus;4</td><td>&minus;5</td><td>&minus;6</td><td>&minus;7</td><td>&minus;8</td>
+			</tr>
+			<tr>
+				<th>7</th>
+				<td>&minus;3</td><td>&minus;4</td><td>&minus;5</td><td>&minus;6</td><td>&minus;7</td>
+			</tr>
+			<tr>
+				<th>8</th>
+				<td>&minus;2</td><td>&minus;3</td><td>&minus;4</td><td>&minus;5</td><td>&minus;6</td>
+			</tr>
+			<tr>
+				<th>9</th>
+				<td>&minus;1</td><td>&minus;2</td><td>&minus;3</td><td>&minus;4</td><td>&minus;5</td>
+			</tr>
+			<tr>
+				<th>A</th>
+				<td>0</td><td>&minus;1</td><td>&minus;2</td><td>&minus;3</td><td>&minus;4</td>
+			</tr>
+			<tr>
+				<th>B</th>
+				<td>1</td><td>0</td><td>&minus;1</td><td>&minus;2</td><td>&minus;3</td>
+			</tr>
+			<tr>
+				<th>C</th>
+				<td>2</td><td>1</td><td>0</td><td>&minus;1</td><td>&minus;2</td>
+			</tr>
+			<tr>
+				<th>D</th>
+				<td>3</td><td>2</td><td>1</td><td>0</td><td>&minus;1</td>
+			</tr>
+			<tr>
+				<th>E</th>
+				<td>4</td><td>3</td><td>2</td><td>1</td><td>0</td>
+			</tr>
+			<tr>
+				<td colspan="6"></td>
+			</tr>
+			<tr>
+				<th>10</th>
+				<td>0</td><td>15</td><td>14</td><td>13</td><td>12</td>
+			</tr>
+			<tr>
+				<th>11</th>
+				<td>1</td><td>16</td><td>15</td><td>14</td><td>13</td>
+			</tr>
+			<tr>
+				<th>12</th>
+				<td>2</td><td>17</td><td>16</td><td>15</td><td>14</td>
+			</tr>
+			<tr>
+				<th>13</th>
+				<td>3</td><td>18</td><td>17</td><td>16</td><td>15</td>
+			</tr>
+			<tr>
+				<th>14</th>
+				<td>4</td><td>19</td><td>18</td><td>17</td><td>16</td>
+			</tr>
+			<tr>
+				<th>15</th>
+				<td>5</td><td>20</td><td>19</td><td>18</td><td>17</td>
+			</tr>
+			<tr>
+				<th>16</th>
+				<td>6</td><td>21</td><td>20</td><td>19</td><td>18</td>
+			</tr>
+			<tr>
+				<th>17</th>
+				<td>7</td><td>22</td><td>21</td><td>20</td><td>19</td>
+			</tr>
+			<tr>
+				<th>18</th>
+				<td>8</td><td>23</td><td>22</td><td>21</td><td>20</td>
+			</tr>
+			<tr>
+				<th>19</th>
+				<td>9</td><td>24</td><td>23</td><td>22</td><td>21</td>
+			</tr>
+			<tr>
+				<th>1A</th>
+				<td>0</td><td>25</td><td>24</td><td>23</td><td>22</td>
+			</tr>
+			<tr>
+				<th>1B</th>
+				<td>1</td><td>10</td><td>25</td><td>24</td><td>23</td>
+			</tr>
+			<tr>
+				<th>1C</th>
+				<td>2</td><td>11</td><td>10</td><td>25</td><td>24</td>
+			</tr>
+			<tr>
+				<th>1D</th>
+				<td>3</td><td>12</td><td>11</td><td>10</td><td>25</td>
+			</tr>
+			<tr>
+				<th>1E</th>
+				<td>4</td><td>13</td><td>12</td><td>11</td><td>10</td>
+			</tr>
+			<tr>
+				<th>1F</th>
+				<td>5</td><td>14</td><td>13</td><td>12</td><td>11</td>
+			</tr>
+		</table>
+		<p>
+			Выглядит похоже на X = (Y &minus; X) mod 16, но не всегда понятно,
+			когда
+			берётся заём, а когда нет. Число A какое-то особенное для двузначных,
+			для него повторяется как для однозначных, т.&#8239;е. только с последней
+			цифрой идёт операция, а потом складывается.
+			<br>
+			Для трёх- и выше значных повторяется как для двузначных,
+			т.&#8239;е. 100 &minus; A = 90, т.&#8239;е. 90 + (10 &minus; A) + 0,
+			100 &minus; B = 105, т.&#8239;е. 90 + (10 &minus; B) + 0,&hellip;,
+			109 &minus; E = 111, т.&#8239;е. 90 + (10 &minus; E) + 9.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_h_minus_x">
+		<header><h2>Операция H <span class="but">-</span> X</h2></header>
+		<table class="center">
+			<tr>
+				<td><sub>X</sub>&Backslash;<sup>H</sup></td>
+				<th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>
+			</tr>
+			<tr>
+				<th>0</th>
+				<td>10</td><td>11</td><td>12</td><td>13</td><td>14</td>
+			</tr>
+			<tr>
+				<th>1</th>
+				<td>9</td><td>0</td><td>1</td><td>2</td><td>3</td>
+			</tr>
+			<tr>
+				<th>2</th>
+				<td>8</td><td>9</td><td>0</td><td>1</td><td>2</td>
+			</tr>
+			<tr>
+				<th>3</th>
+				<td>7</td><td>8</td><td>9</td><td>0</td><td>1</td>
+			</tr>
+			<tr>
+				<th>4</th>
+				<td>6</td><td>7</td><td>8</td><td>9</td><td>0</td>
+			</tr>
+			<tr>
+				<th>5</th>
+				<td>5</td><td>6</td><td>7</td><td>8</td><td>9</td>
+			</tr>
+			<tr>
+				<th>6</th>
+				<td>4</td><td>5</td><td>6</td><td>7</td><td>8</td>
+			</tr>
+			<tr>
+				<th>7</th>
+				<td>3</td><td>4</td><td>5</td><td>6</td><td>7</td>
+			</tr>
+			<tr>
+				<th>8</th>
+				<td>2</td><td>3</td><td>4</td><td>5</td><td>6</td>
+			</tr>
+			<tr>
+				<th>9</th>
+				<td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
+			</tr>
+			<tr>
+				<th>A</th>
+				<td>0</td><td>1</td><td>2</td><td>3</td><td>4</td>
+			</tr>
+			<tr>
+				<th>B</th>
+				<td>&minus;1</td><td>0</td><td>1</td><td>2</td><td>3</td>
+			</tr>
+			<tr>
+				<th>C</th>
+				<td>&minus;2</td><td>&minus;1</td><td>0</td><td>1</td><td>2</td>
+			</tr>
+			<tr>
+				<th>D</th>
+				<td>&minus;3</td><td>&minus;2</td><td>&minus;1</td><td>0</td><td>1</td>
+			</tr>
+			<tr>
+				<th>E</th>
+				<td>&minus;4</td><td>&minus;3</td><td>&minus;2</td><td>&minus;1</td><td>0</td>
+			</tr>
+			<tr>
+				<td colspan="6"></td>
+			</tr>
+			<tr>
+				<th>10</th>
+				<td>0</td><td>1</td><td>2</td><td>3</td><td>4</td>
+			</tr>
+			<tr>
+				<th>11</th>
+				<td>&minus;1</td><td>0</td><td>1</td><td>2</td><td>3</td>
+			</tr>
+			<tr>
+				<th>12</th>
+				<td>&minus;2</td><td>&minus;1</td><td>0</td><td>1</td><td>2</td>
+			</tr>
+			<tr>
+				<th>13</th>
+				<td>&minus;3</td><td>&minus;2</td><td>&minus;1</td><td>0</td><td>1</td>
+			</tr>
+			<tr>
+				<th>14</th>
+				<td>&minus;4</td><td>&minus;3</td><td>&minus;2</td><td>&minus;1</td><td>0</td>
+			</tr>
+			<tr>
+				<th>15</th>
+				<td>&minus;5</td><td>&minus;4</td><td>&minus;3</td><td>&minus;2</td><td>&minus;1</td>
+			</tr>
+			<tr>
+				<th>16</th>
+				<td>&minus;6</td><td>&minus;5</td><td>&minus;4</td><td>&minus;3</td><td>&minus;2</td>
+			</tr>
+			<tr>
+				<th>17</th>
+				<td>&minus;7</td><td>&minus;6</td><td>&minus;5</td><td>&minus;4</td><td>&minus;3</td>
+			</tr>
+			<tr>
+				<th>18</th>
+				<td>&minus;8</td><td>&minus;7</td><td>&minus;6</td><td>&minus;5</td><td>&minus;4</td>
+			</tr>
+			<tr>
+				<th>19</th>
+				<td>&minus;9</td><td>&minus;8</td><td>&minus;7</td><td>&minus;6</td><td>&minus;5</td>
+			</tr>
+			<tr>
+				<th>1A</th>
+				<td>&minus;10</td><td>&minus;9</td><td>&minus;8</td><td>&minus;7</td><td>&minus;6</td>
+			</tr>
+			<tr>
+				<th>1B</th>
+				<td>&minus;1</td><td>&minus;10</td><td>&minus;9</td><td>&minus;8</td><td>&minus;7</td>
+			</tr>
+			<tr>
+				<th>1C</th>
+				<td>&minus;2</td><td>&minus;1</td><td>&minus;10</td><td>&minus;9</td><td>&minus;8</td>
+			</tr>
+			<tr>
+				<th>1D</th>
+				<td>&minus;3</td><td>&minus;2</td><td>&minus;1</td><td>&minus;10</td><td>&minus;9</td>
+			</tr>
+			<tr>
+				<th>1E</th>
+				<td>&minus;4</td><td>&minus;3</td><td>&minus;2</td><td>&minus;1</td><td>&minus;10</td>
+			</tr>
+			<tr>
+				<th>1F</th>
+				<td>&minus;5</td><td>&minus;4</td><td>&minus;3</td><td>&minus;2</td><td>&minus;1</td>
+			</tr>
+		</table>
+		<p>
+			Нарушения обычного вычитания только для нескольких чисел (выше и
+			правее, начиная с B &minus; 1, для двузначных ниже и левее A &minus; 1B).
+			<br>
+			Кстати, особенность: когда из шестнадцатеричного числа вычитается
+			его десятичный аналог, то ноль, на самом деле, ненормализованный
+			(т.&#8239;е. из 4-х значного будет 0000), и это можно использовать
+			для получения нуля в любой степени. Пример (в ручном режиме):
+		</p>
+		<ol>
+			<li>
+				Получим цифру E документированным образом:
+				<span class="but">1</span>&ensp;
+				<span class="but">1</span>&ensp;
+				<span class="but_k">К</span><span class="op_k">ИНВ</span>&ensp;
+				<span class="but_k">К</span><span class="op_k">{x}</span>&ensp;
+				<span class="but">ВП</span>&ensp;
+				<span class="but">1</span>&ensp;
+				<span class="but_k">К</span><span class="op_k">[x]</span>,
+				или можно нестандартным:
+				<span class="but">1</span>&ensp;
+				<span class="but_k">К</span><span class="op_k">&times;</span>&ensp;
+				<span class="but">ВП</span>
+			</li>
+			<li>
+				Добавим порядок, который хотим получить:
+				<span class="but">ВП</span>&ensp;
+				<span class="but">9</span>&ensp;
+				<span class="but">9</span>
+			</li>
+			<li>
+				Затем скопируем в стек:
+				<span class="but">В&uarr;</span>&ensp;
+				<span class="but">В&uarr;</span>&ensp;
+				<span class="but_cx">СX</span>
+			</li>
+			<li>
+				Выполним сложение <span class="but">+</span>
+				(с нулём, что по правилу X + H будет обычным сложением,
+				т.&#8239;е. получится десятичный аналог) и вычитание:
+				<span class="but">-</span>
+			</li>
+		</ol>
+		<p>
+			И вот мы получили
+			<span class="code"> 0.        99</span>.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_h_mult_y">
+		<header><h2>Операция H <span class="but">&times;</span> Y</h2></header>
+		<table class="center">
+			<tr>
+				<td><sub>Y</sub>&Backslash;<sup>H</sup></td>
+				<th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>
+			</tr>
+			<tr>
+				<th>0</th>
+				<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
+			</tr>
+			<tr>
+				<th>1</th>
+				<td>10</td><td>10</td><td>10</td><td>10</td><td>0</td>
+			</tr>
+			<tr>
+				<th>2</th>
+				<td>20</td><td>20</td><td>20</td><td>20</td><td>0</td>
+			</tr>
+			<tr>
+				<th>3</th>
+				<td>30</td><td>30</td><td>30</td><td>30</td><td>0</td>
+			</tr>
+			<tr>
+				<th>4</th>
+				<td>40</td><td>40</td><td>40</td><td>40</td><td>0</td>
+			</tr>
+			<tr>
+				<th>5</th>
+				<td>50</td><td>50</td><td>50</td><td>50</td><td>0</td>
+			</tr>
+			<tr>
+				<th>6</th>
+				<td>60</td><td>60</td><td>60</td><td>60</td><td>0</td>
+			</tr>
+			<tr>
+				<th>7</th>
+				<td>70</td><td>70</td><td>70</td><td>70</td><td>0</td>
+			</tr>
+			<tr>
+				<th>8</th>
+				<td>80</td><td>80</td><td>80</td><td>80</td><td>0</td>
+			</tr>
+			<tr>
+				<th>9</th>
+				<td>90</td><td>90</td><td>90</td><td>90</td><td>0</td>
+			</tr>
+			<tr>
+				<th>A</th>
+				<td>00</td><td>00</td><td>00</td><td>00</td><td>0</td>
+			</tr>
+			<tr>
+				<th>B</th>
+				<td>10</td><td>10</td><td>10</td><td>10</td><td>0</td>
+			</tr>
+			<tr>
+				<th>C</th>
+				<td>20</td><td>20</td><td>20</td><td>20</td><td>0</td>
+			</tr>
+			<tr>
+				<th>D</th>
+				<td>30</td><td>30</td><td>30</td><td>30</td><td>0</td>
+			</tr>
+			<tr>
+				<th>E</th>
+				<td>40</td><td>40</td><td>40</td><td>40</td><td>0</td>
+			</tr>
+			<tr>
+				<td colspan="6"></td>
+			</tr>
+			<tr>
+				<th>10</th>
+				<td>100</td><td>100</td><td>100</td><td>100</td><td>0</td>
+			</tr>
+			<tr>
+				<th>11</th>
+				<td>110</td><td>110</td><td>110</td><td>110</td><td>0</td>
+			</tr>
+			<tr>
+				<th>12</th>
+				<td>120</td><td>120</td><td>120</td><td>120</td><td>0</td>
+			</tr>
+			<tr>
+				<th>13</th>
+				<td>130</td><td>130</td><td>130</td><td>130</td><td>0</td>
+			</tr>
+			<tr>
+				<th>14</th>
+				<td>140</td><td>140</td><td>140</td><td>140</td><td>0</td>
+			</tr>
+			<tr>
+				<th>15</th>
+				<td>150</td><td>150</td><td>150</td><td>150</td><td>0</td>
+			</tr>
+			<tr>
+				<th>16</th>
+				<td>160</td><td>160</td><td>160</td><td>160</td><td>0</td>
+			</tr>
+			<tr>
+				<th>17</th>
+				<td>170</td><td>170</td><td>170</td><td>170</td><td>0</td>
+			</tr>
+			<tr>
+				<th>18</th>
+				<td>180</td><td>180</td><td>180</td><td>180</td><td>0</td>
+			</tr>
+			<tr>
+				<th>19</th>
+				<td>190</td><td>190</td><td>190</td><td>190</td><td>0</td>
+			</tr>
+			<tr>
+				<th>1A</th>
+				<td>200</td><td>200</td><td>200</td><td>200</td><td>0</td>
+			</tr>
+			<tr>
+				<th>1B</th>
+				<td>210</td><td>210</td><td>210</td><td>210</td><td>0</td>
+			</tr>
+			<tr>
+				<th>1C</th>
+				<td>220</td><td>220</td><td>220</td><td>220</td><td>0</td>
+			</tr>
+			<tr>
+				<th>1D</th>
+				<td>230</td><td>230</td><td>230</td><td>230</td><td>0</td>
+			</tr>
+			<tr>
+				<th>1E</th>
+				<td>240</td><td>240</td><td>240</td><td>240</td><td>0</td>
+			</tr>
+			<tr>
+				<th>1F</th>
+				<td>250</td><td>250</td><td>250</td><td>250</td><td>0</td>
+			</tr>
+		</table>
+		<p>
+			Поразительное однообразие, почти все ведут себя как 10. Не ясно, чем
+			так отличается E, но ноль получается и для многозначных чисел.
+			<br>
+			Для двузначных соответственно, т.&#8239;е. C &times; 20 = 200,
+			но E &times; 20 = 0.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_x_mult_h">
+		<header><h2>Операция X <span class="but">&times;</span> H</h2></header>
+		<table class="center">
+			<tr>
+				<td><sub>X</sub>&Backslash;<sup>H</sup></td>
+				<th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>
+			</tr>
+			<tr>
+				<th>0</th>
+				<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
+			</tr>
+			<tr>
+				<th>1</th>
+				<td>0</td><td>1</td><td>2</td><td>3</td><td>4</td>
+			</tr>
+			<tr>
+				<th>2</th>
+				<td>4</td><td>6</td><td>8</td><td>10</td><td>12</td>
+			</tr>
+			<tr>
+				<th>3</th>
+				<td>4</td><td>1</td><td>4</td><td>23</td><td>10</td>
+			</tr>
+			<tr>
+				<th>4</th>
+				<td>8</td><td>2</td><td>0</td><td>20</td><td>24</td>
+			</tr>
+			<tr>
+				<th>5</th>
+				<td>50</td><td>11</td><td>32</td><td>53</td><td>42</td>
+			</tr>
+			<tr>
+				<th>6</th>
+				<td>0</td><td>22</td><td>44</td><td>50</td><td>40</td>
+			</tr>
+			<tr>
+				<th>7</th>
+				<td>10</td><td>33</td><td>40</td><td>63</td><td>54</td>
+			</tr>
+			<tr>
+				<th>8</th>
+				<td>20</td><td>44</td><td>52</td><td>60</td><td>68</td>
+			</tr>
+			<tr>
+				<th>9</th>
+				<td>30</td><td>55</td><td>64</td><td>73</td><td>82</td>
+			</tr>
+			<tr>
+				<th>A</th>
+				<td>00</td><td>10</td><td>20</td><td>30</td><td>40</td>
+			</tr>
+			<tr>
+				<th>B</th>
+				<td>00</td><td>10</td><td>20</td><td>30</td><td>40</td>
+			</tr>
+			<tr>
+				<th>C</th>
+				<td>00</td><td>10</td><td>20</td><td>30</td><td>40</td>
+			</tr>
+			<tr>
+				<th>D</th>
+				<td>00</td><td>10</td><td>20</td><td>30</td><td>40</td>
+			</tr>
+			<tr>
+				<th>E</th>
+				<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>
+			</tr>
+			<tr>
+				<td colspan="6"></td>
+			</tr>
+			<tr>
+				<th>10</th>
+				<td>00</td><td>10</td><td>20</td><td>30</td><td>40</td>
+			</tr>
+			<tr>
+				<th>11</th>
+				<td>10</td><td>21</td><td>32</td><td>43</td><td>54</td>
+			</tr>
+			<tr>
+				<th>12</th>
+				<td>04</td><td>16</td><td>28</td><td>40</td><td>52</td>
+			</tr>
+			<tr>
+				<th>13</th>
+				<td>14</td><td>11</td><td>24</td><td>53</td><td>50</td>
+			</tr>
+			<tr>
+				<th>14</th>
+				<td>08</td><td>22</td><td>20</td><td>50</td><td>4</td>
+			</tr>
+			<tr>
+				<th>15</th>
+				<td>990</td><td>021</td><td>052</td><td>923</td><td>922</td>
+			</tr>
+			<tr>
+				<th>16</th>
+				<td>000</td><td>032</td><td>904</td><td>920</td><td>920</td>
+			</tr>
+			<tr>
+				<th>17</th>
+				<td>010</td><td>043</td><td>900</td><td>933</td><td>934</td>
+			</tr>
+			<tr>
+				<th>18</th>
+				<td>020</td><td>054</td><td>912</td><td>930</td><td>948</td>
+			</tr>
+			<tr>
+				<th>19</th>
+				<td>030</td><td>905</td><td>924</td><td>943</td><td>962</td>
+			</tr>
+			<tr>
+				<th>1A</th>
+				<td>940</td><td>960</td><td>980</td><td>0</td><td>20</td>
+			</tr>
+			<tr>
+				<th>1B</th>
+				<td>940</td><td>960</td><td>980</td><td>0</td><td>20</td>
+			</tr>
+			<tr>
+				<th>1C</th>
+				<td>940</td><td>960</td><td>980</td><td>0</td><td>20</td>
+			</tr>
+			<tr>
+				<th>1D</th>
+				<td>940</td><td>960</td><td>980</td><td>0</td><td>20</td>
+			</tr>
+			<tr>
+				<th>1E</th>
+				<td>00</td><td>10</td><td>20</td><td>30</td><td>40</td>
+			</tr>
+			<tr>
+				<th>1F</th>
+				<td>00</td><td>10</td><td>20</td><td>30</td><td>40</td>
+			</tr>
+		</table>
+		<p>
+			Тут уже трудно поддаётся логике.
+			На практике автор как-то использовал D. С одной стороны, это
+			изображение, с другой – коэффициент 10 (см. таблицу H &times; Y),
+			а самое основное – это проверка битового сдвига. При умножении
+			дробной части, содержащей 1, 2, 4, 8 (как бы биты) возможен выход
+			за диапазон, т.&#8239;е. 0.5 или 1.6. Так вот, при умножении на D по
+			указанной таблице, результат из одной цифры получался, если всё
+			нормально, или из двух, при выходе за диапазон.
+		</p>
+		<p>
+			Для двухзначных результат бывает ненормализованным: обратите
+			внимание на ведущие нули в некоторых случаях. На этом фоне
+			14 &times; E выглядит как белая ворона.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_h_div_x">
+		<header><h2>Операция H <span class="but">&divide;</span> X</h2></header>
+		<table class="center">
+			<tr>
+				<td><sub>X</sub>&Backslash;<sup>H</sup></td>
+				<th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>
+			</tr>
+			<tr>
+				<th>0</th>
+				<td>ЕГГ0Г</td><td>ЕГГ0Г</td><td>ЕГГ0Г</td><td>ЕГГ0Г</td><td>ЕГГ0Г</td>
+			</tr>
+			<tr>
+				<th>1</th>
+				<td>0</td><td>1</td><td>2</td><td>3</td><td>4</td>
+			</tr>
+			<tr>
+				<th>2</th>
+				<td>5</td><td>5.5</td><td>6</td><td>6.5</td><td>7</td>
+			</tr>
+			<tr>
+				<th>3</th>
+				<td>3.3333333</td><td>3.6666666</td><td>4</td><td>4.3333333</td><td>4.6666666</td>
+			</tr>
+			<tr>
+				<th>4</th>
+				<td>2.5</td><td>2.75</td><td>3</td><td>3.25</td><td>3.5</td>
+			</tr>
+			<tr>
+				<th>5</th>
+				<td>2</td><td>2.2</td><td>2.4</td><td>2.6</td><td>2.8</td>
+			</tr>
+			<tr>
+				<th>6</th>
+				<td>1.6666666</td><td>1.8333333</td><td>2</td><td>2.1666666</td><td>2.3333333</td>
+			</tr>
+			<tr>
+				<th>7</th>
+				<td>1.4285714</td><td>1.5714285</td><td>1.7142857</td><td>1.8571428</td><td>2</td>
+			</tr>
+			<tr>
+				<th>8</th>
+				<td>1.25</td><td>1.375</td><td>1.5</td><td>1.625</td><td>1.75</td>
+			</tr>
+			<tr>
+				<th>9</th>
+				<td>1.1111111</td><td>1.2222222</td><td>1.3333333</td><td>1.4444444</td><td>1.5555555</td>
+			</tr>
+			<tr>
+				<th>A</th>
+				<td>1</td><td>1.1</td><td>1.2</td><td>1.3</td><td>1.4</td>
+			</tr>
+			<tr>
+				<th>B</th>
+				<td>8.4444443<sup>|&minus;01</sup></td><td>1</td><td>1.2525252</td><td>1.3434343</td><td>1.4343434</td>
+			</tr>
+			<tr>
+				<th>C</th>
+				<td>ЕГГ0Г</td><td>ЕГГ0Г</td><td>1</td><td>1.23</td><td>1.3</td>
+			</tr>
+			<tr>
+				<th>D</th>
+				<td>4.<sup>|&minus;01</sup></td><td>6.<sup>|&minus;01</sup></td><td>8.<sup>|&minus;01</sup></td><td>1</td><td>1.2</td>
+			</tr>
+			<tr>
+				<th>E</th>
+				<td>5.2929292<sup>|&minus;01</sup></td><td>2.2929292<sup>|&minus;01</sup></td><td>5.2929292<sup>|&minus;0</sup></td><td>8.2929292<sup>|&minus;01</sup></td><td>1</td>
+			</tr>
+			<tr>
+				<td colspan="6"></td>
+			</tr>
+			<tr>
+				<th>10</th>
+				<td>0.<sup>|&minus;01</sup></td><td>1.<sup>|&minus;01</sup></td><td>2.<sup>|&minus;01</sup></td><td>3.<sup>|&minus;01</sup></td><td>4.<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>11</th>
+				<td>9.090909<sup>|&minus;01</sup></td><td>0.<sup>|&minus;01</sup></td><td>0.9090909<sup>|&minus;01</sup></td><td>1.8181818<sup>|&minus;01</sup></td><td>2.7272727<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>12</th>
+				<td>8.3333333<sup>|&minus;01</sup></td><td>9.1666666<sup>|&minus;01</sup></td><td>0.<sup>|&minus;01</sup></td><td>0.8333333<sup>|&minus;01</sup></td><td>1.6666666<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>13</th>
+				<td>7.6923076<sup>|&minus;01</sup></td><td>8.4615384<sup>|&minus;01</sup></td><td>9.2307692<sup>|&minus;01</sup></td><td>0.<sup>|&minus;01</sup></td><td>0.7692307<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>14</th>
+				<td>7.1428571<sup>|&minus;01</sup></td><td>7.8571428<sup>|&minus;01</sup></td><td>8.5714285<sup>|&minus;01</sup></td><td>9.2857142<sup>|&minus;01</sup></td><td>0.<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>15</th>
+				<td>6.6666666<sup>|&minus;01</sup></td><td>7.3333333<sup>|&minus;01</sup></td><td>8.<sup>|&minus;01</sup></td><td>8.6666666<sup>|&minus;01</sup></td><td>9.3333333<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>16</th>
+				<td>6.25<sup>|&minus;01</sup></td><td>6.875<sup>|&minus;01</sup></td><td>7.5<sup>|&minus;01</sup></td><td>8.125<sup>|&minus;01</sup></td><td>8.75<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>17</th>
+				<td>5.8823529<sup>|&minus;01</sup></td><td>6.4705882<sup>|&minus;01</sup></td><td>7.0588235<sup>|&minus;01</sup></td><td>7.6470588<sup>|&minus;01</sup></td><td>8.2352941<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>18</th>
+				<td>5.5555555<sup>|&minus;01</sup></td><td>6.1111111<sup>|&minus;01</sup></td><td>6.6666666<sup>|&minus;01</sup></td><td>7.2222222<sup>|&minus;01</sup></td><td>7.7777777<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>19</th>
+				<td>5.2631578<sup>|&minus;01</sup></td><td>5.7894736<sup>|&minus;01</sup></td><td>6.3157894<sup>|&minus;01</sup></td><td>6.8421052<sup>|&minus;01</sup></td><td>7.368421<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>1A</th>
+				<td>5.<sup>|&minus;01</sup></td><td>5.1<sup>|&minus;01</sup></td><td>6.3157894<sup>|&minus;01</sup></td><td>6.1<sup>|&minus;01</sup></td><td>7.<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>1B</th>
+				<td>5.0330001<sup>|&minus;01</sup></td><td>6.<sup>|&minus;01</sup></td><td>7.0001032<sup>|&minus;01</sup></td><td>7.8330001<sup>|&minus;01</sup></td><td>8.2330001<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>1C</th>
+				<td>6.<sup>|&minus;01</sup></td><td>7.0003809<sup>|&minus;01</sup></td><td>7.8100038<sup>|&minus;01</sup></td><td>8.1810003<sup>|&minus;01</sup></td><td>8.100038<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>1D</th>
+				<td>7.0005899<sup>|&minus;01</sup></td><td>7.9000589<sup>|&minus;01</sup></td><td>8.<sup>|&minus;01</sup></td><td>9.0005899<sup>|&minus;01</sup></td><td>9.9000589<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>1E</th>
+				<td>5.64<sup>|&minus;01</sup></td><td>5.90002<sup>|&minus;01</sup></td><td>6.4<sup>|&minus;01</sup></td><td>6.60002<sup>|&minus;01</sup></td><td>7.24<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>1F</th>
+				<td>5.4000299<sup>|&minus;01</sup></td><td>5.3223099<sup>|&minus;01</sup></td><td>6.153223<sup>|&minus;01</sup></td><td>7.0002999<sup>|&minus;01</sup></td><td>7.7000299<sup>|&minus;01</sup></td>
+			</tr>
+		</table>
+		<p>
+			Здесь кроме случая X = 1, и некоторых двузначных это обычное
+			деление нормализованного шестнадцатеричного числа. Пример:
+			E &divide; 7 = 14 &divide; 7 = 2.
+			<br>
+			Правда и здесь встречаются ненормализованные числа
+			(пример D &divide; 12, или C &divide; 11, которое на порядок меньше,
+			чем A &divide; 11).
+			<br>
+			Встречаются и ненормализованные нули, пример: С &divide; 12, и
+			выглядит, как указано:
+			<span class="code"> 0.       -01</span>.
+			Впрочем, <a href="indirect_addr.html#_R0">в косвенной адресации</a> мы
+			уже встречались с подобными нулями.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_y_div_h">
+		<header><h2>Операция Y <span class="but">&divide;</span> H</h2></header>
+		<table class="center">
+			<tr>
+				<td><sub>Y</sub>&Backslash;<sup>H</sup></td>
+				<th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>
+			</tr>
+			<tr>
+				<th>0</th>
+				<td>9.090909<sup>|&minus;01</sup></td><td>9.9099099<sup>|&minus;01</sup></td><td>4.4444443</td><td>9.9099099<sup>|&minus;01</sup></td><td>9.9099099<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>1</th>
+				<td>ЕГГ0Г</td><td>9.099099<sup>|&minus;01</sup></td><td>9.9099099<sup>|&minus;01</sup></td><td>9.9099099<sup>|&minus;01</sup></td><td>9.9099099<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>2</th>
+				<td>ЕГГ0Г</td><td>8.4444443<sup>|&minus;01</sup></td><td>9.099099<sup>|&minus;01</sup></td><td>9.9099099<sup>|&minus;01</sup></td><td>9.9099099<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>3</th>
+				<td>ЕГГ0Г</td><td>6.4444443<sup>|&minus;01</sup></td><td>ЕГГ0Г</td><td>9.099099<sup>|&minus;01</sup></td><td>9.9099099<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>4</th>
+				<td>ЕГГ0Г</td><td>4.4444443<sup>|&minus;01</sup></td><td>ЕГГ0Г</td><td>8.<sup>|&minus;01</sup></td><td>9.099099<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>5</th>
+				<td>ЕГГ0Г</td><td>2.4444443<sup>|&minus;01</sup></td><td>ЕГГ0Г</td><td>0.<sup>|&minus;01</sup></td><td>2.929292<sup>|&minus;02</sup></td>
+			</tr>
+			<tr>
+				<th>6</th>
+				<td>ЕГГ0Г</td><td>6.4444443<sup>|&minus;01</sup></td><td>ЕГГ0Г</td><td>2.<sup>|&minus;01</sup></td><td>3.2929292<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>7</th>
+				<td>ЕГГ0Г</td><td>4.4444443<sup>|&minus;01</sup></td><td>ЕГГ0Г</td><td>4.<sup>|&minus;01</sup></td><td>6.2929292<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>8</th>
+				<td>ЕГГ0Г</td><td>2.4444443<sup>|&minus;01</sup></td><td>ЕГГ0Г</td><td>0</td><td>9.2929292<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>9</th>
+				<td>ЕГГ0Г</td><td>0.4444443<sup>|&minus;01</sup></td><td>ЕГГ0Г</td><td>2.<sup>|&minus;01</sup></td><td>2.2929292<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>A</th>
+				<td>1</td><td>8.4444443<sup>|&minus;01</sup></td><td>ЕГГ0Г</td><td>4.<sup>|&minus;01</sup></td><td>5.2929292<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>B</th>
+				<td>1.1</td><td>1</td><td>ЕГГ0Г</td><td>6.<sup>|&minus;01</sup></td><td>2.2929292<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>C</th>
+				<td>1.2</td><td>1.2525252</td><td>1</td><td>8.<sup>|&minus;01</sup></td><td>5.2929292<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>D</th>
+				<td>1.3</td><td>1.3434343</td><td>1.23</td><td>1</td><td>8.2929292<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<th>E</th>
+				<td>1.4</td><td>1.4343434</td><td>1.3</td><td>1.2</td><td>1</td>
+			</tr>
+			<tr>
+				<td colspan="6"></td>
+			</tr>
+			<tr>
+				<th>10</th>
+				<td>ЕГГ0Г</td><td>9.09909</td><td>9.9099099</td><td>9.9099099</td><td>9.9099099</td>
+			</tr>
+			<tr>
+				<th>11</th>
+				<td>ЕГГ0Г</td><td>9.099099</td><td>ЕГГ0Г</td><td>9.8</td><td>9.0292929</td>
+			</tr>
+			<tr>
+				<th>12</th>
+				<td>ЕГГ0Г</td><td>9.099099</td><td>ЕГГ0Г</td><td>0</td><td>9.3292929</td>
+			</tr>
+			<tr>
+				<th>13</th>
+				<td>ЕГГ0Г</td><td>9.099099</td><td>ЕГГ0Г</td><td>0.2</td><td>9.6292929</td>
+			</tr>
+			<tr>
+				<th>14</th>
+				<td>ЕГГ0Г</td><td>9.099099</td><td>ЕГГ0Г</td><td>0.4</td><td>9.9292929</td>
+			</tr>
+			<tr>
+				<th>15</th>
+				<td>ЕГГ0Г</td><td>9</td><td>ЕГГ0Г</td><td>9</td><td>0.22922929</td>
+			</tr>
+			<tr>
+				<th>16</th>
+				<td>ЕГГ0Г</td><td>9.2525252</td><td>ЕГГ0Г</td><td>9.2</td><td>0.5292929</td>
+			</tr>
+			<tr>
+				<th>17</th>
+				<td>ЕГГ0Г</td><td>9.3434343</td><td>ЕГГ0Г</td><td>9.4</td><td>9.2292929</td>
+			</tr>
+			<tr>
+				<th>18</th>
+				<td>ЕГГ0Г</td><td>9.4343434</td><td>ЕГГ0Г</td><td>9.6</td><td>9.5292929</td>
+			</tr>
+			<tr>
+				<th>19</th>
+				<td>ЕГГ0Г</td><td>9.5252525</td><td>ЕГГ0Г</td><td>9.8</td><td>9.8292929</td>
+			</tr>
+			<tr>
+				<th>1A</th>
+				<td>ЕГГ0Г</td><td>9.6</td><td>9.9909909</td><td>9.9909909</td><td>9.9909909</td>
+			</tr>
+			<tr>
+				<th>1B</th>
+				<td>ЕГГ0Г</td><td>9.8525252</td><td>9.9909909</td><td>9.9909909</td><td>9.9909909</td>
+			</tr>
+			<tr>
+				<th>1C</th>
+				<td>ЕГГ0Г</td><td>9.9434343</td><td>9.9909909</td><td>9.9909909</td><td>9.9909909</td>
+			</tr>
+			<tr>
+				<th>1D</th>
+				<td>ЕГГ0Г</td><td>0.0343434</td><td>9.9909909</td><td>9.9909909</td><td>9.9909909</td>
+			</tr>
+			<tr>
+				<th>1E</th>
+				<td>ЕГГ0Г</td><td>9.099099</td><td>9.9909909</td><td>9.9909909</td><td>9.9909909</td>
+			</tr>
+			<tr>
+				<th>1F</th>
+				<td>ЕГГ0Г</td><td>7.4444443</td><td>9.9909909</td><td>9.9909909</td><td>9.9909909</td>
+			</tr>
+		</table>
+		<p>
+			Тут логики не наблюдается. Очень похожие, но разные числа:
+			9.099099<sup>|&minus;01</sup> и 9.9099099<sup>|&minus;01</sup> (или 9.099099 и 9.9099099).
+			<br>
+			Также интересно, что при делении нуля на шестнадцатеричную цифру получается вовсе не ноль.
+			<br>
+			А самое главное, тут не просто ЕГГ0Г, а <dfn>плохой ЕГГ0Г</dfn>,
+			который ранее не встречался. После его появления ПМК в дальнейшем
+			(до выключения ПМК) при выполнении многих операций
+			всегда выдаёт ЕГГ0Г. Вот список таких операций.
+		</p>
+			<span class="but">+</span>,
+			<span class="but">-</span>,
+			<span class="but">&times;</span>,
+			<span class="but">&divide;</span>,
+			<span class="but">&larr;&rarr;</span>,
+			<span class="but_f">F</span><span class="op_f">sin</span>,
+			<span class="but_f">F</span><span class="op_f">cos</span>,
+			<span class="but_f">F</span><span class="op_f">tg</span>,
+			<span class="but_f">F</span><span class="op_f">&radic;</span>,
+			<span class="but_f">F</span><span class="op_f">1/x</span>,
+			<span class="but_f">F</span><span class="op_f">sin<sup>-1</sup></span>,
+			<span class="but_f">F</span><span class="op_f">cos<sup>-1</sup></span>,
+			<span class="but_f">F</span><span class="op_f">tg<sup>-1</sup></span>,
+			<span class="but_f">F</span><span class="op_f">&pi;</span>,
+			<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>,
+			<span class="but_f">F</span><span class="op_f">e<sup>x</sup></span>,
+			<span class="but_f">F</span><span class="op_f">lg</span>,
+			<span class="but_f">F</span><span class="op_f">ln</span>,
+			<span class="but_f">F</span><span class="op_f">x<sup>y</sup></span>,
+			<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>,
+			<span class="but_f">F</span><span class="op_f">&orarr;</span>.
+		<p>
+			Ошибка возникает как в режиме вычислений, так и в программном
+			режиме. Интересно, что
+			<span class="but_f">F</span><span class="op_f">&orarr;</span> выдаёт ошибку,
+			а <span class="but_f">F</span><span class="op_f">Вx</span> – нет.
+		</p>
+		<p>
+			<q>Синие</q> функции работают нормально.
+			Видимо такой ЕГГ0Г <q>сводит с ума</q> только один микроконтроллер.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_func">
+		<header><h2>Результат функций над шестнадцатеричными числами</h2></header>
+		<p></p>
+		<table class="center">
+			<tr>
+				<td><sub>H</sub>&Backslash;<sup>F(H)</sup></td>
+				<th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>
+			</tr>
+			<tr>
+				<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+				<td>00</td><td>10</td><td>20</td><td>30</td><td>0</td>
+			</tr>
+			<tr>
+				<td><span class="but_f">F</span><span class="op_f">&radic;</span></td>
+				<td>3.1622776</td><td>3.3166247</td><td>3.4641016</td><td>3.6055512</td><td>3.7416573</td>
+			</tr>
+			<tr>
+				<td><span class="but_f">F</span><span class="op_f">1/x</span></td>
+				<td>ЕГГ0Г</td><td>9.099099<sup>|&minus;01</sup></td><td>9.9099099<sup>|&minus;01</sup></td><td>9.9099099<sup>|&minus;01</sup></td><td>9.9099099<sup>|&minus;01</sup></td>
+			</tr>
+			<tr>
+				<td><span class="but_f">F</span><span class="op_f">e<sup>x</sup></span></td>
+				<td>22026.467</td><td>59874.133</td><td>162754.78</td><td>442413.37</td><td>1202604.3</td>
+			</tr>
+			<tr>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td>1.<sup>|+10</sup></td><td>1.<sup>|+0B</sup></td><td>1.<sup>|+0C</sup></td><td>1.<sup>|+0D</sup></td><td>1.<sup>|+0E</sup></td>
+			</tr>
+			<tr>
+				<td><span class="but_f">F</span><span class="op_f">lg</span></td>
+				<td>1</td><td>41.823681</td><td>42.40274</td><td>42.816354</td><td>43.126564</td>
+			</tr>
+			<tr>
+				<td><span class="but_f">F</span><span class="op_f">ln</span></td>
+				<td>2.3025851</td><td>96.302585</td><td>97.635918</td><td>98.588299</td><td>99.302585</td>
+			</tr>
+			<tr>
+				<td><span class="but_f">F</span><span class="op_f">x&sup1;</span></td>
+				<td>10</td><td>6.6631773<sup>|+41</sup></td><td>2.5277867<sup>|+42</sup></td><td>6.551706<sup>|+42</sup></td><td>1.3383338<sup>|+43</sup></td>
+			</tr>
+			<tr>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td>0</td><td>1</td><td>2</td><td>3</td><td>4</td>
+			</tr>
+		</table>
+		<ul>
+			<li>
+				Результат возведения в квадрат согласуется с таблицей
+				умножения, приведённой выше.
+			</li>
+			<li>
+				Излечение корня вообще по правилам – как корень из
+				нормализованного числа.
+			</li>
+			<li>
+				Обратная величина так же согласуется с таблицей деления, причём
+				здесь опять плохой ЕГГ0Г.
+			</li>
+			<li>
+				<span class="but_f">F</span><span class="op_f">e<sup>x</sup></span>
+				тоже как корень – всё по правилам.</li>
+			<li>
+				<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>
+				отображает шестнадцатеричную степень, только цифра A не любит светиться.
+			</li>
+			<li>Результаты логарифмов уже не понятны.</li>
+			<li>
+				<span class="but_f">F</span><span class="op_f">x&sup1;</span>
+				это <span class="but_f">F</span><span class="op_f">x<sup>y</sup></span>,
+				для случая Y = 1. Впрочем, результат от этого не становится более ясным.
+				Кроме числа A, остальные возводятся в первую степень как какие-то
+				суперчисла.
+			</li>
+			<li>
+				<span class="but_k">К</span><span class="op_k">[x]</span> похож на
+				сложение с нулём. Причём если бы число было ещё с дробной частью,
+				то целая часть осталась бы без изменений, даже если она
+				шестнадцатеричная.
+			</li>
+		</ul>
+		<p>
+			Про более редкие операции переводов градусов/часов сказано
+			<a href="commands.html">в приложении по командам</a>.
+			Числа, где порядок содержит шестнадцатеричные значения, рассмотрены
+			в разделе косвенной адресации
+			<a href="indirect_addr.html#exponent">
+				порядок содержит шестнадцатеричные цифры</a
+			>.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_using">
+		<header><h2>Практическое применение</h2></header>
+		<p>
+			Практическое применение – это получение нестандартного
+			результата (как отличие от обычной цифры). Или получение нестандартной
+			последовательности. Или как был приведен выше по умножению.
+		</p>
+		<p>
+			Случаи с двойными и более шестнадцатеричными числами (в том числе в
+			дробной части) не рассмотрены, как очень редко встречающиеся.
+			Там тоже можно построить подобные таблицы, но проще посмотреть
+			результат под конкретное число.
+		</p>
+	</section>
+
+	<footer>
+		<a href="../Недокументированные%20возможности%20ПМК%20МК-61.html">К оглавлению</a>
+	</footer>
+
+</body>
+</html>

@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>Приложение. Все команды</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta content="true" name="HandheldFriendly"/>
+	<meta content="width" name="MobileOptimized"/>
+	<meta content="yes" name="apple-mobile-web-app-capable"/>
+	<meta name="description" content="Недокументированные возможности программируемого микрокалькулятора МК-61. Приложение. Все команды."/>
+	<link rel="stylesheet" href="../styles/buttons.css">
+	<link rel="stylesheet" href="../styles/tables.css">
+	<link rel="stylesheet" href="../styles/other.css">
+</head>
+
+<body>
+
+	<section>
+		<header><h1>Приложение. Все команды</h1></header>
+		<p>
+			Список всех 256 команд ПМК с дополнительным комментарием, в случае
+			наличия недокументированных возможностей.
+		</p>
+		<table>
+			<tr>
+				<th>Код</th>
+				<th>Вид</th>
+				<th>Название</th>
+				<th>Комментарий</th>
+			</tr>
+			<tr>
+				<th>00&hellip;09</th>
+				<td class="center nowrap">
+					<span class="but">0</span>&hellip;<span class="but">9</span>
+				</td>
+				<td>Ввод числа</td>
+				<td>
+					Ввод цифр идёт даже через границу
+					<span class="but_b">С/П</span>. Т.&#8239;е. если в начале программы
+					идёт цифра(ы), а перед её запуском тоже ввод, то он продолжится.
+					То же касается и разделителя <span class="but">.</span>, он может
+					как заканчивать ввод в режиме вычислений, так и начинать в
+					программе – будет воспринят как разделитель целой и дробной
+					части.
+					<br>
+					Второе нажатие <span class="but">.</span> для разделения разрядов
+					игнорируется.
+					<br>
+					Если предыдущая команда была не ввод цифры или разделителя, а так
+					же не команда <span class="but">В&uarr;</span>, то предварительно
+					осуществляется сдвиг стека под новое число.
+				</td>
+			</tr>
+			<tr>
+				<th>0A</th>
+				<td class="center nowrap">
+					<span class="but">.</span>
+				</td>
+				<td>Разделитель целой и дробной части</td>
+				<td>
+					Кроме того, что указано выше восстановление X2&rarr;X
+					в программном режиме. См.
+					<a href="x2.html#id_point">Таинственный регистр X2</a>.
+				</td>
+			</tr>
+			<tr>
+				<th>0B</th>
+				<td class="center nowrap">
+					<span class="but">/-/</span>
+				</td>
+				<td>Смена знака</td>
+				<td>
+					Предыдущее значение НЕ копируется в X1.
+					Cм. также <a href="x2.html#id_exp_neg">Таинственный регистр X2</a>.
+					Если смена знака идёт после ввода цифры, и далее снова идёт
+					ввод цифры, то стек не сдвигается, а новое вводимое значение
+					заменяет в регистре X то, что было после смены знака.
+				</td>
+			</tr>
+			<tr>
+				<th>0C</th>
+				<td class="center nowrap">
+					<span class="but">ВП</span>
+				</td>
+				<td>Ввод порядка</td>
+				<td>
+					Для многих чисел ввод порядка означает умножение на 10 в соответствующей степени.
+					<br>
+					После ввода порядка можно ещё раз нажать <span class="but">ВП</span> и
+					ввести число – в этом случае порядки складываются.
+					<br>
+					Знак порядка можно ввести как сразу после <span class="but">ВП</span>,
+					так и после ввода цифр.
+					<br>
+					Если мантисса регистра X нулевая, то первая цифра заменяется на 1,
+					причём, если была нажата смена знака
+					<span class="but">/-/</span> до команды
+					<span class="but">ВП</span>, то будет уже &minus;1, даже в
+					программном режиме. Причём у <q>минус</q> нуля до этого
+					знак не отображается. На самом деле в программном режиме
+					это будет восстановление &minus;0 с увеличением первой
+					цифры на 1, как указано в разделе
+					<a href="x2.html#id_exp_combine">Восстановление X2 с сохранением первой цифры числа в X</a>.
+					Например, выполнение программы
+					<table class="center">
+						<tr>
+							<th>&#8202;#&#8202;|&#8202;</th>
+							<th>00</th>
+							<th>01</th>
+							<th>02</th>
+							<th>03</th>
+							<th>04</th>
+							<th>05</th>
+							<th>06</th>
+							<th>07</th>
+							<th>08</th>
+							<th>09</th>
+						</tr>
+						<tr>
+							<th>&#8202;00&#8202;|&#8202;</th>
+							<td><span class="but_cx">Cx</span></td>
+							<td><span class="but">/-/</span></td>
+							<td><span class="but_f">F</span><span class="op_f">&pi;</span></td>
+							<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+							<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
+							<td><span class="but">ВП</span></td>
+							<td><span class="but_b">С/П</span></td>
+							<td colspan="3"></td>
+						</tr>
+					</table>
+					приведёт к &minus;А (<span class="code">--.          </span>).
+					<br>
+					Пример для нестандартной нулевой мантиссы. Возьмём число
+					<span class="code">200000000.   </span> (двойка на месте знака!),
+					которое получается после косвенного обращения через R4&hellip;R6,
+					если до того там содержалось 99999999. Тут после нажатия
+					<span class="but">ВП</span> число превратится в
+					<span class="code">210000000.   </span>.
+				</td>
+			</tr>
+			<tr>
+				<th>0D</th>
+				<td class="center nowrap">
+					<span class="but_cx">Сx</span>
+				</td>
+				<td>Сброс X в ноль</td>
+				<td>
+					Важное свойство – стек не двигается.
+					Предыдущее значение НЕ копируется в X1. Если последующий ввод
+					будет не команда, а цифра, то ввод пойдёт в регистр X без
+					сдвига стека с заменой нуля.
+				</td>
+			</tr>
+			<tr>
+				<th>0E</th>
+				<td class="center nowrap">
+					<span class="but">В&uarr;</span>
+				</td>
+				<td>Сдвиг стека</td>
+				<td>
+					Если последующая команда – ввод числа, то будет ввод в X, если
+					извлечение из памяти или
+					<span class="but_f">F</span><span class="op_f">&pi;</span> –
+					то стек ещё раз сдвинется.
+				</td>
+			</tr>
+			<tr>
+				<th>0F</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">Вx</span>
+				</td>
+				<td>Полный сдвиг, включая X1</td>
+				<td>
+					Единственная документированная и вводимая команда с цифрой F в коде.
+				</td>
+			</tr>
+			<tr>
+				<th>10</th>
+				<td class="center nowrap">
+					<span class="but">+</span>
+				</td>
+				<td>Сложение</td>
+				<td>
+					Результат проверяется только при X&rarr;X2, т.&#8239;е. можно использовать
+					для получения сверхчисел.
+				</td>
+			</tr>
+			<tr>
+				<th>11</th>
+				<td class="center nowrap">
+					<span class="but">-</span>
+				</td>
+				<td>Вычитание</td>
+				<td>
+					Результат проверяется только при X&rarr;X2, т.&#8239;е. можно использовать
+					для получения сверхчисел.
+				</td>
+			</tr>
+			<tr>
+				<th>12</th>
+				<td class="center nowrap">
+					<span class="but">&times;</span>
+				</td>
+				<td>Умножение</td>
+				<td>
+					Результат проверяется при X&rarr;X2, т.&#8239;е. можно использовать
+					для получения сверхчисел.
+				</td>
+			</tr>
+			<tr>
+				<th>13</th>
+				<td class="center nowrap">
+					<span class="but">&divide;</span>
+				</td>
+				<td>Деление</td>
+				<td>
+					Ошибка деления на ноль возникает безусловно, остальное при
+					X&rarr;X2.
+				</td>
+			</tr>
+			<tr>
+				<th>14</th>
+				<td class="center nowrap">
+					<span class="but">&larr;&rarr;</span>
+				</td>
+				<td>Обмен X и Y</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>15</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>
+				</td>
+				<td>Возведение в степень числа 10</td>
+				<td>
+					Аргументы на переполнение порядка (сверхчисло) проверяется
+					безусловно, а не при X&rarr;X2.
+				</td>
+			</tr>
+			<tr>
+				<th>16</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">e<sup>x</sup></span>
+				</td>
+				<td>Возведение в степень числа e (экспонента)</td>
+				<td>
+					Аргументы на переполнение порядка (сверхчисло) проверяется
+					безусловно, а не при X&rarr;X2.
+				</td>
+			</tr>
+			<tr>
+				<th>17</th>
+				<td class="center nowrap"><span class="but_f">F</span><span class="op_f">lg</span></td>
+				<td>Десятичный логарифм</td>
+				<td>
+					Аргументы (должно быть больше нуля) проверяется безусловно, а не
+					при X&rarr;X2.
+				</td>
+			</tr>
+			<tr>
+				<th>18</th>
+				<td class="center nowrap"><span class="but_f">F</span><span class="op_f">ln</span></td>
+				<td>Натуральный (экспоненциальный) логарифм</td>
+				<td>
+					Аргументы (должно быть больше нуля) проверяется безусловно, а не
+					при X&rarr;X2.
+				</td>
+			</tr>
+			<tr>
+				<th>19</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">sin<sup>-1</sup></span>
+				</td>
+				<td>Арксинус</td>
+				<td>
+					Аргументы (должно |X|&les;1) проверяется безусловно, а не при
+					X&rarr;X2. Для ГРД/Г и X = 0 выводит X = 00.
+				</td>
+			</tr>
+			<tr>
+				<th>1A</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">cos<sup>-1</sup></span>
+				</td>
+				<td>Арккосинус</td>
+				<td>
+					Аргументы (должно |X|&les;1) проверяется безусловно, а не при
+					X&rarr;X2. arccos(1) для ГРД/Г даёт ненормализованное 00.
+				</td>
+			</tr>
+			<tr>
+				<th>1B</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">tg<sup>-1</sup></span>
+				</td>
+				<td>Арктангенс</td>
+				<td>
+					Для чисел x &ges; 1.<sup>|+8</sup> результат выдаёт близкий к
+					<q>максимуму</q> – для радиан это почти &pi;/2, для градов 99.999999.
+					Может быть вычислен и для 1.<sup>|+100</sup>
+					в радианах (из-за того, что порядок снижается), но не градусах.
+				</td>
+			</tr>
+			<tr>
+				<th>1C</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">sin</span>
+				</td>
+				<td>Синус</td>
+				<td>
+					Аргументы (должно |X|&lt;1.<sup>|+10</sup>) проверяется безусловно, а не при
+					X&rarr;X2.
+				</td>
+			</tr>
+			<tr>
+				<th>1D</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">cos</span>
+				</td>
+				<td>Косинус</td>
+				<td>
+					Аргументы (должно |X|&lt;1.<sup>|+10</sup>) проверяется безусловно, а не при
+					X&rarr;X2.
+				</td>
+			</tr>
+			<tr>
+				<th>1E</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">tg</span>
+				</td>
+				<td>Тангенс</td>
+				<td>
+					Аргументы (должно |X|&lt;1.<sup>|+10</sup>) проверяется безусловно, а не при X&rarr;X2.
+					При X = <span class="pi">&pi;</span>/2 + n &times; <span class="pi">&pi;</span>
+					тоже будет ошибка.
+				</td>
+			</tr>
+			<tr>
+				<th>1F</th>
+				<td></td>
+				<td>Пустой оператор</td>
+				<td>Обычным образом такую команду не ввести.</td>
+			</tr>
+			<tr>
+				<th>20</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">&pi;</span>
+				</td>
+				<td>Число <span class="pi">&pi;</span> (пи)</td>
+				<td>
+					Кроме того, что сдвигает стек (это документировано), также копирует
+					предыдущее X в X1, как арифметическая операция (а это нет).
+					Ещё одной особенноостью является то, что это единственная не X2-влияющая
+					команда, которая расширяет стек (сдвигает данные в глубь).
+				</td>
+			</tr>
+			<tr>
+				<th>21</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">&radic;</span>
+				</td>
+				<td>Квадратный корень</td>
+				<td>Аргументы проверяется безусловно (X&ges;0), а не при X&rarr;X2.</td>
+			</tr>
+			<tr>
+				<th>22</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>
+				</td>
+				<td>Возведение в квадрат</td>
+				<td>
+					Результат проверяется при X&rarr;X2, т.&#8239;е. можно использовать
+					для получения сверхчисел.
+				</td>
+			</tr>
+			<tr>
+				<th>23</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">1/x</span>
+				</td>
+				<td>Обратная величина</td>
+				<td>
+					Ошибка деления на ноль возникает безусловно, остальное
+					при X&rarr;X2.
+				</td>
+			</tr>
+			<tr>
+				<th>24</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">x<sup>y</sup></span>
+				</td>
+				<td>Возведение в степень.</td>
+				<td>
+					Ошибка, если X &les; 0. Не принимает отрицательный X, даже когда это
+					математически допустимо.
+					<br>
+					Ошибка переполнения возникает безусловно, а не при X&rarr;X2.
+					<br>
+					Стек не сокращается, в отличие от обычных арифметических операций.
+					Т.&#8239;е. число в Y остаётся на месте (позволяя ещё раз возвести в ту
+					же степень).
+				</td>
+			</tr>
+			<tr>
+				<th>25</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">&orarr;</span>
+				</td>
+				<td>Подтягивание стека</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>26</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_k">&deg;&rarr;&prime;</span>
+				</td>
+				<td>
+					Перевод угловых или временных величин из обычной формы в часть целой
+				</td>
+				<td>
+					Если дробное значение &ges;0.6, то будет ошибка.
+					Целая часть не меняется, даже если шестнадцатеричное число.
+				</td>
+			</tr>
+			<tr>
+				<th>27</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="but">-</span>
+				</td>
+				<td>Ошибка</td>
+				<td><span class="code"> ЕГГ0Г      </span>.</td>
+			</tr>
+			<tr>
+				<th>28</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="but">&times;</span>
+				</td>
+				<td>Ошибка</td>
+				<td><span class="code"> ЕГГ0Г      </span>.</td>
+			</tr>
+			<tr>
+				<th>29</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="but">&divide;</span>
+				</td>
+				<td>Ошибка</td>
+				<td><span class="code"> ЕГГ0Г      </span>.</td>
+			</tr>
+			<tr>
+				<th>2A</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_k">&deg;&rarr;&prime;&quot;</span>
+				</td>
+				<td>
+					Перевод угловых или временных величин из обычной формы в часть
+					целой, включая секунды
+				</td>
+				<td>
+					Если дробное значение &ges;0.6, то будет ошибка.
+					Целая часть не меняется, даже если шестнадцатеричное число.
+				</td>
+			</tr>
+			<tr>
+				<th>2B&hellip;2E</th>
+				<td></td>
+				<td>Ошибка</td>
+				<td><span class="code"> ЕГГ0Г      </span>.</td>
+			</tr>
+			<tr>
+				<th>2F</th>
+				<td></td>
+				<td>Пустой оператор</td>
+				<td>Обычным образом такую команду не ввести.</td>
+			</tr>
+			<tr>
+				<th>30</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_k">&deg;&larr;&prime;&quot;</span>
+				</td>
+				<td>
+					Перевод угловых или временных величин из части целого в обычную
+					форму, включая секунды
+				</td>
+				<td>
+					Если дробная часть &les; 2.<sup>|&minus;07</sup>, то обратное преобразование
+					уже не срабатывает. Если = 1.<sup>|&minus;07</sup> то уже и прямое преобразование
+					не меняет значение. Если целая часть шестнадцатеричное число и нет
+					дробной части или оно = 1.<sup>|&minus;07</sup> – оно
+					<a href="glossary.html#id_normalization">нормализуется</a>, как в
+					операциях с шестнадцатеричными цифрами. Иначе остаётся без изменений.
+				</td>
+			</tr>
+			<tr>
+				<th>31</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_k">&mid;x&mid;</span>
+				</td>
+				<td>Модуль</td>
+				<td>
+					Удаляет знак (делает знакоцифру = 1, что выглядит как пустое
+					место и соответствует положительным числам).
+				</td>
+			</tr>
+			<tr>
+				<th>32</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_k">ЗН</span>
+				</td>
+				<td>Знак числа</td>
+				<td>У отрицательного нуля знак положительный (т.е. для нуля знакоцифра игнорируется).</td>
+			</tr>
+			<tr>
+				<th>33</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_k">&deg;&larr;&prime;</span>
+				</td>
+				<td>
+					Перевод угловых или временных величин из части целого в обычную
+					форму
+				</td>
+				<td>
+					Если дробная часть &les; 2.<sup>|&minus;07</sup>, то обратное преобразование
+					уже не срабатывает. Если = 1.<sup>|&minus;07</sup> то уже и прямое преобразование
+					не меняет значение. Если целая часть шестнадцатеричное число и нет
+					дробной части или оно = 1.<sup>|&minus;07</sup> – оно
+					<a href="glossary.html#id_normalization">нормализуется</a>, как в
+					операциях с шестнадцатеричными цифрами. Иначе остаётся без изменений.
+				</td>
+			</tr>
+			<tr>
+				<th>34</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_k">[x]</span>
+				</td>
+				<td>Целая часть</td>
+				<td>
+					Простое отбрасывание дробной части, а не математическое нахождение
+					целой части, т.&#8239;е. [&minus;1.2] = &minus;1, а не &minus;2.
+					<br>
+					Если число целое и шестнадцатеричное – оно преобразуется, как в
+					операциях с шестнадцатеричными цифрами. Если есть дробная часть, то
+					целая шестнадцатеричная часть остаётся без изменений.
+				</td>
+			</tr>
+			<tr>
+				<th>35</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_k">{x}</span>
+				</td>
+				<td>Дробная часть</td>
+				<td>
+					Простое отбрасывание целой части, а не математическое нахождение
+					дробной части, т.&#8239;е. {&minus;1.2} = &minus;0.2, а не 0.8.
+					<br>
+					Для целых чисел по модулю &lt; 10.<sup>|+7</sup> (точнее числа, которым
+					нужно меньше восьми знакомест) получается отрицательный
+					ноль (в сравнениях идёт как отрицательное число и как ноль). Т.&#8239;е.
+					{&minus;1234567} = &minus;0, но {&minus;12345678} = 0.
+					<br>
+					Шестнадцатеричные цифры (в дробной части) сохраняются.
+				</td>
+			</tr>
+			<tr>
+				<th>36</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_k">max</span>
+				</td>
+				<td>Максимум</td>
+				<td>
+					Ноль исключение – самое большое число.
+					<br>
+					Обмена X и Y не происходит, т.&#8239;е. либо X и Y после операции
+					совпадают (в Y был максимум), либо остаются как есть
+					(кроме копирования X в X1).
+				</td>
+			</tr>
+			<tr>
+				<th>37</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_k">&and;</span>
+				</td>
+				<td>Логическое умножение (AND)</td>
+				<td rowspan="4">
+					В логических операциях первая цифра заменяется на 8, а над
+					остальными цифрами мантиссы проводится побитовая операция, как с
+					шестнадцатеричными числами. Порядок и знак исходных чисел
+					значения не имеют, они могут быть даже пустышкой.
+					Результат всегда в форме 8.HHHHHHH
+					<br>
+					Стек для двухоперандных операций не сокращается, что позволяет
+					выполнить операцию ещё раз.
+					<br>
+					Перед выполнением операнды нормализуются (убираются ведущие нули)!
+				</td>
+			</tr>
+			<tr>
+				<th>38</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_k">&or;</span>
+				</td>
+				<td>Логическое сложение (OR)</td>
+			</tr>
+			<tr>
+				<th>39</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_k">&oplus;</span>
+				</td>
+				<td>Логическое исключающее или (XOR)</td>
+			</tr>
+			<tr>
+				<th>3A</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_k">ИНВ</span>
+				</td>
+				<td>Логическая инверсия (NOT)</td>
+			</tr>
+			<tr>
+				<th>3B</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_k">СЧ</span>
+				</td>
+				<td>Случайное число</td>
+				<td>
+					Единица не бывает. Ноль бывает в редких случаях (когда в Y
+					шестнадцатеричное число, то последовательность может выдавать и ноль).
+					Датчик не очень хороший, часто циклится (от применения команд с К).
+					<br>
+					Сбросить на начало (как при включении) можно с помощью операции
+					<span class="but_k">К</span><span class="op_k">max</span>,
+					когда регистр Y нулевой.
+				</td>
+			</tr>
+			<tr>
+				<th>3C</th>
+				<td></td>
+				<td>Ошибка</td>
+				<td><span class="code"> ЕГГ0Г      </span>.</td>
+			</tr>
+			<tr>
+				<th>3D</th>
+				<td></td>
+				<td>
+					То же, что и команда
+					<span class="but_k">К</span><span class="op_k">&deg;&rarr;&prime;&quot;</span>
+					(код 2A)
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>3E</th>
+				<td></td>
+				<td>Копирование Y в X (а X&rarr;X1)</td>
+				<td>
+					Те же действия, что и пара команд
+					<span class="but_f">F</span><span class="op_f">&orarr;</span>&ensp;
+					<span class="but">В&uarr;</span>, только не X2-влияющая.
+				</td>
+			</tr>
+			<tr>
+				<th>3F</th>
+				<td></td>
+				<td>Пустой оператор</td>
+				<td>Обычным образом такую команду не ввести.</td>
+			</tr>
+			<tr>
+				<th>40&hellip;4E</th>
+				<td class="center nowrap">
+					<span class="but_b">x&rarr;П</span><span class="but">R</span>
+				</td>
+				<td>Сохранение X в регистр R0&hellip;Re</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>4F</th>
+				<td></td>
+				<td>Сохранение X в регистр R0</td>
+				<td>Обычным образом такую команду не ввести.</td>
+			</tr>
+			<tr>
+				<th>50</th>
+				<td class="center nowrap">
+					<span class="but_b">С/П</span>
+				</td>
+				<td>Стоп/пуск</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>51</th>
+				<td class="center nowrap">
+					<span class="but_b">БП</span>
+				</td>
+				<td>Безусловный переход</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>52</th>
+				<td class="center nowrap">
+					<span class="but_b">В/О</span>
+				</td>
+				<td>Возврат обратно</td>
+				<td>
+					Стек обратных адресов подпрограмм из 5 ячеек, вначале нулевых.
+					При возврате из подпрограммы берётся значение верхней ячейки
+					стека + 1 (для определения точки возврата) и стек сдвигается,
+					поэтому сразу после включения ПМК команда
+					<span class="but_b">В/О</span> эквивалентна
+					<span class="but_b">БП</span><span class="but">01</span>.
+					Но если стек адресов возврата заполнился до конца, то последний
+					адрес стека начинает копироваться и <span class="but_b">В/О</span>
+					будет на этот адрес + 1. Для зануления стека, в этом случае,
+					можно воспользоваться знаниями Еггогологии и вызвать нулевого 3Г0ГГа:
+					<span class="but_cx">Cx</span>&ensp;
+					<span class="but">В&uarr;</span>&ensp;
+					<span class="but">&divide;</span>&ensp;
+					<span class="but">ВП</span>&ensp;
+					<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>&ensp;
+					<span class="but_cx">Cx</span>&ensp;
+					<span class="but">&larr;&rarr;</span>&ensp;
+					<span class="but_cx">Cx</span>.
+					Или запустить ненадолго бесконечную программу из одного
+					оператора, например
+					<span class="but_k">K</span><span class="but_b">ПП</span><span class="but">9</span>,
+					при условии, что R9 = 0.
+				</td>
+			</tr>
+			<tr>
+				<th>53</th>
+				<td class="center nowrap">
+					<span class="but_b">ПП</span>
+				</td>
+				<td>Вызов подпрограммы</td>
+				<td>
+					Переход на адрес подпрограммы, указанный следующей командой. Этот
+					адрес запоминается в стеке обратных адресов
+					(см. <span class="but_b">В/О</span>).
+				</td>
+			</tr>
+			<tr>
+				<th>54</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_k">НОП</span>
+				</td>
+				<td>Пустой оператор</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>55</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="but">1</span>
+				</td>
+				<td>Пустой оператор</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>56</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="but">2</span>
+				</td>
+				<td>Пустой оператор</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>57</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">x&ne;0</span>
+				</td>
+				<td>Если не ноль</td>
+				<td>
+					Пропуск адреса перехода, и выполнение следующей после него команды,
+					если X не равно нулю (в большинстве языков обычно наоборот, переход
+					на адрес при выполнении условия).
+				</td>
+			</tr>
+			<tr>
+				<th>58</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">L2</span>
+				</td>
+				<td>Цикл по регистру R2</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>59</th>
+				<td class="center nowrap"
+					><span class="but_f">F</span><span class="op_f">x&ge;0</span>
+				</td>
+				<td>Если больше или равно нулю</td>
+				<td>
+					Пропуск адреса перехода, и выполнение следующей после него команды,
+					если X больше или равно нулю (в большинстве языков обычно наоборот,
+					переход на адрес при выполнении условия).
+				</td>
+			</tr>
+			<tr>
+				<th>5A</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">L3</span>
+				</td>
+				<td>Цикл по регистру R3</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>5B</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">L1</span>
+				</td>
+				<td>Цикл по регистру R1</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>5C</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">x&lt;0</span>
+				</td>
+				<td>Если меньше нуля</td>
+				<td>
+					Пропуск адреса перехода, и выполнение следующей после него команды,
+					если X меньше нуля (в большинстве языков обычно наоборот, переход
+					на адрес при выполнении условия).
+				</td>
+			</tr>
+			<tr>
+				<th>5D</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">L0</span>
+				</td>
+				<td>Цикл по регистру R0</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>5E</th>
+				<td class="center nowrap">
+					<span class="but_f">F</span><span class="op_f">x=0</span>
+				</td>
+				<td>Если равно нулю</td>
+				<td>
+					Пропуск адреса перехода, и выполнение следующей после него команды,
+					если X равно нулю (в большинстве языков обычно наоборот, переход на
+					адрес при выполнении условия).
+				</td>
+			</tr>
+			<tr>
+				<th>5F</th>
+				<td></td>
+				<td>Зависание</td>
+				<td>
+					Визуально воспринимается как зависание. ПМК не реагирует на ввод
+					команд и ничего не отображает.
+					<br>
+					Обычным образом такую команду не ввести.
+				</td>
+			</tr>
+			<tr>
+				<th>60&hellip;6E</th>
+				<td class="center nowrap">
+					<span class="but_b">П&rarr;x</span><span class="but">R</span>
+				</td>
+				<td>Извлечение из регистра R0&hellip;Re в X</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>6F</th>
+				<td></td>
+				<td>Извлечение из регистра R0 в X</td>
+				<td>Обычным образом такую команду не ввести.</td>
+			</tr>
+			<tr>
+				<th>70&hellip;7E</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="but">R</span>
+				</td>
+				<td>
+					Косвенный условный переход при неравенстве нулю, адрес перехода в
+					регистре R0&hellip;Re
+				</td>
+				<td>
+					Пропуск адреса перехода, и выполнение следующей после него команды,
+					если X не равно нулю (в большинстве языков обычно наоборот, переход
+					на адрес при выполнении условия).
+				</td>
+			</tr>
+			<tr>
+				<th>7F</th>
+				<td></td>
+				<td>
+					Косвенный условный переход при неравенстве нулю, адрес перехода в
+					регистре R0
+				</td>
+				<td>
+					Пропуск адреса перехода, и выполнение следующей после него команды,
+					если X не равно нулю (в большинстве языков обычно наоборот, переход
+					на адрес при выполнении условия).
+					<br>
+					Обычным образом такую команду не ввести.
+				</td>
+			</tr>
+			<tr>
+				<th>80&hellip;8E</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="but_b">БП</span><span class="but">R</span>
+				</td>
+				<td>
+					Косвенный безусловный переход на адрес перехода в регистре
+					R0&hellip;Re
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>8F</th>
+				<td></td>
+				<td>Косвенный безусловный переход на адрес перехода в регистре R0</td>
+				<td>Обычным образом такую команду не ввести.</td>
+			</tr>
+			<tr>
+				<th>90&hellip;9E</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="but">R</span>
+				</td>
+				<td>
+					Косвенный условный переход, если больше или равно нулю, адрес
+					перехода в регистре R0&hellip;Re
+				</td>
+				<td>
+					Пропуск адреса перехода, и выполнение следующей после него команды,
+					если X больше или равно нулю (в большинстве языков обычно наоборот,
+					переход на адрес при выполнении условия).
+				</td>
+			</tr>
+			<tr>
+				<th>9F</th>
+				<td></td>
+				<td>
+					Косвенный условный переход, если больше или равно нулю, адрес
+					перехода в регистре R0
+				</td>
+				<td>
+					Пропуск адреса перехода, и выполнение следующей после него команды,
+					если X больше или равно нулю (в большинстве языков обычно наоборот,
+					переход на адрес при выполнении условия).
+					<br>
+					Обычным образом такую команду не ввести.
+				</td>
+			</tr>
+			<tr>
+				<th>A0&hellip;AE</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="but_b">ПП</span><span class="but">R</span>
+				</td>
+				<td>
+					Косвенный вызов подпрограммы по адресу в регистре R0&hellip;Re
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>AF</th>
+				<td></td>
+				<td>Косвенный вызов подпрограммы по адресу в регистре R0</td>
+				<td>Обычным образом такую команду не ввести.</td>
+			</tr>
+			<tr>
+				<th>B0&hellip;BE</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">R</span>
+				</td>
+				<td>
+					Косвенное сохранение X в регистр, по номеру в регистре
+					R0&hellip;Re
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>BF</th>
+				<td></td>
+				<td>Косвенное сохранение X в регистр, по номеру в регистре R0</td>
+				<td>Обычным образом такую команду не ввести.</td>
+			</tr>
+			<tr>
+				<th>C0&hellip;CE</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_f">x&lt;0</span><span class="but">R</span>
+				</td>
+				<td>
+					Косвенный условный переход, если меньше нуля, адрес перехода в
+					регистре R0&hellip;Re
+				</td>
+				<td>
+					Пропуск адреса перехода, и выполнение следующей после него команды,
+					если X меньше нуля (в большинстве языков обычно наоборот, переход
+					на адрес при выполнении условия).
+				</td>
+			</tr>
+			<tr>
+				<th>CF</th>
+				<td></td>
+				<td>
+					Косвенный условный переход, если меньше нуля, адрес перехода в
+					регистре R0
+				</td>
+				<td>
+					Пропуск адреса перехода, и выполнение следующей после него команды,
+					если X меньше нуля (в большинстве языков обычно наоборот, переход
+					на адрес при выполнении условия).
+					<br>
+					Обычным образом такую команду не ввести.
+				</td>
+			</tr>
+			<tr>
+				<th>D0&hellip;DE</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">R</span>
+				</td>
+				<td>
+					Косвенное извлечение X из регистра, по номеру в регистре
+					R0&hellip;Re
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>DF</th>
+				<td></td>
+				<td>Косвенное извлечение X из регистра, по номеру в регистре R0</td>
+				<td>Обычным образом такую команду не ввести.</td>
+			</tr>
+			<tr>
+				<th>E0&hellip;EE</th>
+				<td class="center nowrap">
+					<span class="but_k">К</span><span class="op_f">x=0</span><span class="but">R</span>
+				</td>
+				<td>
+					Косвенный условный переход, если равно нулю, адрес перехода в
+					регистре R0&hellip;Re
+				</td>
+				<td>
+					Пропуск адреса перехода, и выполнение следующей после него команды,
+					если X равно нулю (в большинстве языков обычно наоборот, переход на
+					адрес при выполнении условия).
+				</td>
+			</tr>
+			<tr>
+				<th>EF</th>
+				<td></td>
+				<td>
+					Косвенный условный переход, если равно нулю, адрес перехода в
+					регистре R0
+				</td>
+				<td>
+					Пропуск адреса перехода, и выполнение следующей после него команды,
+					если X равно нулю (в большинстве языков обычно наоборот, переход на
+					адрес при выполнении условия).
+					<br>
+					Обычным образом такую команду не ввести.
+				</td>
+			</tr>
+			<tr>
+				<th>F0&hellip;FF</th>
+				<td></td>
+				<td>Пустой оператор</td>
+				<td>Обычным образом такую команду не ввести.</td>
+			</tr>
+		</table>
+		<p>
+			Все команды, которые приводят к ошибке (при проверке границ,
+			неверном аргументе или просто помеченные, как приводящие к ошибке),
+			успевают скопировать X &rarr; X1 перед исполнением и выдачей ошибки.
+			Но если возникает переполнение (слишком большое число), то
+			копирование X &rarr; X1 будет в операции, вызвавшей переполнения, а
+			не когда ошибка проявится из-за перевода
+			X &rarr; X2 (понятно, это только в программном режиме).
+			Пример, в программе
+		</p>
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">c</span></td>
+				<td><span class="but_f">F</span><span class="op_f">&pi;</span></td>
+				<td><span class="but">&divide;</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td colspan="6"></td>
+			</tr>
+		</table>
+		<p>
+			ошибка возникнет на шаге 02 (деление на ноль), и &pi; попадёт в X1.
+			А если так:
+		</p>
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
+				<td><span class="but">8</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+				<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
+				<td><span class="but">/-/</span></td>
+				<td><span class="but">ВП</span></td>
+				<td colspan="2"></td>
+			</tr>
+		</table>
+		<p>
+			то переполнение будет на шаге 04, именно там
+			10.<sup>|+64</sup> попадёт в X1, а команда <span class="but">/-/</span>
+			только проявит ошибку на экране.
+		</p>
+
+
+	</section>
+
+	<hr>
+
+	<section id="id_times">
+		<header><h2>Среднее время выполнения некоторых команд</h2></header>
+		<p>
+			Среднее время выполнения некоторых команд на реальном ПМК для ориентировки.
+			Фактически может отличаться до 10% в зависимости от партии контроллеров,
+			которые использовались при монтаже калькулятора.
+		</p>
+		<table>
+			<tr>
+				<th>Время в секундах</th>
+				<th>Команды</th>
+			</tr>
+			<tr>
+				<th>0.20</th>
+				<td>
+					<span class="but">+</span>,
+					<span class="but">-</span>,
+					<span class="but">&times;</span>,
+					<span class="but">&divide;</span>,
+					<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>,
+					<span class="but_f">F</span><span class="op_f">&pi;</span>,
+					<span class="but_f">F</span><span class="op_f">1/x</span>,
+					<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span> при целом X,
+					<span class="but_k">K</span><span class="op_k">[x]</span>,
+					<span class="but_k">K</span><span class="op_k">{x}</span>,
+					<span class="but_k">K</span><span class="op_k">|x|</span>,
+					<span class="but_k">K</span><span class="op_k">max</span>,
+					<span class="but_k">K</span><span class="op_k">&or;</span>,
+					<span class="but_k">K</span><span class="op_k">&and;</span>,
+					<span class="but_k">K</span><span class="op_k">ИНВ</span>,
+					<span class="but_k">K</span><span class="op_k">&oplus;</span>,
+					команды со стеком.
+				</td>
+			</tr>
+			<tr>
+				<th>0.22</th>
+				<td>
+					<span class="but_f">F</span><span class="op_f">&radic;</span>.
+				</td>
+			</tr>
+			<tr>
+				<th>0.26</th>
+				<td>
+					Ввод чисел в RX (явно или через извлечение из регистра), а
+					также операции
+					<span class="but_f">F</span><span class="op_f">Bx</span> и
+					<span class="but">В&uarr;</span>.
+				</td>
+			</tr>
+			<tr>
+				<th>0.31</th>
+				<td>
+					<span class="but_f">F</span><span class="op_f">x<sup>y</sup></span>
+					если X и Y целые &gt; 0.
+				</td>
+			</tr>
+			<tr>
+				<th>0.40</th>
+				<td>
+					<span class="but_k">K</span><span class="op_k">Сч</span>,
+					<span class="but_f">F</span><span class="op_f">L0</span>
+					&hellip;
+					<span class="but_f">F</span><span class="op_f">L3</span>.
+				</td>
+			</tr>
+			<tr>
+				<th>1.20</th>
+				<td>
+					<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>,
+					<span class="but_f">F</span><span class="op_f">e<sup>x</sup></span>,
+					<span class="but_f">F</span><span class="op_f">Lg</span>,
+					<span class="but_f">F</span><span class="op_f">Ln</span>.
+				</td>
+			</tr>
+			<tr>
+				<th>1.50</th>
+				<td>
+					Тригонометрические функции.
+				</td>
+			</tr>
+			<tr>
+				<th>2.00</th>
+				<td>
+					<span class="but_f">F</span><span class="op_f">x<sup>y</sup></span>.
+				</td>
+			</tr>
+		</table>
+		<p>
+			Нужно ещё учитывать, что при выполнении время чтения команд с дальних
+			адресов немного (1&hellip;4%) медленнее, чем с начальных.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_F_commands">
+		<header><h2>Команды с кодом F</h2></header>
+		<p>
+			Некоторые команды с цифрой F в коде можно получить тоже
+			недокументированным образом.
+		</p>
+		<p>
+			Команды F0&hellip;FE получаются по адресам 30&hellip;44 после выполнения
+			в режиме вычислений пары команд
+			<span class="but_b">В/О</span>&ensp;
+			<span class="but_k">К</span><span class="but_b">ПП</span><span class="but">R</span>
+			(R = 0&hellip;e), которые переведут ПМК в режим ввода программы и вставят
+			код с цифрой F. При этом в регистрах R0&hellip;R3 должно быть число
+			заканчивающееся на 1 или 2 (точнее такое, чтобы после косвенной адресации
+			заканчивалось на 1 или 2). Если там будет другое (например, ноль, как
+			после включения ПМК), то для R1&hellip;R3 вставится F0&hellip;F2 по
+			адресу 30&hellip;32, а для R0 это будет самый быстрый способ получить
+			3Г0ГГа (причём перехода в режим ввода программы не произойдёт,
+			но, увы, этот 3Г0ГГ очистку стека возврата не делает).
+		</p>
+		<p>
+			Так же по адресам 50&hellip;59 можно вставить команды, начинающиеся
+			с цифры F. При этом можно даже управлять, на какую цифру заканчивается
+			и по какому адресу именно вставиться (в пределах указанного диапазона).
+			Для этого сначала сделаем ЕГГ0Г (как число, а не ошибку). Например, как
+			<span class="but">5</span>&ensp;
+			<span class="but">0</span>&ensp;
+			<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>&ensp;
+			<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>.
+			Можно его и сохранить, чтобы повторить шаги.
+			После появления ЕГГ0Га (так или извлечения из регистра) набираем
+			<span class="but">ВП</span>&ensp;
+			<span class="but">{D1}</span>&ensp;
+			<span class="but">{D2}</span>&ensp;
+			<span class="but">.</span>&ensp;
+			<span class="but">0</span>, где {D1} и {D2} цифры. Так вот, в
+			этот момент ПМК перейдёт в режим ввода программы и по адресу 5{D1},
+			и будет вставлена команда F{D2}. Т.&#8239;е. при вводе
+			<span class="but">ВП</span>&ensp;
+			<span class="but">3</span>&ensp;
+			<span class="but">7</span>&ensp;
+			<span class="but">.</span>&ensp;
+			<span class="but">0</span>, по адресу 53 будет вставлена команда F7.
+
+		</p>
+		<p>
+			Последовательность 5 команд FF (через одну) можно получить
+			по любому адресу, если стек возврата <q>забить</q> числом, начинающимся
+			с пустышки, и перед переходом в режим ПРГ нажимается
+			<span class="but">БП</span> <q>Адрес</q>. Тогда
+			начиная с адреса <q>Адрес</q>&minus;11 через одну будут проставлены команды FF.
+			<br>
+			Для начала получим адрес с начальной пустышкой, например число F8, и
+			сохраним в регистр, например в R7. Не забыть при этом в конце убрать
+			такое число с начальной пустышкой из RX!
+			<br>
+			<span class="but">8</span>&ensp;
+			<span class="but">8</span>&ensp;
+			<span class="but">8</span>&ensp;
+			<span class="but">В&uarr;</span>&ensp;
+			<span class="but">7</span>&ensp;
+			<span class="but">7</span>&ensp;
+			<span class="but_k">K</span><span class="op_k">&or;</span>&ensp;
+			<span class="but_k">K</span><span class="op_k">{x}</span>&ensp;
+			<span class="but">ВП</span>&ensp;
+			<span class="but">2</span>&ensp;
+			<span class="but_b">x&rarr;П</span><span class="but">7</span>&ensp;
+			<span class="but_cx">Cx</span>
+			<br>
+			Теперь по этому <q>темному</q> адресу вставим команду вызова подпрограммы
+			по R7:
+			<br>
+			<span class="but_k">K</span><span class="but_b">БП</span><span class="but">7</span>&ensp;
+			<span class="but_f">F</span><span class="op_f">ПРГ</span>&ensp;
+			<span class="but_k">K</span><span class="but_b">ПП</span><span class="but">7</span>&ensp;
+			<span class="but_f">F</span><span class="op_f">АВТ</span>&ensp;
+			<span class="but_k">K</span><span class="but_b">БП</span><span class="but">7</span>
+			<br>
+			Потом 5 раз, чтобы забить стек возврата, нажмём <span class="but_b">ПП</span>
+			<br>
+			После этого уже выбираем, где нам нужны команды FF. Пусть мы хотим их с
+			адреса 80. Тогда делаем переход на 80 + 11 = 91
+			<span class="but_b">БП</span><span class="but">91</span> и
+			<span class="but_f">F</span><span class="op_f">ПРГ</span>&ensp;
+			<span class="but_f">F</span><span class="op_f">АВТ</span>
+			<br>
+			Теперь по адресам 80, 82, 84, 86, 88 добавилась команда FF. Если нужно
+			побольше, например ещё и по адресам 81, 83, 85, 87, 89, то просто снова
+			заполним стек возврата
+			<span class="but_k">K</span><span class="but_b">БП</span><span class="but">7</span>,
+			5 раз <span class="but_b">ПП</span>, и после
+			<span class="but_b">БП</span><span class="but">92</span> и
+			<span class="but_f">F</span><span class="op_f">ПРГ</span>&ensp;
+			<span class="but_f">F</span><span class="op_f">АВТ</span>
+			получим то, что хотели.
+			<br>
+			Не забудьте в конце почистить стек возврата (как указано в примечание для
+			команды В/О)!
+		</p>
+	</section>
+
+	<footer>
+		<a href="../Недокументированные%20возможности%20ПМК%20МК-61.html">К оглавлению</a>
+	</footer>
+
+</body>
+</html>

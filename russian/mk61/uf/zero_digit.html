@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>Числа, у которых вместо знака стоит цифра</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta content="true" name="HandheldFriendly"/>
+	<meta content="width" name="MobileOptimized"/>
+	<meta content="yes" name="apple-mobile-web-app-capable"/>
+	<meta name="description" content="Недокументированные возможности программируемого микрокалькулятора МК-61. Числа, у которых вместо знака стоит цифра."/>
+	<link rel="stylesheet" href="../styles/buttons.css">
+	<link rel="stylesheet" href="../styles/tables.css">
+	<link rel="stylesheet" href="../styles/other.css">
+</head>
+
+<body>
+	<section id="id_zero_digit">
+		<header><h1>Числа, у которых вместо знака стоит цифра</h1></header>
+		<p>
+			Рассматривается работа с числами, у которых вместо знака стоит цифра.
+			В дальнейшем будем её называть знакоцифра.
+			Автору известны только способы получения чисел, где знакоцифра получается
+			из диапазона 2&hellip;9. Более того, есть основание думать, что кроме них
+			допустимы только ещё только две цифры: A = минус, представляет
+			отрицательные числа, и 1, которая отображается
+			как пустое место и представляет положительные числа.
+			Для ПМК БЗ-34 было возможно отображение и других цифр, но в МК-61 это не работает.
+		</p>
+		<p>
+			Напомню, что знакоцифра успешно <q>выживает</q> при косвенной адресации.
+			Обратите внимание, что далее в этом разделе очень часто в примерах у чисел
+			вначале указывается именно знакоцифра.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_get">
+		<header><h2>Способы получения</h2></header>
+		<ol>
+			<li>
+				<p>
+					<strong>Хвосты 0C-оборотней</strong>. В этом случае используются знания
+					Еггогологии. 0С-оборотни – это числа в диапазоне
+					&plusmn;1.<sup>|+400</sup>&hellip;&plusmn;9.9999999<sup>|+499</sup>.
+					Для получения таких чисел (точнее <q>хвостов</q>) воспользуемся программой:
+				</p>
+				<table class="center">
+					<tr>
+						<th>&#8202;#&#8202;|&#8202;</th>
+						<th>00</th>
+						<th>01</th>
+						<th>02</th>
+						<th>03</th>
+						<th>04</th>
+						<th>05</th>
+						<th>06</th>
+						<th>07</th>
+						<th>08</th>
+						<th>09</th>
+					</tr>
+					<tr>
+						<th>&#8202;00&#8202;|&#8202;</th>
+						<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
+						<td><span class="but">5</span></td>
+						<td><span class="but">0</span></td>
+						<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+						<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+						<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+						<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+						<td><span class="but">&times;</span></td>
+						<td><span class="but_b">x&rarr;П</span><span class="but">9</span></td>
+						<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+					</tr>
+					<tr>
+						<th>&#8202;10&#8202;|&#8202;</th>
+						<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+						<td><span class="but">ВП</span></td>
+						<td><span class="but">7</span></td>
+						<td><span class="but_b">С/П</span></td>
+						<td colspan="6"></td>
+					</tr>
+				</table>
+				<p>
+					На вход ей передаётся число (0&hellip;8.9999999], на выходе получаем
+					<q>хвост</q> оборотня из регистра Rc. Поэтому их
+					и называют 0C-оборотни, что сами они на экран дают ноль, а <q>хвост</q>
+					сбрасывают в регистр Rc. Передавать на вход
+					девятку неинтересно, т.&#8239;к. на выходе получим 10, точнее цифру А,
+					т.&#8239;е. обычный минус.
+					<br>
+					Пример, передав 1, получим
+					<span class="code">2E.          </span>,
+					передав 6, получим
+					<span class="code">7E.          </span>,
+					и т.&#8239;д. Нажав <span class="but">/-/</span> получим другую знакоцифру
+					(вычислить какую именно легко, т.&#8239;к. сумма таких парных знакоцифр = 11).
+					Кстати, если мантисса нулевая, то после <span class="but">/-/</span>
+					будет &minus;0 для любой знакоцифры.
+				</p>
+				<p>
+					Этот способ получения знакоцифры не очень удобен, тем более, что
+					для получения других цифр мантиссы нужно сильно <q>напрячься</q>,
+					например многократно прокрутив счётчик косвенной адресации.
+					Есть способ лучше.
+				</p>
+			</li>
+			<li>
+				<strong>Использование косвенной адресации регистров R4&hellip;R6</strong>.
+				О том, что при использовании шестнадцатеричных чисел в косвенной
+				адресации для R4&hellip;R6 идёт их нормализация уже было
+				упомянуто в
+				<a href="#id_indirect_addr_mantissa">
+					мантисса содержит шестнадцатеричные цифры</a
+				>.
+				<p>
+					Так вот, если первая цифра 8-значного числа тоже шестнадцатеричная, то
+					перенос из старшего разряда происходит в знаковый разряд, т.&#8239;е.
+					появляется знакоцифра.
+				</p>
+				<p>
+					Для начала возьмём обычную цифру E (для краткости
+					нестандартным способом), которая потом пригодится:
+					<span class="but">1</span>&ensp;
+					<span class="but_k">К</span><span class="but">-</span>&ensp;
+					<span class="but">ВП</span>&ensp;
+					<span class="but_b">x&rarr;П</span><span class="reg">e</span>.
+					Затем сделаем её первой (число 8-значным):
+					<span class="but">ВП</span>&ensp;
+					<span class="but">7</span>&ensp;
+					<span class="but_b">x&rarr;П</span><span class="but">4</span>.
+					Получили <span class="code"> E0000000.   </span>.
+					Если теперь использовать косвенное увеличение:
+					<span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">4</span>&ensp;
+					<span class="but_b">П&rarr;x</span><span class="but">4</span>,
+					то получим <span class="code">240000001.   </span>.
+					Тут из цифры E сделан перенос единицы в знаковый разряд.
+					В отличии от 0С-оборотней мы пока получили только знакоцифру два
+					(или 9, если нажать <span class="but">/-/</span>), зато остальные
+					цифры мантиссы легко выбрать нужные (кроме шестнадцатеричных,
+					которые косвенной адресацией нормализуются), а с помощью
+					<a href="#id_x2_exp_combine">
+						Восстановление X2 с сохранением первой цифры числа в X
+					</a>
+					можно и первую цифру сделать шестнадцатеричной.
+					Введём простую программу:
+				</p>
+				<table class="center">
+					<tr>
+						<th>&#8202;#&#8202;|&#8202;</th>
+						<th>00</th>
+						<th>01</th>
+						<th>02</th>
+						<th>03</th>
+						<th>04</th>
+						<th>05</th>
+						<th>06</th>
+						<th>07</th>
+						<th>08</th>
+						<th>09</th>
+					</tr>
+					<tr>
+						<th>&#8202;00&#8202;|&#8202;</th>
+						<td><span class="but">&larr;&rarr;</span></td>
+						<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
+						<td><span class="but">ВП</span></td>
+						<td><span class="but_b">С/П</span></td>
+						<td colspan="6"></td>
+					</tr>
+				</table>
+				<p>
+					Эта программа меняет у числа в X первую цифру на первую
+					цифру из числа в Y.
+					Соответственно, возьмём цифру E и наше новое число со знакоцифрой два
+					и объединим их:
+					<span class="but_b">П&rarr;x</span><span class="reg">e</span>&ensp;
+					<span class="but_b">П&rarr;x</span><span class="but">4</span>&ensp;
+					<span class="but_b">В/О</span>&ensp;
+					<span class="but_b">С/П</span>.
+					Получили
+					<span class="code">2E0000001.   </span>.
+					Если такое число провести через косвенную адресацию:
+					<span class="but_b">x&rarr;П</span><span class="but">4</span>&ensp;
+					<span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">4</span>&ensp;
+					<span class="but_b">П&rarr;x</span><span class="but">4</span>,
+					то получим <span class="code">340000002.   </span>.
+					Таким же образом можно получить остальные знакоцифры
+					(до 9 включительно). Кому эстетически не нравится хвостик
+					(в данном случае 2), его можно сбросить до нуля, уже через
+					косвенную адресацию с использованием R0&hellip;R3.
+				</p>
+			</li>
+		</ol>
+		<p>
+			Тут стоит сделать отступление и сказать, что в принципе на месте знака можно
+			сделать и шестнадцатеричный символ, но это будет только <q>видимость</q>. Т.&#8239;е. просто
+			индикатор будет отображать нестандартное число, но как числом
+			им невозможно пользоваться (сохранить, восстановить и т.&#8239;п.).
+		</p>
+		<p>
+			Для этого можно использовать знания Еггогологии, где
+			<q>Длинные монстры</q>
+			(&plusmn;1.<sup>|+700</sup>&hellip;&plusmn;9.9999999<sup>|+799</sup>)
+			смещают разряды знака, а <q>C-ЕГГ0Г-оборотни</q>
+			(&plusmn;1.<sup>|+600</sup>&hellip;&plusmn;9.9999999<sup>|+699</sup>)
+			вытаскивают	вместо себя содержимое регистра Rc.
+			Для начала введем программу, которая создаст оба
+			<q>монстра</q> и сохранит их в регистры Rd и Rb.
+		</p>
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_cx">Cx</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">4</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but">9</span></td>
+				<td><span class="but">5</span></td>
+				<td><span class="but_b">ПП</span></td>
+				<td><span class="but">12</span></td>
+				<td><span class="but">8</span></td>
+				<td><span class="but">5</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;10&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">0</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+				<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+				<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+				<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but_cx">Cx</span></td>
+				<td><span class="but_b">В/О</span></td>
+				<td colspan="1"></td>
+			</tr>
+		</table>
+		<p>
+			После выполнения содержимое регистров будет следующее:
+		</p>
+		<table>
+			<tr>
+				<th>Регистр</th>
+				<th>Значение</th>
+			</tr>
+			<tr>
+				<th>Rb</th>
+				<td><span class="code"> 1.       680</span></td>
+			</tr>
+			<tr>
+				<th>Rd</th>
+				<td><span class="code"> 1.       760</span></td>
+			</tr>
+		</table>
+		<p>
+			Если теперь в регистре Rc сохранить какое-либо число, с нестандартным
+			порядком, то можно заставить этих монстров <q>прикрыть</q> себя изменённым
+			значением Rc.
+		</p>
+		<table>
+			<tr>
+				<th>Операция</th>
+				<th>Индикатор</th>
+				<th>Пояснение</th>
+			</tr>
+			<tr>
+				<td>33304</td>
+				<td><span class="code"> 33304.      </span></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td><span class="but_k">К</span><span class="op_k">ИНВ</span></td>
+				<td><span class="code"> 8.CC L      </span></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="code"> C.C L    -01</span></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td><span class="but">ВП</span></td>
+				<td><span class="code"> C.C L     00</span></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td><span class="but">2</span></td>
+				<td><span class="code"> C.C L     02</span></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="code">-5.6974148 СГ</span></td>
+				<td>Пример числа с нестандартным порядком. Даже отрицательное (шестнадцатеричная арифметика).</td>
+			</tr>
+			<tr>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+				<td><span class="code">-5.6974148 СГ</span></td>
+				<td>Важно сохранить именно в Rc!</td>
+			</tr>
+			<tr>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+				<td><span class="code">00.10000000 6</span></td>
+				<td>Так выглядит <q>Длинный монстр</q>, с нулём на месте знака (последняя цифра порядка).</td>
+			</tr>
+			<tr>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+				<td><span class="code"> Г.С 00 00 77</span></td>
+				<td>Реакция <q>монстра</q> – перевод ПМК в режим ПРГ.</td>
+			</tr>
+			<tr>
+				<td><span class="but_f">F</span><span class="op_f">АВТ</span></td>
+				<td><span class="code">00.10000000 6</span></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+				<td><span class="code"> 0.          </span></td>
+				<td>
+					Содержимое R1, которое является косвенным значением для Rb.
+					Кстати, Rb тоже меняется в соответствии с правилами косвенной
+					адресации на 0.0000001<sup>|+687</sup>.
+				</td>
+			</tr>
+			<tr>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+				<td><span class="code"> 6.8 00 00 69</span></td>
+				<td>Реакция этого <q>монстра</q> на попытку его вытащить аналогична предыдущему.</td>
+			</tr>
+			<tr>
+				<td><span class="but_f">F</span><span class="op_f">АВТ</span></td>
+				<td><span class="code">СГ.9569741480</span></td>
+				<td></td>
+			</tr>
+		</table>
+		<p>
+			Получившееся число фактически является тем же <q>C-ЕГГ0Г-оборотнем</q>, который
+			<q>прикрылся</q> содержимым Rс, перетащив порядок числа в начало, затем
+			цифра знака &minus; 1 (=9), затем сами цифры мантиссы (кроме последней), наезжая
+			на знак порядка. А две цифры порядка (80) – две последние цифры порядка самого <q>монстра</q>.
+			Понятно, что ничего с этим числом сделать нельзя, т.&#8239;к. это только <q>видимость</q>
+			<q>монстра</q> из Rb. Не забудьте его уничтожить двойным <span class="but_cx">Cx</span>.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_sign">
+		<header><h2>Какой знак у числа?</h2></header>
+		<p>
+			Первый вопрос, который приходит на ум, глядя на такие числа, а они
+			положительные или отрицательные? В дальнейшем для обозначения
+			будем использовать <span class="first_bold">2N</span>,
+			<span class="first_bold">3N</span>,&hellip;,
+			<span class="first_bold">9N</span>, где знакоцифра
+			указана явно, а мантисса (может + порядок) обозначена буквой N.
+		</p>
+		<table class="center">
+			<tr>
+				<td></td>
+				<td><span class="first_bold">2N</span></td>
+				<td><span class="first_bold">3N</span></td>
+				<td><span class="first_bold">4N</span></td>
+				<td><span class="first_bold">5N</span></td>
+				<td><span class="first_bold">6N</span></td>
+				<td><span class="first_bold">7N</span></td>
+				<td><span class="first_bold">8N</span></td>
+				<td><span class="first_bold">9N</span></td>
+			</tr>
+			<tr>
+				<td><span class="but_f">F</span><span class="op_f">x&lt;0</span></td>
+				<td>Нет</td><td>Нет</td><td>Нет</td><td>Да</td><td>Да</td><td>Да</td><td>Да</td><td>Да</td>
+			</tr>
+			<tr>
+				<td><span class="but_f">F</span><span class="op_f">x&ge;0</span></td>
+				<td>Да</td><td>Да</td><td>Да</td><td>Да</td><td>Да</td><td>Нет</td><td>Нет</td><td>Нет</td>
+			</tr>
+		</table>
+		<p>
+			Как видно, далеко не всё так прозрачно. <span class="first_bold">5N</span> и
+			<span class="first_bold">6N</span> получаются и отрицательные и положительные.
+			Сравнения с нулём, кстати, для всех проходят корректно (не ноль, если
+			N не ноль).
+			<br>
+			Рассмотрим другие функции, для косвенного определения знака числа.
+		</p>
+		<ul>
+			<li>
+				<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>
+				выдаёт положительный порядок только для <span class="first_bold">9N</span>.
+				Кстати, из <span class="first_bold">222</span> число 1.<sup>|+222</sup> не
+				получится. ПМК посчитает число отрицательным и даст 1.<sup>|&minus;22</sup>.
+				Для <span class="first_bold">922</span> соответственно 1.<sup>|+22</sup>.
+			</li>
+			<li>
+				<span class="but_f">F</span><span class="op_f">1/x</span>
+				наоборот считает <span class="first_bold">9N</span> отрицательным,
+				а остальные положительными.
+			</li>
+			<li>
+				<span class="but_f">F</span><span class="op_f">e<sup>x</sup></span>
+				тоже только <span class="first_bold">9N</span> считает отрицательным.
+			</li>
+			<li>
+				<span class="but_f">F</span><span class="op_f">&radic;</span>
+				все считает отрицательными, т.&#8239;е. даёт ошибку.
+			</li>
+			<li>
+				<span class="but_f">F</span><span class="op_f">lg</span> и
+				<span class="but_f">F</span><span class="op_f">ln</span>
+				все считает отрицательными, т.&#8239;е. дают ошибку.
+			</li>
+			<li>
+				<span class="but_f">F</span><span class="op_f">sin</span>
+				все считает отрицательными, т.&#8239;е. результат отрицательный.
+				Остальные тригонометрические функции ведут себя аналогично.
+			</li>
+			<li>
+				<span class="but_k">К</span><span class="op_k">&deg;&larr;&prime;&quot;</span>
+				или
+				<span class="but_k">К</span><span class="op_k">&deg;&larr;&prime;&quot;</span>
+				считают их отрицательными, а
+				<span class="but_k">К</span><span class="op_k">&deg;&rarr;&prime;</span>
+				и <span class="but_k">К</span><span class="op_k">&deg;&rarr;&prime;&quot;</span>
+				не меняют знакоцифру.
+			</li>
+			<li>
+				Парадоксально, но функция
+				<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>
+				для чисел <span class="first_bold">5N</span>&hellip;<span class="first_bold">8N</span>
+				результат делает отрицательным, хоть и правильным по модулю.
+			</li>
+			<li>
+				<span class="but_f">F</span><span class="op_f">x<sup>y</sup></span>
+				все считает отрицательными, если числа являются основанием
+				(т.&#8239;е. даёт ошибку), но в качестве показателя различает,
+				считая <span class="first_bold">9N</span> отрицательным, а остальные положительными.
+			</li>
+		</ul>
+	</section>
+
+	<hr>
+
+	<section id="id_eval">
+		<header><h2>Арифметика с этими числами</h2></header>
+		<p>
+			Нужно понимать, что <q>по модулю</q> функции считают правильно, обычно только
+			знак результата бывает не очевиден.
+			Часть функций уже была рассмотрена выше, где мы пытались определить знак числа.
+			Рассмотрим другие:
+		</p>
+		<ul>
+			<li>
+				<span class="but_k">К</span><span class="op_k">ЗН</span> заменяет
+				мантиссу на 1, оставляя знакоцифру, т.&#8239;е. от
+				<span class="first_bold">8N</span>,
+				получится <span class="first_bold">81</span>.
+			</li>
+			<li>
+				<span class="but_k">К</span><span class="op_k">&mid;x&mid;</span>
+				отбрасывает знакоцифру, как и ожидалось.
+			</li>
+			<li>
+				<span class="but_k">К</span><span class="op_k">[x]</span>
+				оставляет целую часть и ставит знак минус.
+			</li>
+			<li>
+				<span class="but_k">К</span><span class="op_k">{x}</span>,
+				оставляет дробную часть вместе со знакоцифрой, если
+				число по модулю &lt; 1.<sup>|+7</sup> (точнее число, которому нужно
+				меньше восьми знакомест). Для больших чисел знакоцифра удаляется.
+			</li>
+			<li>
+				<span class="but">+</span> в любом сочетании считает их отрицательными.
+			</li>
+			<li>
+				<span class="but">-</span> ведёт себя хитрее. Когда число со знакоцифрой
+				уменьшаемое, т.&#8239;е. находится в регистре Y, то ведёт себя как
+				отрицательное, но когда вычитаемое (находится в регистре X), то
+				наоборот, как положительное. Например, возьмём
+				<span class="first_bold">63</span> (6 – знакоцифра),
+				тогда <span class="first_bold">63</span> &minus; 1 = &minus;4,
+				а вот 1 &minus; <span class="first_bold">63</span> = &minus;2 (а не 4, как
+				для 1 &minus; (&minus;3)).
+				Отсюда следует, что вычитание двух чисел со знакоцифрами
+				складывает их модули, но результат оставляет отрицательным,
+				т.&#8239;е. ведёт себя в точности, как сложение (!).
+			</li>
+			<li>
+				<span class="but">&times;</span>, <span class="but">&divide;</span>
+				обрабатываются сложнее, нужна таблица (порядок операндов не важен):
+				<p></p>
+				<table class="center">
+					<tr>
+						<td></td>
+						<td><span class="first_bold">+N</span></td>
+						<td><span class="first_bold">2N</span></td>
+						<td><span class="first_bold">3N</span></td>
+						<td><span class="first_bold">4N</span></td>
+						<td><span class="first_bold">5N</span></td>
+						<td><span class="first_bold">6N</span></td>
+						<td><span class="first_bold">7N</span></td>
+						<td><span class="first_bold">8N</span></td>
+						<td><span class="first_bold">9N</span></td>
+						<td><span class="first_bold">&minus;N</span></td>
+					</tr>
+					<tr>
+						<td><span class="first_bold">+N</span></td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+					</tr>
+					<tr>
+						<td><span class="first_bold">2N</span></td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+					</tr>
+					<tr>
+						<td><span class="first_bold">3N</span></td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+					</tr>
+					<tr>
+						<td><span class="first_bold">4N</span></td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+					</tr>
+					<tr>
+						<td><span class="first_bold">5N</span></td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+					</tr>
+					<tr>
+						<td><span class="first_bold">6N</span></td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+					</tr>
+					<tr>
+						<td><span class="first_bold">7N</span></td>
+						<td>+</td>
+						<td>+</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+					</tr>
+					<tr>
+						<td><span class="first_bold">8N</span></td>
+						<td>+</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>+</td>
+					</tr>
+					<tr>
+						<td><span class="first_bold">9N</span></td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>+</td>
+						<td>+</td>
+					</tr>
+					<tr>
+						<td><span class="first_bold">&minus;N</span></td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>&minus;</td>
+						<td>+</td>
+						<td>+</td>
+						<td>+</td>
+					</tr>
+				</table>
+				<p>
+					Результат, по крайней мере, согласуется с поведением функций
+					<span class="but_f">F</span><span class="op_f">1/x</span> и
+					<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>.
+				</p>
+			</li>
+			<li>
+				<span class="but_k">К</span><span class="op_k">max</span> считает
+				числа с разными знакоцифрами равными (если N одинаковый),
+				например для <span class="first_bold">8N</span> и
+				<span class="first_bold">2N</span> операция
+				не будет делать ничего
+				(кроме сброса X в X1), к каком бы порядке они не стояли.
+				<br>Но при этом все они меньше, чем
+				<span class="first_bold">+N</span>, и больше,
+				чем <span class="first_bold">&minus;N</span>.
+			</li>
+		</ul>
+		<p>
+			Тут нужно остановиться на нуле. Как указано в функции
+			<span class="but_k">К</span><span class="op_k">{x}</span>, может
+			получиться ноль со знакоцифрой. Так вот, он ведёт себя как обычный ноль.
+			Единственное отличие – это в функциях сравнения. Такой ноль ведёт
+			себя так, как указано ранее для чисел со знакоцифрой. В частности число
+			<span class="code">50.          </span>
+			операторы
+			<span class="but_f">F</span><span class="op_f">x&lt;0</span>,
+			<span class="but_f">F</span><span class="op_f">x&ge;0</span>,
+			<span class="but_f">F</span><span class="op_f">x=0</span>
+			пропустят, как удовлетворяющее условию.
+		</p>
+	</section>
+
+	<hr>
+
+	<section id="id_sum">
+		<header><h2>Произвольная мантисса и выводы</h2></header>
+		<p>
+			Как видно, почти все операции уничтожают знакоцифру. Гарантированная
+			доступная возможность менять мантиссу без изменения знакоцифры –
+			это использовать косвенную адресацию. И конечно мантиссу можно заранее
+			подготовить. Пример (использую программу и цифру E, полученную выше):
+		</p>
+		<p>
+			<span class="but_b">П&rarr;x</span><span class="reg">e</span>&ensp;
+			<span class="but">9</span>&ensp;
+			<span class="but">9</span>&ensp;
+			<span class="but">9</span>&ensp;
+			<span class="but">9</span>&ensp;
+			<span class="but">9</span>&ensp;
+			<span class="but">9</span>&ensp;
+			<span class="but">9</span>&ensp;
+			<span class="but">8</span>&ensp;
+			<span class="but_b">В/О</span>&ensp;
+			<span class="but_b">С/П</span>
+			Получили
+			<span class="code"> E9999998.   </span>.
+			Затем
+			<span class="but_b">x&rarr;П</span><span class="but">4</span>&ensp;
+			<span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">4</span>&ensp;
+			<span class="but">9</span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">4</span>&ensp;
+			<span class="but_b">В/О</span>&ensp;
+			<span class="but_b">С/П</span>.
+			Получим <span class="code">299999999.   </span>
+			(Кстати, если нажать <span class="but">/-/</span>, то получим девять
+			девяток). Теперь снова сделаем над ним операцию
+			<span class="but_b">x&rarr;П</span><span class="but">4</span>&ensp;
+			<span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">4</span>&ensp;
+			<span class="but_b">П&rarr;x</span><span class="but">4</span>.
+			Мы увидим довольно симпатичный ненормализованный ноль
+			<span class="code">300000000.   </span>, которому
+			можно поставить любую первую цифру (но не знакоцифру), как сделано
+			только что по программе. Кстати, если так сделать с девятью девятками,
+			то получится <span class="code">-00000000.   </span>.
+		</p>
+		<p>
+			Фактически, таким образом можно получать почти любые мантиссы
+			(кроме шестнадцатеричных) с нужной знакоцифрой.
+		</p>
+		<p>
+			Например, хотим получить <span class="first_bold">321</span>,
+			где 3 – знакоцифра.
+			Используя короткую программу, указанную в начале раздела, у числа
+			<span class="code"> 10000019.   </span>, заменим
+			первую цифру на E, получим
+			<span class="code"> E0000019.   </span>.
+			После косвенного увеличения станет
+			<span class="code">240000020.   </span>. Снова заменим
+			на E, получим
+			<span class="code">2E0000020.   </span>. Повторное
+			косвенное увеличение приведёт к
+			<span class="code">340000021.   </span>. Теперь,
+			после замены первой цифры на ноль, останется
+			<span class="code">321.         </span>.
+		</p>
+		<p>
+			Ещё пример. Хочу получить <span class="pi">&pi;</span>/2 (для работы с
+			тригонометрическими функциями), и знакоцифру девять.
+			<span class="pi">&pi;</span>/2 = 1.5707963.
+			Начнем с
+			<span class="code"> 15707962.   </span>, заменим
+			первую цифру на E, получим
+			<span class="code"> E5707962.   </span>.
+			После косвенного увеличения станет
+			<span class="code">245707963.   </span>. Нажмём
+			<span class="but">/-/</span>, получим
+			<span class="code">945707963.   </span> и сделаем
+			замену первой цифра на 1:
+			<span class="code">915707963.   </span>. Осталось
+			только
+			<span class="but">ВП</span>&ensp;
+			<span class="but">7</span>&ensp;
+			<span class="but">/-/</span>&ensp;
+			<span class="but_b">x&rarr;П</span><span class="but">1</span>,
+			и мы получили, что хотели
+			<span class="code">91.5707963   </span>.
+			Можно проверить тригонометрические функции
+			на нем, например синус о него даёт &minus;1.
+		</p>
+		<p>
+			На самом деле можно получить числа со знакоцифрам и шестнадцатеричными
+			цифрами в мантиссе. Сначала получим, как указано в начале
+			<span class="code">240000001.   </span>, а затем
+			применим следующий алгоритм:
+		</p>
+		<ol>
+			<li>Ставим первой шестнадцатеричную цифру (E из Re) по мини-программе.</li>
+			<li>Если все цифры мантиссы уже шестнадцатеричные, то завершаем.</li>
+			<li>
+				Уменьшаем с помощью
+				<span class="but">ВП</span>&ensp;
+				<span class="but">1</span>&ensp;
+				<span class="but">/-/</span> порядок на единицу.
+			</li>
+			<li>
+				У полученного значения через косвенную адресацию в R7&hellip;Rd убираем
+				дробную часть. При этом вместо первой цифры будет вписано
+				знакоцифра &minus; 1, а наша шестнадцатеричная цифра отодвинется.
+				Переходим на п.&#8239;1.
+			</li>
+		</ol>
+		<p>
+			По такому алгоритму и цифре E легко получается
+			<span class="code">2EEEEEEEE.   </span>.
+		</p>
+		<p>
+			Понятно, что в пункте 1 алгоритма можно вписать любую цифру
+			(кроме E). И начать с числа с любой знакоцифрой. Таким образом можно
+			получить практически любую мантиссу с
+			любой знакоцифрой (кроме цифр F или ведущих нулей).
+		</p>
+		<p>
+			Более того, такие знакоцифры влияют и на остальное. Возьмём, для примера,
+			<a href="#id_x2_exp_SR">
+				Восстановление X2 с отбрасыванием первой цифры
+			</a>. На самом деле указанная там последовательность при восстановлении
+			вместо первой цифры записывает знакоцифру &minus; 1, что для положительного
+			числа равно нулю, т.&#8239;е. отбрасывание цифры. А вот если знакоцифра есть,
+			то эта последовательность запишет её минус один вместо первого знака.
+			Отсюда же понятно, почему для отрицательных запишет 9, это знак минус,
+			как цифра A (= 10) минус один. Причём знакоцифра останется на месте.
+		</p>
+		<p>
+			На <strong>практике</strong> автор не использовал такие числа просто
+			в силу того,
+			что в момент активного использования ПМК не обладал этими знаниями.
+			И хотя нестандартность поведения многих функций с такими числами
+			определяется только реакцией на знак числа, всё равно можно
+			предположить, что и это можно использовать для оптимизации.
+		</p>
+	</section>
+
+	<footer>
+		<a href="../Недокументированные%20возможности%20ПМК%20МК-61.html">К оглавлению</a>
+	</footer>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+a[target="_blank"] {
+	background: url(https://upload.wikimedia.org/wikipedia/commons/6/64/Icon_External_Link.png) center right no-repeat;
+	padding-right: 0.8em;
+}
+
+span.pi {
+	font-size:large;
+}
+
+.center {
+	text-align:center;
+}
+
+address.align_right {
+	text-align:right;
+}
+
+li.li_change {
+	list-style-type:none;
+}
+li.li_change::before {
+	content:"*";
+	margin-left:-1em;
+	padding-right:0.2em;
+}
+
+li.li_add {
+	list-style-type:none;
+}
+li.li_add::before {
+	content:"+";
+	margin-left:-1em;
+	padding-right:0.2em;
+}
+
+span.first_bold {
+	display:inline-block;
+}
+span.first_bold::first-letter {
+	font-weight:bold;
+}
+
+dt {
+	margin-top:1em;
+}

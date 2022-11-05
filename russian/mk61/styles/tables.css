@@ -1,0 +1,23 @@
+table {
+	border-collapse:collapse;
+}
+
+table, th, td {
+	border:1px solid black;
+}
+
+.center {
+	text-align:center;
+}
+
+tr.trblack td {
+	background:#E1E1E1;
+}
+
+tr.trblack_black td {
+	background:#8E8E8E;
+}
+
+td.nowrap {
+	white-space:nowrap;
+}
