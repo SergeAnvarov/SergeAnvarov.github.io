@@ -1609,7 +1609,7 @@
 		const exponentDigit3 = memory[addr - 6];
 		let exponent = exponentDigit1 * 100 + exponentDigit2 * 10 + exponentDigit3;
 		exponent += (exponent <= 900) ? 0 : -1000;
-		const standartExponent = (exponentDigit1 !== 9) || (exponentDigit2 !== 9) || (exponentDigit3 <= 9); // Not like 1.0^-0E
+		const standartExponent = (exponentDigit1 !== 9) && (exponentDigit2 !== 9) && (exponentDigit3 <= 9); // Not like 1.0^-0E
 		const digits = [];
 		let isSignificantDigit = false;
 		for (let i = 0; i < 8; i++) {
