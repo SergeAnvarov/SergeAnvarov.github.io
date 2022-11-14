@@ -38,7 +38,7 @@
 			<span class="but">1</span>&ensp;
 			<span class="but">0</span>&ensp;
 			<span class="but">/-/</span>&ensp;
-			<span class="but_k">К</span><span class="but">-</span>&ensp;
+			<span class="but_k">К</span><span class="but">&minus;</span>&ensp;
 			<span class="but">ВП</span>&ensp;
 			<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>.
 			Получилось число как 1.<sup>|&minus;140</sup> или по правилу 160 = 1.<sup>|+20</sup>.
@@ -56,7 +56,7 @@
 			можно и другие. Для исследования чисел с разными мантиссами приведём
 			программу, которая регистры R1&hellip;Re заполняет числами с нулевой
 			отрицательной степенью, а на месте первой цифры будет стоять номер
-			регистра (да, да, для последнего это будет E.<sup>|&minus;00</sup>).
+			регистра. Да, да, для последнего это будет E.<sup>|&minus;00</sup>.
 		</p>
 		<table class="center">
 			<tr>
@@ -118,17 +118,17 @@
 			</tr>
 		</table>
 		<p>
-			Тут тоже используются недокументированные возможности. Большую часть
-			(адреса с 00 по 17) это получение (документированное)
+			Тут тоже используются недокументированные возможности. Большую часть,
+			адреса с 00 по 17, это документированное получение
 			той же 1.<sup>|&minus;00</sup>, что
-			мы сделали руками, только без ЕГГ0Га. Причём не через E0, а через L0
-			(просто число 13 нужно для цикла по оставшимся регистрам R2&hellip;Re).
+			мы сделали руками, только без ЕГГ0Га. Причём не через E0, а через L0.
+			Просто число 13 нужно для цикла по оставшимся регистрам R2&hellip;Re.
 			Из-за особенностей поведения <span class="but">ВП</span> в программном
 			режиме X нужно копировать в X2. Первый раз нам помогает
 			<span class="but">/-/</span> по адресу 08, второй раз уже явно делаем
 			<span class="but">В&uarr;</span> по адресу 12. А вот с 18 адреса начинается
 			<q>шаманство</q>. Фрагмент программы 18&hellip;21 увеличивает текущую цифру
-			(в шестнадцатеричном смысле). Эта особенность была рассказана
+			в шестнадцатеричном смысле. Эта особенность была рассказана
 			<a href="x2.html#id_exp_combine">в разделе</a>
 			про регистр X2 и команду <span class="but">ВП</span>. А фрагмент
 			22&hellip;25 (тот же раздел) подставляет эту цифру в число из R1.
@@ -136,7 +136,7 @@
 		</p>
 		<p>
 			Обозначим такое число с необычной степенью как N. В общем случае,
-			нулевая степень (пусть с минусом) в математическом смысле ничего не меняет,
+			нулевая степень, пусть с минусом, в математическом смысле ничего не меняет,
 			т.&#8239;е. число должно быть как бы без степени. И большинство операций так
 			его и воспринимают, но есть исключения. Пройдёмся по всем
 			операциям/функциям, использую значения регистров, внесённые программой выше.
@@ -149,10 +149,10 @@
 		<header><h2>Сложение и вычитание</h2></header>
 		<p>
 			Тут порядок операндов неважен. Правило такое: если целая
-			часть второго операнда состоит только из одной цифры (сюда же попадают
-			шестнадцатеричные цифры и дробная часть может быть любая), то этот
-			операнд (т.&#8239;е. всё число) сначала умножается на 10 (то же и для
-			шестнадцатеричных чисел), а затем выполняется операция с N. Примеры:
+			часть второго операнда состоит только из одной цифры, сюда же попадают
+			шестнадцатеричные цифры и дробная часть может быть любая, то этот
+			операнд, т.&#8239;е. всё число, сначала умножается на 10, то же и для
+			шестнадцатеричных чисел, а затем выполняется операция с N. Примеры:
 		</p>
 		<p>
 			2.<sup>|&minus;00</sup> + 5.1 = 53:
@@ -169,14 +169,14 @@
 			<span class="but">.</span>&ensp;
 			<span class="but">1</span>&ensp;
 			<span class="but_b">П&rarr;x</span><span class="but">3</span>&ensp;
-			<span class="but">-</span> =
+			<span class="but">&minus;</span> =
 			<span class="code"> 18.         </span>.
 		</p>
 		<p>
 			<span class="pi">&pi;</span> &minus; 3.<sup>|&minus;00</sup> = 28.415926;
 			<span class="but_f">F</span><span class="op_f">&pi;</span>&ensp;
 			<span class="but_b">П&rarr;x</span><span class="but">3</span>&ensp;
-			<span class="but">-</span> =
+			<span class="but">&minus;</span> =
 			<span class="code"> 28.415926   </span>.
 		</p>
 		<p>
@@ -184,7 +184,7 @@
 			<span class="but">1</span>&ensp;
 			<span class="but">.</span>&ensp;
 			<span class="but">1</span>&ensp;
-			<span class="but_k">К</span><span class="but">-</span>&ensp;
+			<span class="but_k">К</span><span class="but">&minus;</span>&ensp;
 			<span class="but">ВП</span>&ensp;
 			<span class="but_k">К</span><span class="op_k">НОП</span>&ensp;
 			<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
@@ -207,7 +207,7 @@
 			<span class="but">2</span>&ensp;
 			<span class="but">1</span>&ensp;
 			<span class="but_b">П&rarr;x</span><span class="but">3</span>&ensp;
-			<span class="but">-</span> =
+			<span class="but">&minus;</span> =
 			<span class="code"> 18.         </span>.
 		</p>
 		<p>
@@ -215,14 +215,14 @@
 			<span class="but_f">F</span><span class="op_f">&pi;</span>&ensp;
 			<span class="but_f">F</span><span class="op_f">e<sup>x</sup></span>&ensp;
 			<span class="but_b">П&rarr;x</span><span class="but">3</span>&ensp;
-			<span class="but">-</span> =
+			<span class="but">&minus;</span> =
 			<span class="code"> 20.14069    </span>.
 		</p>
 		<p>
 			E1 + 2.<sup>|&minus;00</sup> = 43:
 			<span class="but">1</span>&ensp;
 			<span class="but">1</span>&ensp;
-			<span class="but_k">К</span><span class="but">-</span>&ensp;
+			<span class="but_k">К</span><span class="but">&minus;</span>&ensp;
 			<span class="but">ВП</span>&ensp;
 			<span class="but_k">К</span><span class="op_k">НОП</span>&ensp;
 			<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
@@ -230,7 +230,7 @@
 			<span class="code"> 43.         </span>.
 		</p>
 		<p>
-			Если дробное число (целая часть нулевая), то выполняется как обычно.
+			Если дробное число у которого целая часть нулевая, то выполняется как обычно.
 			Примеры:
 		</p>
 		<p>
@@ -248,7 +248,7 @@
 			<span class="but">.</span>&ensp;
 			<span class="but">9</span>&ensp;
 			<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>&ensp;
-			<span class="but_k">К</span><span class="but">-</span>&ensp;
+			<span class="but_k">К</span><span class="but">&minus;</span>&ensp;
 			<span class="but">ВП</span>&ensp;
 			<span class="but_k">К</span><span class="op_k">НОП</span>&ensp;
 			<span class="but_b">П&rarr;x</span><span class="but">4</span>&ensp;
@@ -270,7 +270,7 @@
 			2.<sup>|&minus;00</sup> &minus; 3.<sup>|&minus;00</sup> = &minus;1:
 			<span class="but_b">П&rarr;x</span><span class="but">2</span>&ensp;
 			<span class="but_b">П&rarr;x</span><span class="but">3</span>&ensp;
-			<span class="but">-</span> =
+			<span class="but">&minus;</span> =
 			<span class="code">-1.          </span>.
 		</p>
 		<p>
@@ -298,10 +298,11 @@
 		<p>
 			При <strong>умножении</strong>, когда число N перед операцией
 			находится в регистре
-			Y, а число в регистре X меньше единицы (в абсолютном значении), то
+			Y, а число в регистре X меньше единицы в абсолютном значении, то
 			получается число со степенью &minus;160, т.&#8239;е. само число N в операции
-			воспринимается как число в степени &minus;160 (кстати, с учётом цикличности
-			ПМК на 1000 степени можно считать это числом в 840 степени).
+			воспринимается как число в степени &minus;160. Кстати, с учётом
+			<a href="glossary.html#id_cyclicity">цикличности</a>
+			ПМК на 1000 степени можно считать это числом в 840 степени.
 			В остальных случаях ведёт как обычное умножение. Пример:
 		</p>
 		<p>
@@ -427,7 +428,7 @@
 		</p>
 		<p>
 			Напомню, если число N находится в регистре X, то происходит обычное
-			умножение, но если в Y тоже N (может другое),
+			умножение, но если в Y тоже N, может другое,
 			то будет как выше степень &minus;160.
 		</p>
 		<p>
@@ -471,8 +472,8 @@
 		<p>
 			Для <strong>деления</strong> ситуация похожая. Необычность возникает,
 			только когда
-			делят на N (N в регистре X). Если число в регистре Y по модулю в
-			диапазоне 1 &les; Y &lt; 10 (сюда же попадают шестнадцатеричные цифры),
+			делят на N. N в регистре X. Если число в регистре Y по модулю в
+			диапазоне 1 &les; Y &lt; 10, сюда же попадают шестнадцатеричные цифры,
 			то в операциях деления N выглядит как число со степенью &minus;160.
 		</p>
 		<p>
@@ -555,11 +556,9 @@
 	<hr>
 
 	<section id="id_func_F">
-		<header><h2><q>Жёлтые</q> функции</h2></header>
-		<p>
-			<q>Жёлтые</q> функции – те, которые вызываются через кнопку
-			<span class="but_f">F</span>.
-		</p>
+		<header><h2>
+			<a href="glossary.html#id_yellow_num">Жёлтые</a> функции
+		</h2></header>
 		<ul>
 			<li>
 				<p>
@@ -1074,7 +1073,8 @@
 					<span class="but_f">F</span><span class="op_f">x<sup>y</sup></span>
 					ведёт себя тоже нестандартно.
 					Если число N показатель степени, т.&#8239;е. в регистре Y, то нормально
-					работает, только если число в X не меньше числа e (экспонента), а
+					работает, только если число в X не меньше числа
+					<a href="https://ru.wikipedia.org/wiki/E_(число)" target="_blank">e</a>, а
 					иначе даёт единицу.
 				</p>
 				<table class="center">
@@ -1123,9 +1123,9 @@
 						<td>2.<sup>|&minus;00</sup></td>
 						<td>5.5355546<sup>|&minus;87</sup></td>
 						<td>1.7215634<sup>|&minus;99</sup></td>
-						<td>0(=6.3773317<sup>|&minus;100</sup>)</td>
-						<td>ЕГГ0Г(=2.3624032<sup>|&minus;100</sup>)</td>
-						<td>ЕГГ0Г(просто ошибка аргумента)</td>
+						<td>0, точнее 6.3773317<sup>|&minus;100</sup></td>
+						<td>0, точнее 2.3624032<sup>|&minus;100</sup></td>
+						<td>ЕГГ0Г – просто ошибка аргумента</td>
 					</tr>
 				</table>
 				<p>
@@ -1184,11 +1184,9 @@
 	<hr>
 
 	<section id="id_func_K">
-		<header><h2><q>Синие</q> функции</h2></header>
-		<p>
-			<q>Синие</q> функции – те, которые вызываются через кнопку
-			<span class="but_k">К</span>.
-		</p>
+		<header><h2>
+			<a href="glossary.html#id_blue_num">Синие</a> функции
+		</h2></header>
 		<ul>
 			<li>
 				<span class="but_k">К</span><span class="op_k">[x]</span>
@@ -1224,8 +1222,8 @@
 					диапазон мантисс для чисел N. Дело в том, что они так же считают
 					такие числа дробными, но в отличии от остальных функций при
 					обработке не трогают порядок. Это значит, что число по-прежнему
-					остаётся с нулевой отрицательной степенью (если конечно в результате
-					не понизится порядок). Пример:
+					остаётся с нулевой отрицательной степенью, если конечно в результате
+					не понизится порядок. Пример:
 					<br>
 					<span class="but_b">П&rarr;x</span><span class="but">3</span>&ensp;
 					<span class="but_k">К</span><span class="op_k">&deg;&rarr;&prime;&quot;</span>&ensp;

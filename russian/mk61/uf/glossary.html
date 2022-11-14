@@ -8,6 +8,8 @@
 	<meta content="width" name="MobileOptimized">
 	<meta content="yes" name="apple-mobile-web-app-capable">
 	<meta name="description" content="Недокументированные возможности программируемого микрокалькулятора МК-61. Список терминов.">
+	<link rel="stylesheet" href="../styles/buttons.css">
+	<link rel="stylesheet" href="../styles/tables.css">
 	<link rel="stylesheet" href="../styles/other.css">
 </head>
 
@@ -32,6 +34,10 @@
 					https://ru.wikipedia.org/wiki/Еггогология
 				</a>
 			</dd>
+			<dt id="id_yellow_num">Жёлтые функции</dt>
+			<dd>
+				Желтые функции – те функции, которые вызываются через кнопку <span class="but_f">F</span>.
+			</dd>
 			<dt>Знакоцифра</dt>
 			<dd id="id_zero_digit">
 				Цифра, которая располагается на месте знака. См.
@@ -55,6 +61,12 @@
 				Программируемый микрокалькулятор.
 				В контексте статьи – МК-61.
 			</dd>
+			<dt>Плохой ЕГГ0Г</dt>
+			<dd id="id_bad_error">
+				Возникает в результате
+				<a href="hex.html#id_y_div_h">деления</a>
+				на шестнадцатеричные числа.
+			</dd>
 			<dt id="id_F">Пустышка</dt>
 			<dd>
 				Число, у которого первая цифра представлена
@@ -72,14 +84,59 @@
 				диапазон чисел для ПМК, т.&#8239;е. порядок числа вне диапазона &minus;99&hellip;99,
 				например 1.<sup>|+120</sup>, или 4.<sup>|&minus;180</sup>.
 			</dd>
+			<dt id="id_blue_num">Синие функции</dt>
+			<dd>
+				Синие функции – те функции, которые вызываются через кнопку <span class="but_k">К</span>.
+			</dd>
 			<dt id="id_dark">Супертёмные адреса</dt>
 			<dd>
-				Адреса FA&hellip;FF.
+				Адреса FA&hellip;FF. Подробности в разделе
+				<a href="addr_space.html">Программное адресное пространство</a>.
 			</dd>
 			<dt id="id_shadow">Тёмные адреса</dt>
 			<dd>
 				Шестнадцатеричные адреса, располагаясь на которых
 				в режиме ввода программы ПМК не отображает коды операций – тёмный экран.
+			</dd>
+			<dt id="id_cyclicity">Цикличность степени</dt>
+			<dd>
+				<p>
+					Когда порядок числа превышает 1000, то он снова возвращается на ноль.
+					Пример:
+				</p>
+				<table class="center">
+					<tr>
+						<th>&#8202;#&#8202;|&#8202;</th>
+						<th>00</th>
+						<th>01</th>
+						<th>02</th>
+						<th>03</th>
+						<th>04</th>
+						<th>05</th>
+						<th>06</th>
+						<th>07</th>
+						<th>08</th>
+						<th>09</th>
+					</tr>
+					<tr>
+						<th>&#8202;00&#8202;|&#8202;</th>
+						<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
+						<td><span class="but">6</span></td>
+						<td><span class="but">5</span></td>
+						<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+						<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+						<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+						<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+						<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+						<td><span class="but_b">С/П</span></td>
+						<td colspan="1"></td>
+					</tr>
+				</table>
+				<p>
+					Здесь должно было получиться 10.<sup>|+1040</sup>, а фактически получается 10.<sup>|+40</sup>.
+					Если вместо 65 в программу вбить 60, то результат 10.<sup>|+960</sup>
+					будет отображен уже как 10.<sup>|&minus;40</sup>.
+				</p>
 			</dd>
 			<dt id="id_x_to_x2">X2-влияющие команды</dt>
 			<dd>
