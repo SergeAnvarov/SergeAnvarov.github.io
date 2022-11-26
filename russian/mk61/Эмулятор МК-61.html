@@ -1619,6 +1619,9 @@
 				digits.push(digit);
 			}
 		}
+		if (digits.length === 0) {
+			digits.push('0');
+		}
 		const signValue = memory[addr - 9];
 		const signChar = (signValue === 0) ? ' ' : DIGIT_CHARS[signValue + 1];
 		const mantissa = digits.reduce((result, digit) => DIGIT_CHARS[digit] + result, '').padEnd(8); // In reverse order
@@ -2224,6 +2227,7 @@
 		event.preventDefault();
 		const text = event.clipboardData.getData('text');
 		let useNeg = false; // /-/ must be pressed after digits to take effect
+		let powerButtonIsPressed = false;
 		let digitsCount = 0;
 		forLoop:
 		for (let chr of text) {
@@ -2231,7 +2235,7 @@
 			if (chr >= '0' && chr <= '9') {
 				pressing(`b${chr}`, true);
 				digitsCount++;
-				if (digitsCount < 8) {
+				if ((digitsCount < 8) || powerButtonIsPressed)  {
 					continue;
 				}
 				digitsCount = 0;
@@ -2256,6 +2260,7 @@
 						stepExec(true);
 					}
 					pressing('bPower', true);
+					powerButtonIsPressed = true;
 					break;
 				default:
 					break forLoop; // Unexpected char
