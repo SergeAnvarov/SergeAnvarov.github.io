@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta content="true" name="HandheldFriendly">
+	<meta content="width" name="MobileOptimized">
+	<meta content="yes" name="apple-mobile-web-app-capable">
+	<meta name="description" content="Раджа-йога. Игра. ПМК. МК-61">
+	<title>Раджа-йога</title>
+
+<style>
+
+span.but, span.but_f, span.but_k, span.but_cx, span.but_b, span.reg, span.op_f, span.op_k {
+	border:thin solid black;
+	border-radius:4px;
+	display:inline-block;
+	font-size:1.1em;
+	font-weight:bold;
+	font-family:monospace;
+	text-align:center;
+	min-width:2.3em;
+	white-space:nowrap;
+}
+
+sup {
+	line-height:0;
+}
+
+span.but {
+	background-color:#CCCCCC;
+	color:black;
+}
+
+span.but_f {
+	background-color:#F5E345;
+	color:black;
+}
+
+span.but_k {
+	background-color:LightSkyBlue;
+	color:white;
+}
+
+span.but_cx {
+	background-color:#F00505;
+	color:white;
+}
+
+span.but_b {
+	background-color:black;
+	color:white;
+}
+
+span.reg {
+	background-color:black;
+	color:white;
+}
+
+span.op_f {
+	background-color:black;
+	color:yellow;
+}
+
+span.op_k {
+	background-color:black;
+	color:#00BFFF;
+}
+
+.code {
+	background-color:#103810;
+	color:#77FF77;
+	font-size:1.1em;
+	font-family:monospace;
+	font-weight:bold;
+	padding:1px 2px 1px 2px;
+	white-space:pre;
+}
+
+table {
+	border-collapse:collapse;
+}
+
+table, th, td {
+	border:1px solid black;
+}
+
+.center {
+	text-align:center;
+}
+
+details summary {
+	cursor: pointer;
+}
+details summary > * {
+	display: inline;
+}
+
+a[target="_blank"] {
+	background: url(https://upload.wikimedia.org/wikipedia/commons/6/64/Icon_External_Link.png) center right no-repeat;
+    padding-right: 0.8em;
+}
+
+</style>
+
+</head>
+
+<body>
+	<header>
+		<h1>Раджа-йога</h1>
+	</header>
+
+	<h2>Задача</h2>
+	<p>
+		Вы адепт <a href="https://ru.wikipedia.org/wiki/Раджа-йога" target="_blank">Раджа-йоги</a>,
+		и собираетесь пройти все восемь ступеней.
+		Каждая ступень состоит из двух частей. Получается восемь ступеней по две части.
+		Сначала нужно чётко определить цель ступени,
+		найти подходящие практики или знания. Назовём это <dfn>определение цели</dfn>.
+		Далее нужно <dfn>достичь этой цели</dfn>, то есть освоить текущую ступень.
+		На экране ПМК <q>Цель</q> отображается как <span class="code">-</span>.
+
+	</p>
+	<p>
+		Как и в обычной жизни, вам будут мешать разные обстоятельства. Одна из самых
+		опасных это <q>Лень</q>. На экране	ПМК отображаются как <span class="code">E</span>.
+		Она всюду будет следовать за вами, куда бы вы не отправились. Если вы с ней
+		встретитесь на жизненном пути (примете её), то о постижении Раджа-йоги придётся забыть.
+	</p>
+	<p>
+		Кроме того, жизнь не вечна, и все время нужно учитывать возраст.
+		Об этом будет напоминать <q>Старость</q>, которая обозначается
+		как <span class="code">C</span>. Она <q>проходит</q> на экране ПМК
+		слева направо. Как только она уйдет за правый край – ваша жизнь завершена
+		и ни о каком достижении уже не говорится.
+		Кроме того встреча с ней означает преждевременную болезнь. Этого тоже нужно избежать.
+		В самом начале она не видна, за левым краем.
+	</p>
+	<p>
+		Экран ПМК отображает вашу жизнь адепта, с семью жизненными этапами (семь ячеек).
+		Каждая ячейка либо пустая, либо содержит символы:
+	</p>
+	<table>
+		<tr>
+			<th>Символ</th>
+			<th>Обозначение</th>
+		</tr>
+		<tr>
+			<th><span class="code">8</span></th>
+			<td>Ваше положение</td>
+		</tr>
+		<tr>
+			<th><span class="code">-</span></th>
+			<td><q>Цель</q></td>
+		</tr>
+		<tr>
+			<th><span class="code">C</span></th>
+			<td><q>Старость</q></td>
+		</tr>
+		<tr>
+			<th><span class="code">E</span></th>
+			<td><q>Лень</q></td>
+		</tr>
+		<tr>
+			<th><span class="code">9</span></th>
+			<td>Если <q>Старость</q> совпадает с <q>Целью</q></td>
+		</tr>
+		<tr>
+			<th><span class="code">L</span></th>
+			<td>Если <q>Лень</q> совпадают с <q>Целью</q></td>
+		</tr>
+	</table>
+	<p>
+		В процессе постижения истины вам необходимо выбрать
+		направление движения по жизненным этапам и усилия,
+		которые вы прилагаете для этого. В отличие от реальной
+		жизни вы будете видеть, где и что вас подстерегает.
+	</p>
+
+	<h2>Игровой процесс</h2>
+
+	<h3>Начало</h3>
+	<p>
+		Перед первым запуском внесём константы в регистры. Если используете эмулятор, то уже вбито:
+	</p>
+	<table>
+		<tr>
+			<th>Регистр</th>
+			<th>Значение</th>
+		</tr>
+		<tr>
+			<th>R8</th>
+			<td>56</td>
+		</tr>
+		<tr>
+			<th>R9</th>
+			<td>78</td>
+		</tr>
+		<tr>
+			<th>Ra</th>
+			<td>12</td>
+		</tr>
+		<tr>
+			<th>Rc</th>
+			<td>
+				Любое случайное число в диапазоне 0&hellip;1. Можно оставить ноль.
+			</td>
+		</tr>
+		<tr>
+			<th>Rd</th>
+			<td>82</td>
+		</tr>
+		<tr>
+			<th>Re</th>
+			<td>10000000, т. е. 10<sup>7</sup></td>
+		</tr>
+	</table>
+	<p>
+		Начало игры:
+		<span class="but_b">В/О</span>
+		<span class="but_b">ШГ&rarr;</span>
+		<span class="but_b">С/П</span>.
+	</p>
+
+	<h3>Игра</h3>
+	<p>
+		Экран состояния отображается в виде числа.
+		Первая цифра – номер ступени, которую вы осваиваете.
+		Вначале всегда 1. Кстати, он же находится в регистре Y.
+		А остальные 7 знаков мантиссы отображают
+		состояние жизненного пространства.
+		Знак точки в конце обозначает, для удобства, правую границу.
+	</p>
+	<p>
+		Направления вашего движения по жизни, а также
+		усилия определяются цифрами &minus;3&hellip;3.
+		Фактически на столько вы изменяете своё положение.
+		Отрицательное значения для движения влево.
+		Если в промежутке встречается что-то другое, вы это
+		проскакиваете без последствий.
+		Если границы не позволяют сделать такое движение,
+		то вы остаётесь на месте – то же, что ход с нулём.
+	</p>
+	<p>
+		Для выполнения хода просто введите выбранную цифру
+		и нажмите <span class="but_b">С/П</span>.
+		Если число дробное или не из указанного диапазона,
+		то ПМК ещё раз отобразит то же самое состояние, чтобы вы выбрали
+		правильный ход, но внутренний счётчик шагов будет увеличен.
+	</p>
+	<p>
+		Как только вы совмещаетесь с <q>Целью</q>, то переходите на следующую
+		часть в освоении ступени. В этом случае <q>Старость</q> <q>отступает</q>
+		за левый край, а <q>Лень</q> снова располагаются случайным образом.
+		О том, что вторая часть уже наступила, сообщает цифра минуса перед номером ступени.
+		Она характеризует, что цель известна и нужно её достичь.
+	</p>
+	<p>
+		Как только вы совмещаетесь с <q>Целью</q> во второй части, то переходите на новую
+		ступень, где снова всё возвращается <q>на круги своя</q>.
+	</p>
+	<p>
+		Ваше положение между частями или ступенями остаётся неизменным.
+		Если в процессе игры оно совпадает с одной из опасностей,
+		то миссия постижения считается проваленной.
+	</p>
+	<p>
+		ПМК проверяет совпадение после вашего хода для
+		<span class="code">C</span> и <span class="code">E</span>. Затем
+		делает ход за <span class="code">Е</span>, причём в вашу сторону,
+		но всего на один шаг, и тут же проверяет на совпадение.
+		Затем делает проверку на <span class="code">-</span>. И если его
+		нет, то только тогда сдвигает <span class="code">С</span>
+		вправо, проверяя не только на совпадение, но и на выход его за
+		правую границу.
+		Получается непосредственно перед <span class="code">С</span>
+		можно забрать <q>Цель</q>, но с
+		<span class="code">Е</span> такое не получится, и нужна
+		фора в ячейках.
+	</p>
+
+	<h3>Окончание</h3>
+	<p>
+		Если вас застигла <q>Старость</q> или <q>Лень</q>, то вы бросаете
+		свое заняти Раджа-йогой и ПМК зацикливается, отображая в мигающем режиме
+		<span class="code">0.70100000-E.E.</span>
+		В этом случае после остановки через <span class="but_b">С/П</span>,
+		и нового запуска через <span class="but_b">С/П</span>
+		начнётся новая игра (другой адепт).
+	</p>
+	<p>
+		Если же вы освоите все восемь уровней, и достигнете
+		<a href="https://ru.wikipedia.org/wiki/Мокша_(философия)" target="_blank">мокши</a>,
+		то ПКМ при остановке покажет вам количество шагов (решений, усилий), которые вам
+		пришлось сделать для достижения этого.
+		Для начала новой игры просто нажмите <span class="but_b">С/П</span>.
+	</p>
+	<p>
+		Так как положения генерируются случайно, то далеко не всегда вам удастся
+		достичь вершины Раджа-йоги.
+	</p>
+
+	<h2>Пример</h2>
+	<p>
+		Для пояснения приведём начало игрового процесса, с начальным
+		значением случайного числа равным 0.3234636.
+		В данном примере будут приведены только <q>правильные ходы</q>.
+		Ошибочные вы можете потом сделать самостоятельно.
+	</p>
+	<p>
+		Начало после
+		<span class="but_b">В/О</span>
+		<span class="but_b">ШГ&rarr;</span>
+		<span class="but_b">С/П</span>.
+	</p>
+	<table>
+		<tr>
+			<th>Экран ПМК</th>
+			<th>Пояснение и код</th>
+		</tr>
+		<tr>
+			<td><span class="code"> 1Е   - 8.   </span></td>
+			<td>
+				Повезло. <q>Лень</q> далеко.
+				Просто сразу находим <q>Цель</q>:
+				<span class="but">2</span>
+				<span class="but">/-/</span>
+				<span class="but_b">С/П</span>
+			</td>
+		</tr>
+		<tr>
+			<td><span class="code">-1    8Е-.   </span></td>
+			<td>
+				Обратите внимание на минус в начале.
+				Значит мы уже во второй часть ступени.
+				<span class="but">1</span>
+				<span class="but">/-/</span>
+				<span class="but_b">С/П</span>
+			</td>
+		</tr>
+		<tr>
+			<td><span class="code">-1С  8Е -.   </span></td>
+			<td>
+				Появилась <q>Старость</q>.
+				Но теперь можно сразу перепрыгнуть для достижения <q>Цели</q>.
+				<span class="but">3</span>
+				<span class="but_b">С/П</span>
+			</td>
+		</tr>
+		<tr>
+			<td><span class="code"> 2 Е -  8.   </span></td>
+			<td>
+				Уже вторая ступень! Здесь тоже нетрудно
+				найти <q>Цель</q>.
+				<span class="but">3</span>
+				<span class="but">/-/</span>
+				<span class="but_b">С/П</span>
+			</td>
+		</tr>
+		<tr>
+			<td><span class="code">-2   8L  .   </span></td>
+			<td>
+				А вот тут уже всё не просто.
+				Сначала заманиваем <q>Лень</q> правее,
+				чтобы <q>подождать</q> <q>Старость</q>.
+				<span class="but">3</span>
+				<span class="but_b">С/П</span>
+			</td>
+		</tr>
+		<tr>
+			<td><span class="code">-2С   -Е8.   </span></td>
+			<td>
+				<span class="but">3</span>
+				<span class="but">/-/</span>
+				<span class="but_b">С/П</span>
+			</td>
+		</tr>
+		<tr>
+			<td><span class="code">-2 С 8L  .   </span></td>
+			<td>
+				Теперь <q>обходим</q> <q>Старость</q>.
+				<span class="but">3</span>
+				<span class="but">/-/</span>
+				<span class="but_b">С/П</span>
+			</td>
+		</tr>
+		<tr>
+			<td><span class="code">-28 СЕ-  .   </span></td>
+			<td>
+				Просто ждём. Иногда и в жизни так бывает.
+				<span class="but_b">0</span>
+				<span class="but_b">С/П</span>
+			</td>
+		</tr>
+		<tr>
+			<td><span class="code">-28 ЕС-  .   </span></td>
+			<td>
+				Снова ждём.
+				<span class="but_b">0</span>
+				<span class="but_b">С/П</span>
+			</td>
+		</tr>
+		<tr>
+			<td><span class="code">-28Е  9  .   </span></td>
+			<td>
+				А теперь побежали.
+				<span class="but">3</span>
+				<span class="but_b">С/П</span>
+			</td>
+		</tr>
+		<tr>
+			<td><span class="code">-2  Е8-С .   </span></td>
+			<td>
+				А после
+				<span class="but">1</span>
+				<span class="but_b">С/П</span>
+				перейдём на третью ступень.
+			</td>
+		</tr>
+	</table>
+	<p>
+		И так далее. Начальное случайное число не совсем случайно. С ним
+		вы непременно достигнете нирваны!
+	</p>
+	<p>
+		Кстати, если вначале игры после <span class="but_b">В/О</span>
+		забыть нажать <span class="but_b">ШГ&rarr;</span>, то вы сразу
+		узнаете что такое неудачное окончание (зависание). Но это не страшно – просто
+		остановите по <span class="but_b">С/П</span> и запустите
+		так же.
+	</p>
+
+	<p>
+		Приятной игры!
+	</p>
+
+	<hr>
+
+	<details>
+		<summary>
+			<h2>Разбор программы</h2>
+		</summary>
+		<h3>Распределение регистров</h3>
+		<table>
+			<tr>
+				<th>R0</th>
+				<td>Рабочий регистр.</td>
+			</tr>
+			<tr>
+				<th>R1</th>
+				<td>Положение <q>Лени</q>. 0 – крайнее справа, 6 – крайнее слева.</td>
+			</tr>
+			<tr>
+				<th>R2</th>
+				<td>Флаг части уровня. Если = 1, то вторая часть, если много больше единицы – первая.</td>
+			</tr>
+			<tr>
+				<th>R3</th>
+				<td>Положение <q>Старости</q>.</td>
+			</tr>
+			<tr>
+				<th>R4</th>
+				<td>Уровень ступени.</td>
+			</tr>
+			<tr>
+				<th>R5</th>
+				<td>Положение <q>Цели</q>.</td>
+			</tr>
+			<tr>
+				<th>R6</th>
+				<td>Счётчик шагов.</td>
+			</tr>
+			<tr>
+				<th>R7</th>
+				<td>Положение игрока.</td>
+			</tr>
+			<tr>
+				<th>R8</th>
+				<td>
+					Константа 56.
+					Используется при проверке границ, чтобы избежать
+					сохранения нового положения при выходе за границы.
+				</td>
+			</tr>
+			<tr>
+				<th>R9</th>
+				<td>
+					Константа 78.
+					Адрес процедуры для проверки совпадения RX с положением
+					игрока. При совпадении сразу уходит на ошибку.
+				</td>
+			</tr>
+			<tr>
+				<th>Ra</th>
+				<td>
+					Константа 12.
+					Адрес начала цикла игры одной части.
+				</td>
+			</tr>
+			<tr>
+				<th>Rb</th>
+				<td>Не используется</td>
+			</tr>
+			<tr>
+				<th>Rc</th>
+				<td>Случайное число.</td>
+			</tr>
+			<tr>
+				<th>Rd</th>
+				<td>
+					Константа 82.
+					Адрес процедуры генерации случайного положения.
+					Гарантируется, что значение не совпадёт с положением игрока.
+				</td>
+			</tr>
+			<tr>
+				<th>Re</th>
+				<td>
+					Константа 10000000.
+					Используется для генерации видеоизображения, и как
+					адрес процедуры выхода по ошибке (адрес 00).
+				</td>
+			</tr>
+		</table>
+		<h3>Текст программы</h3>
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+				<td><span class="but_cx">Cx</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">4</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">6</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">7</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">e</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">d</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">5</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;10&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">d</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="reg">e</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_k">К</span><span class="op_k">ИНВ</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;20&#8202;|&#8202;</th>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">e</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="op_k">&oplus;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L0</span></td>
+				<td><span class="but">17</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;30&#8202;|&#8202;</th>
+				<td><span class="but_f">F</span><span class="op_f">L2</span></td>
+				<td><span class="but">33</span></td>
+				<td><span class="but">/-/</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but">7</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but_k">К</span><span class="op_k">&mid;x&mid;</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;40&#8202;|&#8202;</th>
+				<td><span class="but">4</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&lt;0</span><span class="reg">a</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x=0</span><span class="reg">a</span></td>
+				<td><span class="but">6</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="but">8</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;50&#8202;|&#8202;</th>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="but">8</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">7</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but">В&uarr;</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_k">К</span><span class="op_k">ЗН</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;60&#8202;|&#8202;</th>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x=0</span><span class="reg">a</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L2</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;70&#8202;|&#8202;</th>
+				<td><span class="but">07</span></td>
+				<td><span class="but">8</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+				<td><span class="but">05</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
+				<td><span class="but">&minus;</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;80&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="reg">e</span></td>
+				<td><span class="but_b">В/О</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+				<td><span class="but">7</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">&pi;</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;90&#8202;|&#8202;</th>
+				<td><span class="but">7</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="reg">d</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+				<td><span class="but_b">В/О</span></td>
+				<td colspan="2"></td>
+			</tr>
+		</table>
+		<h3>Объяснение работы программы</h3>
+		<p>
+			Некоторые фрагменты программы используют особенности
+			косвенной адресации или выполнения команды <span class="but">ВП</span>
+			в программном режиме. Данные особенности описаны в документе
+			<a href="https://sergeanvarov.github.io/russian/mk61/Недокументированные%20возможности%20ПМК%20МК-61.html" target="_blank">
+				Недокументированные возможности
+			</a> в соответствующих разделах.
+		</p>
+		<p>
+			Все значения положений отсчитываются справа. Т. е. нулю соответствует 8-я позиция мантиссы,
+			а шестерке - вторая. Первая занята под номер ступени.
+			Кроме <q>Старости</q>, все остальные находятся в диапазоне [0..6].
+			Старость вначале любой части <q>вне игры</q>, и равна 7.
+		</p>
+		<p>
+			Теперь про флаг в R2. Он равен единице, если идёт
+			вторая часть, и не единице (много больше её), если первая. Это позволяет проводить
+			проверки простым оператором
+			<span class="but_f">F</span><span class="op_f">L2</span>, причём без
+			нарушения стека, и неоднократно.
+		</p>
+		<p>
+			Теперь пройдёмся последовательно по всему коду, поясняя, что выполняют фрагменты.
+		</p>
+		<ul>
+			<li>
+				Адрес 00. Процедура <q>отказа</q> или зацикливания. В связи с тем, что проверки на совпадения
+				проходят внутри подпрограммы, то, чтобы не возвращаться в вызывающий код и очистить стек
+				возвратов, используется такая команда.
+			</li>
+			<li>
+				Адреса 01-04. Обнуление счётчиков и установка положение игрока (крайнее справа).
+				Выполняется только при начале новой игры.
+			</li>
+			<li>
+				Адреса 05-07. Увеличение ступени и внесение признака первой части. При переходе на вторую
+				часть программа сразу попадает на адрес 07 с единицей.
+			</li>
+			<li>
+				Адреса 08-11. Генерация положения для <q>Цели</q> и <q>Лени</q>. Начальное положение <q>Старости</q>
+				сохраняется в самой процедуре генерации случайного числа – сокращения программы при совмещении.
+				Оно равно 7.
+			</li>
+			<li>
+				Адреса 12-14. С этого адреса начинается цикл игровой части ступени.
+				Вначале проверяется, что <q>Старость</q> не вышла за границу. Затем, через вызов подпрограммы,
+				что не совпадает с положением игрока. В начале ступени это всегда так, т. к. 7 &ges; 0, и
+				ни с кем не совпадает.
+			</li>
+			<li>
+				Адреса 15-16. Подготовка для генерации видеоизображения. Поле <q>пустое</q>, а целая
+				часть (8) используется как счётчик цикла. Тут используется тот факт, что процедура
+				генерации возвращает число состоящее только из одной цифры.
+			</li>
+			<li>
+				Адреса 17-25. Формирование видеоизображения. Регистр R0 уменьшается не только из-за цикла,
+				но и при косвенном обращении. В результате он <q>пробегает</q> по регистрам R7, R5, R3, R1.
+				Причем сами значения 7, 5, 3, 1 используются для инверсии бит, что и приводит к нужному изображению.
+			</li>
+			<li>
+				Адреса 26-29. <q>Сбрасывание</q> текущего видеоизображения в регистр X1, чтобы <q>пропустить</q>
+				вперёд неважное значение, извлекаемое при увеличении счётчика шагов, и номер ступени. А затем
+				восстановление его же. Последняя команда также сохранит значение в недокументированном
+				регистре X2 (ссылку про это смотри выше), которое и будет позднее восстановлено в RX
+				через команду <span class="but">ВП</span>, только с другой первой цифрой.
+			</li>
+			<li>
+				Адреса 30-32. Установка дополнительного минуса для второй части ступени. Сам <q>минус</q>
+				пересохраняет новое значение в X2.
+			</li>
+			<li>
+				Адреса 33-37. <q>Подгоняет</q> номер уровня в регистр X, чтобы команда
+				<span class="but">ВП</span> взяла от него первую цифру при восстановлении X2.
+				Степень устанавливается в семь, чтобы разделительная точка была в крайнем правом положении.
+			</li>
+			<li>
+				Адреса 38-42. Сохраняет ход игрока, и проверяет, что он по модулю &les; 3. Если не так,
+				то переходит на адрес начала цикла, которое снова сгенерирует то же самое изображение.
+			</li>
+			<li>
+				Адреса 43-44. Проверка, что ход игрока – целое число.
+			</li>
+			<li>
+				Адреса 45-48. Для корректности последующих арифметических операций сначала загоняет
+				в стек максимально возможное значение для положения, затем текущее положение и по разнице
+				вычисляет новое положение.
+			</li>
+			<li>
+				Адреса 49-53. Проверка, что новое положение в пределах [0..6]. И только в этом случае
+				сохранение нового положения.
+			</li>
+			<li>
+				Адреса 54-55. Проверка, что новое положение не совпадает с положением <q>Старости</q>.
+			</li>
+			<li>
+				Адреса 56-62. Не только проверка, что новое положение не совпадает с положением <q>Лени</q>,
+				но и автоматическое <q>приближение</q> её к игроку. И повторная проверка, уже с новым
+				положением <q>Лени</q>.
+			</li>
+			<li>
+				Адреса 63-66. Продвижение <q>Старости</q> и вычисление разницы в положении игрока и <q>Цели</q>.
+			</li>
+			<li>
+				Адреса 67-70. В случае несовпадения уход на начало цикла. При совпадении (равно нулю)
+				<q>подготавливается</q> 2-я часть и проверяется, что закончилась первая. Если так, то уходит
+				на адрес 07.
+			</li>
+			<li>
+				Адреса 71-77. Проверка уровня ступени. Если ещё не 8-я, то уходит на начало новой, и при
+				совпадении фиксируется окончание игры отображением счётчика шагов.
+			</li>
+			<li>
+				Адреса 78-81. Процедура выявления совпадения с положением игрока.
+				Проверяет, что значение в RX не совпадает с положением игрока (R7). Если совпадает,
+				то уход на ошибку. Эта же часть обеспечивает через <span class="but_b">В/О</span>
+				переход игры на адрес 01 после удачного окончания игры.
+			</li>
+			<li>
+				Адреса 82-97. Процедура генерации случайного положения. Для генерации псевдослучайного числа
+				используется последовательность N = {N &times; 7 + &pi;}. Делается проверка того, что это положение
+				не совпадает с положением игрока. Если так, то генерируется другое значение.
+				Для сокращения длины программы значение в R3 инициализируется тут же, но второй семёркой.
+				Вместо первой можно записать 11, чтобы был другой датчик случайных чисел.
+				Оставшийся резерв команд позволяет вписать вообще другой датчик.
+			</li>
+		</ul>
+		<p>
+			И хотя в программе только 98 команд, это программа для МК-61, а не для БЗ-34.
+			Просто так получилось.
+		</p>
+	</details>
+</body>
+
+</html>
