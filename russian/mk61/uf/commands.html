@@ -146,9 +146,41 @@
 				<td>Сброс X в ноль</td>
 				<td>
 					Важное свойство – стек не двигается.
-					Предыдущее значение НЕ копируется в X1. Если последующий ввод
-					будет не команда, а цифра, то ввод пойдёт в регистр X без
-					сдвига стека с заменой нуля.
+					Предыдущее значение НЕ копируется в X1.
+					Обычно следующий ввод в RX сдвигает стек, но после <span class="but_cx">Cx</span> это иногда нет.
+					Если после команды идёт ввод цифр, то стек не сдвигается, если перед выполнением
+					<span class="but_cx">Cx</span> были:
+					<ul>
+						<li>
+							Команды ввода чисел, но не отдельно команды
+							<span class="but">/-/</span> и <span class="but">.</span>
+						</li>
+						<li>
+							Команда <span class="but">В&uarr;</span>
+						</li>
+						<li>
+							Команда <span class="but">ВП</span>, возможно дополненная
+							ввод цифр и/или знака порядка
+						</li>
+					</ul>
+					Если после <span class="but_cx">Cx</span> идёт <span class="but">ВП</span>,
+					то стек тоже не сдвигается.
+					В остальных случаях стек сдвигается, даже при вводе цифр.
+					Например последовательность команд
+					<span class="but">1</span>
+					<span class="but_k">К</span><span class="op_k">НОП</span>
+					<span class="but_cx">СХ</span>
+					<span class="but">2</span>, приведёт к тому, что в RY сдвинется ноль.
+					Если убрать <span class="but_k">К</span><span class="op_k">НОП</span>, то RY
+					не измениться. Ещё пример. После
+					<span class="but">1</span>
+					<span class="but_b">П&rarr;x</span><span class="but">2</span>
+					<span class="but">/-/</span>
+					<span class="but_cx">СХ</span>
+					<span class="but">3</span>
+					стек будет таким: X=3, Y=0, Z=1. А если <span class="but">/-/</span>
+					заменить на <span class="but">ВП</span>, то стек останется таким:
+					X=3, Y=1.
 				</td>
 			</tr>
 			<tr>
