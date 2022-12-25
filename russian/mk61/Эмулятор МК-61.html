@@ -2181,7 +2181,7 @@
 			textPos++;
 		}
 		turnOff();
-		changeAngleMeasure(fromHex(stateStr[0]));
+		changeAngleMeasure(fromHex(stateStr[0]), false);
 		for (let iChip = 0; iChip < 2; iChip++) {
 			const chipIR2 = microChips[iChip];
 			for (let iMem = 0; iMem < 252; iMem++) {
