@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta content="true" name="HandheldFriendly">
+	<meta content="width" name="MobileOptimized">
+	<meta content="yes" name="apple-mobile-web-app-capable">
+	<meta name="description" content="Том и Джерри 3. Игра. ПМК. МК-61">
+	<title>Том и Джерри 3</title>
+
+<style>
+
+span.but, span.but_f, span.but_k, span.but_cx, span.but_b, span.reg, span.op_f, span.op_k {
+	border:thin solid black;
+	border-radius:4px;
+	display:inline-block;
+	font-size:1.1em;
+	font-weight:bold;
+	font-family:monospace;
+	text-align:center;
+	min-width:2.3em;
+	white-space:nowrap;
+}
+
+sup {
+	line-height:0;
+}
+
+span.but {
+	background-color:#CCCCCC;
+	color:black;
+}
+
+span.but_f {
+	background-color:#F5E345;
+	color:black;
+}
+
+span.but_k {
+	background-color:LightSkyBlue;
+	color:white;
+}
+
+span.but_cx {
+	background-color:#F00505;
+	color:white;
+}
+
+span.but_b {
+	background-color:black;
+	color:white;
+}
+
+span.reg {
+	background-color:black;
+	color:white;
+}
+
+span.op_f {
+	background-color:black;
+	color:yellow;
+}
+
+span.op_k {
+	background-color:black;
+	color:#00BFFF;
+}
+
+.code {
+	background-color:#103810;
+	color:#77FF77;
+	font-size:1.1em;
+	font-family:monospace;
+	font-weight:bold;
+	padding:1px 2px 1px 2px;
+	white-space:pre;
+}
+
+.white {
+	background-color:white;
+}
+
+table {
+	border-collapse:collapse;
+}
+
+table, th, td {
+	border:1px solid black;
+}
+
+th.thout {
+	background-color:#EEEEEE;
+	border-right-style: hidden;
+}
+
+.center {
+	text-align:center;
+}
+
+details summary {
+	cursor: pointer;
+}
+details summary > * {
+	display: inline;
+}
+
+a[target="_blank"] {
+	background: url(https://upload.wikimedia.org/wikipedia/commons/6/64/Icon_External_Link.png) center right no-repeat;
+    padding-right: 0.8em;
+}
+
+</style>
+
+</head>
+
+<body>
+	<header>
+		<h1>Том и Джерри 3</h1>
+	</header>
+	<p>
+		Кот Том гоняется за мышонком Джерри. По мотивам
+		<a href="https://ru.wikipedia.org/wiki/Том_и_Джерри" target="_blank">
+			серии мультфильмов
+		</a>
+	</p>
+
+	<h2>Задача</h2>
+
+	<p>
+		Вы играете за мышонка Джерри. Нужно убежать от кота и скрыться в любой из норок.
+	</p>
+
+	<h2>Общее описание</h2>
+
+	<p>
+		Зал, где Том гоняется за Джерри, представлен в виде квадрата 9 x 9, где часть клеток
+		заняты – это колонны (чёрные клетки). Цифры по краям – только для понимания координат,
+		и не являются частью зала.
+	</p>
+	<table class="center">
+		<tr>
+			<th class="thout">9</th>
+			<td class="code white">&lsaquo;</td>
+			<td class="code"></td>
+			<td class="code white"></td>
+			<td></td>
+			<td class="code white"></td>
+			<td class="code"></td>
+			<td class="code white"></td>
+			<td></td>
+			<td class="code white"></td>
+		</tr>
+		<tr>
+			<th>8</th>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="code"></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="code"></td>
+			<td></td>
+		</tr>
+		<tr>
+			<th class="thout">7</th>
+			<td class="code white">&lsaquo;</td>
+			<td class="code"></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="code"></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<th>6</th>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="code"></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="code"></td>
+			<td></td>
+		</tr>
+		<tr>
+			<th class="thout">5</th>
+			<td class="code white">&lsaquo;</td>
+			<td class="code"></td>
+			<td>Т</td>
+			<td></td>
+			<td></td>
+			<td class="code"></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<th>4</th>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="code"></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="code"></td>
+			<td></td>
+		</tr>
+		<tr>
+			<th class="thout">3</th>
+			<td class="code white">&lsaquo;</td>
+			<td class="code"></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="code"></td>
+			<td>Д</td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<th>2</th>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="code"></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="code"></td>
+			<td></td>
+		</tr>
+		<tr>
+			<th class="thout">1</th>
+			<td class="code white">&lsaquo;</td>
+			<td class="code"></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td class="code"></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<th>&nbsp;0&nbsp;</th>
+			<th>&nbsp;1&nbsp;</th>
+			<th>&nbsp;2&nbsp;</th>
+			<th>&nbsp;3&nbsp;</th>
+			<th>&nbsp;4&nbsp;</th>
+			<th>&nbsp;5&nbsp;</th>
+			<th>&nbsp;6&nbsp;</th>
+			<th>&nbsp;7&nbsp;</th>
+			<th>&nbsp;8&nbsp;</th>
+			<th>&nbsp;9&nbsp;</th>
+		</tr>
+	</table>
+	<p>
+		Координаты персонажей задаются двузначным числом. Первая цифра – номер горизонтали, вторая – номер вертикали.
+		Для примера координаты Тома – 53 (буква Т на плане). Координаты Джерри – 37.
+		Норки, куда Джерри стремится убежать, это затенённые цифры. Для выхода нужно в клетках с зелёными стрелками пойти влево.
+		Через колонны пройти нельзя, за границу зала тоже не выйти (кроме норок).
+	</p>
+
+	<h2>Игровой процесс</h2>
+
+	<h3>Начало</h3>
+
+	<p>
+		Перед первым запуском несколько констант в регистры:
+	</p>
+	<table>
+		<tr>
+			<th>Регистр</th>
+			<th>Значение</th>
+		</tr>
+		<tr>
+			<th>R7</th>
+			<td>61</td>
+		</tr>
+		<tr>
+			<th>R9</th>
+			<td>91</td>
+		</tr>
+		<tr>
+			<th>Ra</th>
+			<td>25</td>
+		</tr>
+		<tr>
+			<th>Rс</th>
+			<td>Случайное число из диапазона (0..1). Можно оставить нулевым.</td>
+		</tr>
+	</table>
+	<p>
+		Начало игры:
+		<span class="but_b">В/О</span>
+		<span class="but_b">С/П</span>.
+		<a href="https://ru.wikipedia.org/wiki/Программируемый_калькулятор" target="_blank">ПМК</a>
+		сгенерирует случайное положение Тома в третьей вертикали и случайное
+		положение Джерри в седьмой вертикали.
+	</p>
+
+	<h3>Игра</h3>
+
+	<p>
+		При остановке ПМК отображает координаты Тома и Джерри в виде числа
+		ТТ0000ДД, где ТТ и ДД двузначные координаты Тома и Джерри соответственно.
+		Для примера из общего описания это будет
+		<span class="code"> 53000037.   </span>.
+		В регистре Y находится номер хода (идёт подсчет ходов для интереса). В самом
+		начале единица.
+	</p>
+	<p>
+		Для выбора направления движения Джерри наберите цифру-код и нажмите
+		<span class="but_b">С/П</span>. Цифра указывает направление движения (относительно центра):
+		4 – влево, 6 – право, 2 – вниз, 8 – вверх. Специальный код 5 позволяет просто
+		ещё раз показать текущие координаты персонажей, если по каким-то причинам вы их забыли,
+		при этом никто не двигается.
+	</p>
+	<p>
+		После передвижения Джерри на выбранное поле, если конечно не помешает колонна, двигается
+		Том. За него играет ПМК. Естественно он стремится как можно быстрее встретится с Джерри
+		(поймать его).
+	</p>
+	<p>
+		Более того, вначале, пока Том не устал, он <q>прыгает</q> – делает по два хода за раз.
+		Через некоторое время (после 5 прыжков) он устаёт и делает по одному ходу за раз –
+		как Джерри.
+	</p>
+	<p>
+		Иногда Том может оставаться на месте, например, если не знает, с какой стороны
+		лучше обойти мешающую колонну, чтобы поймать Джерри.
+	</p>
+	<p>
+		По окончании расчётов ПМК остановится и покажет новые координаты Тома и Джерри.
+		После чего вы снова задаёте направление движения Джерри.
+	</p>
+	<p>
+		Если Джерри при своём ходе не может сдвинуться, потому что мешает колонна
+		или граница зала, то ход всё равно переходит к Тому.
+		Впрочем, иногда это можно использовать, чтобы передать очередь хода Тому.
+	</p>
+
+	<h3>Окончание</h3>
+	<p>
+		В случае, если Том догнал Джерри, то будет отображено
+		<span class="code"> ЕГГ0Г      </span>. В этом случае для
+		начала новой игры нужно нажать <span class="but_b">В/О</span>
+		<span class="but_b">С/П</span>.
+	</p>
+	<p>
+		Если же Джерри успел убежать в одну из норок, то при остановке
+		ПМК покажет число – сколько движений сделал Джерри. Это может быть
+		меньше, чем число ходов, потому что когда Джерри упирается в колонну,
+		то это ход, но не движение. В регистре Y, как обычно, будет общее число
+		ходов, которые вы сделали за игру. Для
+		начала новой игры можно нажать только <span class="but_b">С/П</span>.
+		Или ещё перед этим <span class="but_b">В/О</span>.
+	</p>
+
+	<h3>Контроль со стороны ПМК</h3>
+	<p>
+		Код-цифра может быть любая. На самом деле ПМК любое число меньше 4
+		считает за двойку, а любое число, больше 6 – за восьмерку. Дробная часть числа,
+		если вдруг такое введёте, игнорируется.
+	</p>
+
+	<h2>Предыстория</h2>
+	<p>
+		Это доработка версии
+		<a href="https://lordbss.narod.ru/pmk72.html" target="_blank">Том и Джерри-2</a>
+	</p>
+	<p>
+		Проведены следующие доработки:
+	</p>
+	<ul>
+		<li>
+			Исправлена ошибка, при которой Джерри мог ускользнуть из зала
+			<q>телепортировавшись</q>, когда уходит далее от норок с координат 29, 49, 69, 89
+			и неожиданно <q>убегает</q>.
+		</li>
+		<li>
+			Координаты Тома и Джерри отображаются одним числом – так удобнее, сразу
+			видно оба положения.
+		</li>
+		<li>
+			Координаты развёрнуты на 90&deg;. Мне кажется так естественнее (привык работать
+			с массивами, где первым меняется последняя цифра). К тому же в офисных зданиях
+			также принята такая нумерация кабинетов – номера этажа, затем номер по порядку
+			на этаже.
+		</li>
+		<li>
+			Добавлены счётчики ходов и движений Джерри. Поэтому успешное окончание
+			показывает не специальное число, а эти счётчики. С учётом того, что
+			обычно отображается 8-значное число – это заметно.
+		</li>
+		<li>
+			Инициализация переменных перед каждой игрой выполняется автоматически.
+		</li>
+		<li>
+			Выполняется контроль хода (кода для направления движения Джерри).
+		</li>
+		<li>
+			Используется более надёжный генератор случайных чисел:
+			N<sub>i+1</sub> = {N<sub>i</sub> &times; 11 + &pi;}.
+			В предыдущей версии был N<sub>i+1</sub> = {10<sup>N<sub>i</sub></sup>}
+		</li>
+		<li>
+			Несмотря на все улучшения, ещё удалось освободить 5 регистров: регистры
+			R0, R8, Rb, Rd, Re не используются в программе.
+		</li>
+	</ul>
+
+	<h2>Послесловие</h2>
+	<p>
+		Как и в предыдущей версии программы при правильной стратегии Джерри всегда убегает.
+	</p>
+
+	<hr>
+
+	<details>
+		<summary>
+			<h2>Далее только для тех, кто не только играет&hellip;</h2>
+		</summary>
+
+		<h3>Текст программы</h3>
+
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_cx">Cx</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">4</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">6</span></td>
+				<td><span class="but">6</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
+				<td><span class="but">&times;</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;10&#8202;|&#8202;</th>
+				<td><span class="but_f">F</span><span class="op_f">&pi;</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+				<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L2</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;20&#8202;|&#8202;</th>
+				<td><span class="but">05</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+				<td><span class="but">В&uarr;</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="but">7</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">1/x</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;30&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but">6</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but">5</span></td>
+				<td><span class="but">&minus;</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;40&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="reg">a</span></td>
+				<td><span class="but_k">К</span><span class="op_k">ЗН</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+				<td><span class="but_k">К</span><span class="op_k">&mid;x&mid;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Lg</span></td>
+				<td><span class="but_k">К</span><span class="op_k">ЗН</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but">В&uarr;</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;50&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&lt;0</span><span class="but">7</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+				<td><span class="but">99</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">5</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;60&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">ЗН</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+				<td><span class="but">76</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;70&#8202;|&#8202;</th>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+				<td><span class="but">86</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but_k">К</span><span class="op_k">ИНВ</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but_k">К</span><span class="op_k">ИНВ</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;80&#8202;|&#8202;</th>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">ЗН</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+				<td><span class="but">88</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L3</span></td>
+				<td><span class="but">21</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;90&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="but_b">БП</span><span class="reg">a</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
+				<td><span class="but">4</span></td>
+				<td><span class="but">&divide;</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but_b">В/О</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+			</tr>
+			<tr>
+				<th>&#8202;A0&#8202;|&#8202;</th>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x=0</span><span class="but">7</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td colspan="5"></td>
+			</tr>
+		</table>
+
+		<h3>Распределение регистров</h3>
+
+		<table>
+			<tr>
+				<th>R1</th>
+				<td>Координаты Тома</td>
+			</tr>
+			<tr>
+				<th>R2</th>
+				<td>Рабочий регистр</td>
+			</tr>
+			<tr>
+				<th>R3</th>
+				<td>Счётчик <q>прыжков</q> Тома. При чётном значении Том делает ещё один ход</td>
+			</tr>
+			<tr>
+				<th>R4</th>
+				<td>Счётчик общего числа ходов</td>
+			</tr>
+			<tr>
+				<th>R5</th>
+				<td>Координаты Джерри</td>
+			</tr>
+			<tr>
+				<th>R6</th>
+				<td>Счётчик числа движений Джерри</td>
+			</tr>
+			<tr>
+				<th>R7</th>
+				<td>Адрес начала кода для расчёта движения Тома</td>
+			</tr>
+			<tr>
+				<th>R9</th>
+				<td>Адрес процедуры приращения координат с проверкой колонн и выхода сверху</td>
+			</tr>
+			<tr>
+				<th>Ra</th>
+				<td>Адрес начала основного цикла программы</td>
+			</tr>
+			<tr>
+				<th>Rc</th>
+				<td>Случайное число.</td>
+			</tr>
+		</table>
+
+		<h3>Объяснение работы программы</h3>
+
+		<p>
+			Для понимания работы в программе команды
+			<span class="but">ВП</span> рекомендую вначале ознакомится
+			со статьей
+			<a href="https://sergeanvarov.github.io/russian/mk61/uf/x2.html" target="_blank">
+				Недокументированные возможности
+			</a>. Далее предполагается, что вы это знаете и просто поясняется, где и как
+			используется содержимое регистра X2. В программе <span class="but">ВП</span>
+			используется целых 5 раз, причём только дважды <q>штатно</q>.
+		</p>
+		<p>
+			<strong>Адреса 00-20</strong>. Код начальной инициализации счётчиков и генерации
+			положений Тома (R1) и Джерри (R5). Если с начальным занулением
+			счётчиков понятно, то на цикле по R2 с начальным значением 6
+			нужно остановиться подробнее. Первое – это как <q>пробегает</q>
+			цикл. В нём регистр R2 ещё и используется для косвенного сохранения.
+			В результате его значение на первом этапе равно 6, после косвенного
+			сохранения – 5 (сохраняет в R5, положение Джерри),
+			после проверки конца цикла – 4.
+			Во второй раз уже R2=4 и сохраняет в R3. Но это не важно, поскольку
+			в цикле R3 всегда перезаписывается константой 11.
+			В последний раз R2=2 и сохраняет в R1 (положение Тома).
+			Второй факт – тело цикла. Кроме вычисления очередного значения случайного числа,
+			по формуле N<sub>i+1</sub> = {N<sub>i</sub> &times; 11 + &pi;}
+			оно также через <span class="but">ВП</span> комбинированно
+			восстанавливает X2 (в данном случае число 11), с сохранением первой цифры.
+			В данном случае получается двузначное число N1, где N – первая значащая
+			цифра случайного числа. К нему первый раз добавляется 6, получается N7.
+			Как раз случайные координаты Джерри. А последний +2, получается N3,
+			координаты Тома. Регистр R3 по окончании безусловно содержит число 11.
+		</p>
+		<p>
+			<strong>Адреса 91-98</strong>. Процедура приращения координат с проверкой. На входе
+			предполагается, что в регистрах X и Y содержатся координаты персонажа
+			и приращение. Суммарное значение процедурой сохраняется в R2 и делается
+			проверка, результат которой показывает знак числа в RX:
+		</p>
+		<ul>
+			<li>
+				Ноль – сумма делится на 4 нацело, что означает, что координаты
+				совпадают с колонной.
+			</li>
+			<li>
+				Больше нуля – сумма больше 100, т. е. выход за верхнюю границу.
+			</li>
+			<li>
+				Меньше нуля - хороший случай.
+			</li>
+		</ul>
+		<p>
+			В этой процедуре константа 25 из Ra используется для проверки на
+			более 100, поскольку 25 &times; 4 = 100. Именно <q>более</q>,
+			поскольку если ровно 100, то делится на 4.
+		</p>
+		<p>
+			<strong>Адреса 21-24</strong>. Проверка <q>прыжка</q> Тома. Содержимое R3, которое
+			вначале равно 11, в цикле уменьшается. При каждом чётном значении
+			(10, 8, 6, 4, 2) Том делает ещё один ход. Чётность проверяется
+			с помощью процедуры приращения. Для этого R3 складывается само
+			с собой. Если сумма делится на 4, значит нужно перейти на
+			повторный ход Тома (адрес в R7). При начальном R3=11 это проверка
+			не проходит и идёт выполнение далее.
+		</p>
+		<p>
+			<strong>Адреса 25-36</strong>. Начало основного цикла. Проверка совпадения координат
+			Тома и Джерри. Приращение счётчика ходов и отображения координат
+			на экране ПМК. Тут всё просто, только поясню, что после X2-влияющей
+			команды <span class="but_b">П&rarr;x</span><span class="but">1</span>
+			использование <span class="but">ВП</span> работает <q>штатно</q>.
+		</p>
+		<p>
+			<strong>Адреса 37-47</strong>. Преобразование кода команды в число приращение. Нужно
+			получить &plusmn;1 или &plusmn;10. Специальная проверка на 5 не
+			только позволяет перейти на начало, но неявно делает проверку, чтобы
+			команда <span class="but_f">F</span><span class="op_f">Lg</span>
+			не столкнулась с нулём. Для вычисления приращения используется
+			два числа. Первое – это знак. Тут просто, меньше 5 – значит минус,
+			больше – плюс. Знак его задвигаем в стек.
+			А вот второе, абсолютное значение, вычисляется хитрее.
+			Для чисел, которые возле 5 (4 и 6), логарифм от разницы (от 1) будет
+			нулевым, знак тоже и
+			<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>
+			даст 1. А вот для чисел <q>подальше</q> логарифм уже будет
+			не нулевым, соответственно знак равен 1 и
+			<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>
+			даст 10. Абсолютное значение просто умножается на знак.
+		</p>
+		<p>
+			<strong>Адреса 48-52</strong>. Приращение координат Джерри. Перед приращением само
+			значение для приращения сохраняется в стеке (позднее нам пригодится).
+			В случае, если есть проблемы с движением, сразу уходим на ход Тома
+			(адрес в R7). Иначе подгоняем обратно в RX сохранённое приращение.
+		</p>
+		<p>
+			<strong>Адреса 53-60</strong>. Проверка новых координат Джерри на выход на границу зала.
+			Крайние положения (кроме верха, который уже проверили) характерны тем,
+			что их координаты содержат ноль. Либо 10, 30, 50, 70, 90. Либо
+			1, 3, 5, 7, 9. Т. е. только одна цифра не нулевая.
+			Для проверки этого выполняется нестандартное <q>удаление</q> первой
+			цифры числа с помощью последовательности
+			<span class="but_b">x&rarr;П</span><span class="but">R</span>
+			<span class="but">ВП</span>. И если результат нулевой, то проводится
+			дополнительная проверка на выход в норку по адресу 99, а иначе новые
+			координаты Джерри сохраняются с приращением счётчика движений Джерри.
+		</p>
+		<p>
+			<strong>Адреса 99-A5</strong>. Проверка на выход в норку. Вот тут и пригодится значение
+			приращения, которое мы сохраняли, и которое в этот момент в RY.
+			При нормальном движении влево оно равно (&minus;1). При движении
+			вниз (ниже границы) оно равно (&minus;10). А при движении вправо за границу
+			равно +1. Поэтому мы его складываем с 1 (получаем из нуля в RX с
+			помощью <span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>).
+			И только нулевая сумма говорит, что Джерри удачно ускользнул.
+			Иначе это попытка выхода за границы зала и нужно перейти на ход Тома.
+		</p>
+		<p>
+			<strong>Адреса 61-69</strong>. Начало вычисления хода Тома. Попытка сблизить горизонталь
+			с Джерри. Для этого нужно найти разницу только десяток от координат
+			и её прибавлять. Тут опять используется нестандартное восстановление
+			X2. Для пояснения, пусть координаты Тома = 34, а координаты Джерри
+			= 58. Тогда восстановив 58 с первой цифрой от 34 мы получим 38.
+			А разница между 58 и 38 и будет нужной нам разницей десятков.
+			Естественно нас интересует только знак этой разницы. При неудаче
+			(ноль – нет разницы), мы перейдём на другую проверку (адрес 76).
+		</p>
+		<p>
+			<strong>Адреса 70-75</strong>. Сближение по горизонтали. На основе предыдущей разницы
+			знак числа умножаем на 10 (через <span class="but">ВП</span>,
+			и здесь это также корректно). Вызываем процедуру приращения. И
+			если не упираемся в колонну, то сразу идёт на адрес 86 – сохранения
+			новых координат Тома.
+		</p>
+		<p>
+			<strong>Адреса 76-81</strong>. Попытка сблизить вертикаль. Для этого нужно найти разницу
+			между единицами (последней цифрой). Используем тот факт, что команда
+			<span class="but_k">К</span><span class="op_k">ИНВ</span> первую цифру
+			всегда меняет на 8 (нивелируя разницу координат в десятках), а дробная часть будет
+			отличаться. Так как это инверсия, то отнимать нужно в обратном порядке.
+			Опять же нас интересует только знак числа.
+		</p>
+		<p>
+			<strong>Адреса 82-91</strong>. Делаем приращение этой &plusmn;1 с помощью процедуры.
+			Если неудачно, то пропускаем сохранение новых координат Тома по адресам
+			86, 87 и сразу идём на цикл по прыжкам (адреса 88-89). Механизм этого
+			цикла был описан вначале. Если же цикл прыжков уже исчерпался, то
+			безусловный переход на начало основного цикла программы.
+		</p>
+		<p>
+			Остаток команд мы уже рассмотрели ранее. Единственно поясню, почему
+			безопасно начать новую игру, сразу нажав <span class="but_b">С/П</span>.
+			Конечно программа перейдёт на побочную адресную ветвь, но конец цикла по
+			адресу 20 вернёт её в нормальное русло, а то, что команды по адресам 00-06
+			выполнятся дважды не страшно.
+		</p>
+
+	</details>
+</body>
+
+</html>
