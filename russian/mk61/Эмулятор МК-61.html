@@ -2,8 +2,12 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-	<meta charset="utf-8">
 	<title>Эмулятор МК-61</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta content="true" name="HandheldFriendly">
+	<meta content="width" name="MobileOptimized">
+	<meta content="yes" name="apple-mobile-web-app-capable">
 	<meta name="description" content="Эмулятор МК-61 на javascript">
 	<style>
 
@@ -312,6 +316,7 @@
 								<label><input type="checkbox" id="skip_address" checked="checked">Простой код</label>
 								<label><input type="checkbox" id="use_color" checked="checked">Подсветка</label>
 								<label><input type="checkbox" id="code_only">Числовые значения</label>
+								<label><input type="checkbox" id="column_mode">Код по вертикали</label>
 								<div style="margin-top: 5px;">
 									<button type="button" id="program_to_text">Прочитать программу из памяти</button>
 									<button type="button" id="text_to_program">Записать программу в память</button>
@@ -2001,29 +2006,47 @@
 		}
 
 		const commands = programText.split(/\s+/).slice(0, 105);
-		// Set all commands to default 0
-		for (let iAddr = 0; iAddr < 105; iAddr++) {
-			writeSingleCommand(iAddr, 0);
-		}
-		let addrIndex = 0;
-		commands.some((cmd) => {
-			if ((cmd.length > 2) && (cmd[2] === '.')) {
-				// If command with address prefix like 99.Cx, A4.В/О
-				let firstChar = cmd[0];
-				const secondChar = cmd[1];
-				if (['A', '-', '.'].includes(firstChar) && (Number(secondChar) < 5)) {
-					firstChar = '10';
-				}
-				const newAddrIndex = Number(firstChar + secondChar);
-				if (!Number.isNaN(newAddrIndex)) {
-					cmd = cmd.slice(3);
-					addrIndex = newAddrIndex;
-				}
+		let useColumnMode = document.getElementById('column_mode').checked;
+		const lastColumnStartFrom = commands.length - 10; // used only when useColumnMode
+		let repeat = false;
+		do {
+			// Set all commands to default 0
+			for (let iAddr = 0; iAddr < 105; iAddr++) {
+				writeSingleCommand(iAddr, 0);
 			}
-			writeSingleCommand(addrIndex, parseCommand(cmd));
-			addrIndex++;
-			return addrIndex >= 105; // Stop to exclude address overflow by 'A4.+' '-' '*'
-		});
+			let addrIndex = 0;
+			repeat = false;
+			commands.some((cmd) => {
+				if ((cmd.length > 2) && (cmd[2] === '.')) {
+					// If command with address prefix like 99.Cx, A4.В/О
+					let firstChar = cmd[0];
+					const secondChar = cmd[1];
+					if (['A', '-', '.'].includes(firstChar) && (Number(secondChar) < 5)) {
+						firstChar = '10';
+					}
+					const newAddrIndex = Number(firstChar + secondChar);
+					if (!Number.isNaN(newAddrIndex)) {
+						cmd = cmd.slice(3);
+						addrIndex = newAddrIndex;
+						if (useColumnMode) {
+							useColumnMode = false;
+							repeat = true;
+							return true;
+						}
+					}
+				}
+				if (addrIndex >= 105) { // Stop to exclude address overflow by 'A4.+' '-' '*'
+					return true;
+				}
+				writeSingleCommand(addrIndex, parseCommand(cmd));
+				if (useColumnMode) {
+					addrIndex = (addrIndex < lastColumnStartFrom) ? addrIndex + 10 : (addrIndex % 10) + 1;
+				} else {
+					addrIndex++;
+				}
+				return false;
+			});
+		} while (repeat);
 		turnOn();
 	};
 
@@ -2069,10 +2092,11 @@
 			}
 		}
 
+		const columnMode = document.getElementById('column_mode').checked;
 		// Calc column widths
-		const colWidths = new Array(10).fill(0);
+		const colWidths = new Array((columnMode) ? 11 : 10).fill(0);
 		commands.forEach((cmd, i) => {
-			const column = i % 10;
+			const column = (columnMode) ? intDiv(i, 10) : i % 10;
 			colWidths[column] = Math.max(colWidths[column], cmd.length + 1);
 		});
 
@@ -2088,9 +2112,19 @@
 				return addressSpan + cmd;
 			});
 		}
-		return commands.map((cmd, i) => result[i] + (
-			(i % 10 === 9) ? '<br>' : '&nbsp;'.repeat(colWidths[i % 10] - cmd.length))
-		).join('');
+		commands.forEach((cmd, i) => {
+			const column = (columnMode) ? intDiv(i, 10) : i % 10;
+			const breakLine = (columnMode && (i >= 95)) || (!columnMode && (i % 10 === 9));
+			result[i] += ((breakLine) ? '<br>' : '&nbsp;'.repeat(colWidths[column] - cmd.length));
+		});
+		if (columnMode) {
+			result = result.map((cmd, i) => {
+				const column = (i < 65) ? intDiv(i, 11) : intDiv(i - 65, 10) + 6;
+				const row = (i < 65) ? i % 11 : (i - 65) % 10;
+				return result[row * 10 + column];
+			});
+		}
+		return result.join('');
 	};
 
 	const extractProgramToText = () => {
