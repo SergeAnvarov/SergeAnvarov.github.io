@@ -156,34 +156,34 @@ a[target="_blank"] {
 			<td>Случайное число. Можно оставить нулевым.</td>
 		</tr>
 		<tr>
-			<th>R8</th>
-			<td>0.11828112</td>
+			<th>R7</th>
+			<td>73</td>
 		</tr>
 		<tr>
 			<th>R9</th>
-			<td>75</td>
+			<td>0.11828112</td>
 		</tr>
 		<tr>
 			<th>Ra</th>
-			<td>0.31000025</td>
+			<td>0.35000025</td>
 		</tr>
 		<tr>
 			<th>Rс</th>
-			<td>-2</td>
+			<td>86</td>
 		</tr>
 		<tr>
 			<th>Rd</th>
-			<td>62</td>
+			<td>63</td>
 		</tr>
 	</table>
 	<p>
-		Начало игры: вводим количество мин от 1 до 62. Рекомендую 20. И
+		Начало игры: вводим количество мин от 1 до 63. Рекомендую 20. И
 		<span class="but_b">В/О</span>
 		<span class="but_b">С/П</span>.
 	</p>
 	<p>
 		ПМК расставит на поле мины случайным образом и по окончании выдаст
-		<span class="code">-99999992.   </span>.
+		<span class="code"> 3.5000025-01</span>.
 	</p>
 	<h3>Игра</h3>
 	<p>
@@ -206,7 +206,7 @@ a[target="_blank"] {
 		<li>
 			При начальном вводе количества мин, если число содержит
 			дробную часть, то она будет проигнорирована (отброшена).
-			Если число не в диапазоне 1&hellip;62, то выдаст
+			Если число не в диапазоне 1&hellip;63, то выдаст
 			<span class="code"> ЕГГ0Г      </span>.
 			В этом случае нужно заново ввести правильное число, затем
 			<span class="but_b">В/О</span>
@@ -215,7 +215,7 @@ a[target="_blank"] {
 		<li>
 			Во время обычного хода: дробная часть так же будет отброшена.
 			Если координаты не в диапазоне 1&hellip;99, или содержат ноль,
-			то ПМК выдаст <span class="code">-99999992.   </span>.
+			то ПМК выдаст <span class="code"> 3.5000025-01</span>.
 			Такое иногда случается,	если забудете, что нумерация с 1.
 			Например, указав 50, вместо 51.
 			В этом случае укажите правильные координаты и нажмите
@@ -306,19 +306,16 @@ a[target="_blank"] {
 		</p>
 		<p>
 			Теперь технические детали. У ПМК нет столько регистров памяти,
-			чтобы хранить 110 чисел. Поэтому он для каждой ячейки использует один бит.
+			чтобы хранить 111 чисел. Поэтому он для каждой ячейки использует один бит.
 			Для операций с битами используются шестнадцатеричные представления чисел.
 			Т.&#8239;к. одна шестнадцатеричная цифра может
 			представлять 4 бита, то 7 цифр (максимум в шестнадцатеричных операциях)
-			7 &times; 4 = 28. Для хранения используется 4 регистра по 25 бит. Самый
-			верхний ряд не хранится совсем, потому что там всегда нули. Фактически
-			он представлен регистром, используемом для других целей, в котором
-			только одна цифра. Получается, что все остальные разряды, которые и нужны
-			для шестнадцатеричной арифметики, всегда нулевые.
+			7 &times; 4 = 28. Итого получается 4 &times; 28 = 112. Как раз хватит
+			для нашего случая.
 		</p>
 		<p>
 			Второй момент, это вычисление координат <q>обхода</q>. Для удобства, формула
-			выше, для вычисления ячеек <q>обхода</q> с произвольной координаты P, хранится
+			выше для вычисления ячеек <q>обхода</q> с произвольной координаты P, хранится
 			в относительном виде. К начальному P &minus; 11 потом добавляется:
 			+1, +1, +8, +2, +8, +1, +1. А это как раз составляет содержимое загадочной константа
 			из R8 (0.11828112). В ней последняя цифра может быть произвольной при расчётах, потому
@@ -357,15 +354,15 @@ a[target="_blank"] {
 			</tr>
 			<tr>
 				<th>&#8202;10&#8202;|&#8202;</th>
-				<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
 				<td><span class="but_b">x&rarr;П</span><span class="but">4</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">8</span></td>
 				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">c</span></td>
 				<td><span class="but">ВП</span></td>
 				<td><span class="but">1</span></td>
 				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">c</span></td>
 				<td><span class="but">+</span></td>
-				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
-				<td><span class="but_k">К</span><span class="op_f">x=0</span><span class="but">8</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">7</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x=0</span><span class="but">9</span></td>
 				<td><span class="but">+</span></td>
 			</tr>
 			<tr>
@@ -375,108 +372,99 @@ a[target="_blank"] {
 				<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="reg">e</span></td>
 				<td><span class="but_f">F</span><span class="op_f">L0</span></td>
 				<td><span class="but">12</span></td>
-				<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
 				<td><span class="but_b">С/П</span></td>
 				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="reg">a</span></td>
 				<td><span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="reg">a</span></td>
-				<td><span class="but_b">x&rarr;П</span><span class="but">7</span></td>
 			</tr>
 			<tr>
 				<th>&#8202;30&#8202;|&#8202;</th>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
 				<td><span class="but">ВП</span></td>
 				<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="reg">a</span></td>
 				<td><span class="but_f">F</span><span class="op_f">Lg</span></td>
 				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
 				<td><span class="but_k">К</span><span class="op_f">x=0</span><span class="reg">a</span></td>
-				<td><span class="but_b">П&rarr;x</span><span class="but">8</span></td>
-				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
-				<td><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
-				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
-				<td><span class="but_k">К</span><span class="op_f">x=0</span><span class="but">9</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">7</span></td>
 			</tr>
 			<tr>
 				<th>&#8202;40&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="op_f">x=0</span><span class="but">7</span></td>
 				<td><span class="but_b">x&rarr;П</span><span class="but">5</span></td>
 				<td><span class="but">1</span></td>
 				<td><span class="but">1</span></td>
 				<td><span class="but">&minus;</span></td>
-				<td><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
 				<td><span class="but">+</span></td>
-				<td><span class="but_b">x&rarr;П</span><span class="but">7</span></td>
-				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">7</span></td>
 				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
-				<td><span class="but">51</span></td>
 			</tr>
 			<tr>
 				<th>&#8202;50&#8202;|&#8202;</th>
+				<td><span class="but">52</span></td>
 				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
-				<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
 				<td><span class="but">ВП</span></td>
 				<td><span class="but">1</span></td>
 				<td><span class="but">В&uarr;</span></td>
 				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
-				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
 				<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
-				<td><span class="but">43</span></td>
-				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but">44</span></td>
 			</tr>
 			<tr>
 				<th>&#8202;60&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
 				<td><span class="but_b">БП</span></td>
 				<td><span class="but">26</span></td>
-				<td><span class="but">3E</span></td>
-				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
-				<td><span class="but">&lt;-&gt;</span></td>
-				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+				<td><span class="but">4</span></td>
 				<td><span class="but">&divide;</span></td>
 				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
-				<td><span class="but">В&uarr;</span></td>
-				<td><span class="but_f">F</span><span class="op_f">&orarr;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but">&divide;</span></td>
 			</tr>
 			<tr>
 				<th>&#8202;70&#8202;|&#8202;</th>
-				<td><span class="but">&times;</span></td>
-				<td><span class="but">&minus;</span></td>
-				<td><span class="but">1</span></td>
-				<td><span class="but">+</span></td>
+				<td><span class="but_f">F</span><span class="op_f">e<sup>x</sup></span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
 				<td><span class="but_b">В/О</span></td>
-				<td><span class="but">4</span></td>
 				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">d</span></td>
 				<td><span class="but_b">x&rarr;П</span><span class="reg">e</span></td>
 				<td><span class="but">&lt;-&gt;</span></td>
-				<td><span class="but">7</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">d</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">+</span></td>
 			</tr>
 			<tr>
 				<th>&#8202;80&#8202;|&#8202;</th>
-				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">d</span></td>
 				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
-				<td><span class="but">&lt;-&gt;</span></td>
-				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
-				<td><span class="but">&times;</span></td>
-				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
-				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
 				<td><span class="but">+</span></td>
 				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="reg">e</span></td>
 				<td><span class="but_k">К</span><span class="op_k">&and;</span></td>
-			</tr>
-			<tr>
-				<th>&#8202;90&#8202;|&#8202;</th>
 				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
 				<td><span class="but_b">В/О</span></td>
 				<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
 				<td><span class="but">7</span></td>
 				<td><span class="but">&times;</span></td>
 				<td><span class="but_f">F</span><span class="op_f">&pi;</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;90&#8202;|&#8202;</th>
 				<td><span class="but">+</span></td>
 				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
 				<td><span class="but_b">x&rarr;П</span><span class="but">6</span></td>
 				<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
-			</tr>
-			<tr>
-				<th>&#8202;A0&#8202;|&#8202;</th>
 				<td><span class="but">ВП</span></td>
 				<td><span class="but_b">В/О</span></td>
-				<td colspan="8"></td>
+				<td colspan="4"></td>
 			</tr>
 		</table>
 
@@ -487,8 +475,16 @@ a[target="_blank"] {
 				<td>Рабочий регистр.</td>
 			</tr>
 			<tr>
-				<th>R1&hellip;R4</th>
+				<th>R1, R2, R4, R8</th>
 				<td>Поле мин в битовом представлении.</td>
+			</tr>
+			<tr>
+				<th>R3</th>
+				<td>
+					Рабочий регистр. Используется для
+					вычисления следующего смещения
+					при <q>обходе вокруг</q>.
+				</td>
 			</tr>
 			<tr>
 				<th>R5</th>
@@ -500,23 +496,15 @@ a[target="_blank"] {
 			</tr>
 			<tr>
 				<th>R7</th>
-				<td>
-					Рабочий регистр. Первоначально ввод
-					координат ячейки для проверки, а потом меняется
-					при <q>обходе вокруг</q>.
-				</td>
+				<td>73. Адрес процедуры проверки наличия в указанной ячейке мины.</td>
 			</tr>
 			<tr>
-				<th>R8</th>
+				<th>R9</th>
 				<td>
 					<span class="code"> 1.1828112^-01</span>.
 					Константа для вычисления координат ячеек
 					вокруг заданной, а также адрес перехода 12.
 				</td>
-			</tr>
-			<tr>
-				<th>R9</th>
-				<td>75. Адрес процедуры проверки наличия в указанной ячейке мины.</td>
 			</tr>
 			<tr>
 				<th>Ra</th>
@@ -532,21 +520,17 @@ a[target="_blank"] {
 			</tr>
 			<tr>
 				<th>Rc</th>
-				<td>
-					-2 или -99999992.
-					Специальный <q>флаг</q> для пользователя,
-					а также адрес процедуры генерации случайной цифры.
-				</td>
+				<td>86. Адрес процедуры генерации случайной цифры.</td>
 			</tr>
 			<tr>
 				<th>Rd</th>
-				<td>62. Адрес процедуры деления с остатком.</td>
+				<td>63. Адрес процедуры деления на 4.</td>
 			</tr>
 			<tr>
 				<th>Re</th>
 				<td>
 					Рабочий регистр. Содержит номер регистра – поля,
-					в котором идёт проверка наличия мин (1..5).
+					в котором идёт проверка наличия мин (1, 2, 4, 8).
 				</td>
 			</tr>
 		</table>
@@ -559,34 +543,40 @@ a[target="_blank"] {
 		</p>
 		<ol>
 			<li>
-				Процедура целочисленного деление с остатком. Она начинается с
-				адреса 62 (регистр Rd). Смысл команды <span class="but">3E</span>, см. в
-				<a href="https://sergeanvarov.github.io/russian/mk61/uf/commands.html" target="_blank">
-					Недокументированные возможности</a
-				>.
-				Эта процедура для чисел в регистрах RX, RY возвращает
-				(RY mod RX) + 1, RY div RX.
-				<q>Плюс один</q> для удобства следующих операций.
-				Используется только стек.
+				Процедура деление на 4 с остатком. Причем остаток сразу используется
+				как показатель функции 2<sup>x</sup>. Она начинается с
+				адреса 63 (регистр Rd).
+				Для числа X процедура возвращяет пару (в X и Y):
+				2<sup>(X mod 4)</sup>, X div 4.
+				Сначала просто находит целую часть от деления. А второе число
+				получается чуть сложнее.
+				Для этого используется хитрая константа из Ra (0.35000025).
+				Она примерно равна обратной величине от 4 &times; Ln(2), только
+				подобрана так, чтобы после вычисления можно было сразу взять
+				целую часть, а не как для встроенной функции
+				<span class="but_f">F</span><span class="op_f">x<sup>y</sup></span>,
+				которая для 2<sup>3</sup> даёт 7.9999993. К тому же
+				<span class="but_f">F</span><span class="op_f">e<sup>x</sup></span>
+				вычисляется быстрее.
+				Получается e<sup>(X mod 4) &times; 4 &times; Ln(2)</sup>, что даёт
+				2<sup>X</sup>, или числа 1, 2, 4, 8.
+				Хвостик хитрой константы используется как адрес перехода 25.
+				А обратная величина используется вместо прямой именно
+				для возможности косвенной адресации <q>по хвосту</q>.
 			</li>
 			<li>
 				Процедура проверки наличия в указанной ячейке мины.
-				Или преобразование целого числа (0&hellip;110) из регистра X в номер
-				регистра (в Re) для определения поле для тестирования, бита для проверки
+				Или преобразование целого числа [0&hellip;110] из регистра X в номер
+				регистра (в Re) для определения поля для тестирования, бита для проверки
 				в RY, и	сам результат проверки битовой операции (не ноль, если есть).
 				<br>
-				Подпрограмма начинается	с адреса 75 (R9).
-				Сначала число целочисленно делиться на 4 (через процедуру 1).
-				Потом остаток от деления (1&hellip;4, т.&#8239;к. +1) используется как номер
-				регистра. Затем целая часть (0&hellip;24)
-				делиться на 7. Остаток используется для определения разряда
-				(10 в степени 1&hellip;7), а целая часть (0&hellip;3)
-				преобразуется в бит внутри разряда.
-				Для этого используется хитрая константа из Ra (0.31000025).
-				Потому что [10<sup>(Ra &times; N)</sup>], где N = 0, 1, 2, 3
-				даёт числа 1, 2, 4, 8. Хвостик константы используется
-				как адрес перехода 25.
-				Число 1..8 складывается с номером разряда и получается бит для
+				Подпрограмма начинается	с адреса 73 (R7).
+				Сначала число делиться на 4 (через процедуру 1).
+				Затем число из множества [1, 2, 4, 8] используется как номер
+				регистра. А целая часть [0&hellip;27] снова
+				делиться на 4. Целая часть используется для определения разряда
+				(10 в степени [0&hellip;6] + 1), а число [1, 2, 4, 8]
+				складывается с номером разряда и получается бит для
 				тестирования, что и делается с помощью операции
 				<span class="but_k">К</span><span class="op_k">&and;</span>.
 				Кстати, сам бит остаётся в RY, что позволит его же использовать для
@@ -594,20 +584,14 @@ a[target="_blank"] {
 				<br>
 				Возвращается или ноль – нет мин, или не ноль
 				(причём меньше единицы) – есть мина.
-				<br>
-				Здесь же упомяну, что если на вход передать число &ges;100, то в
-				Re получится 5. Но R5 используется для подсчёта количества мин,
-				и его значение (0..8) не содержит битов для шестнадцатеричной
-				арифметики. Т.&#8239;е. тестирование для него всегда даст 0, что
-				и требуется для верхнего ряда.
 			</li>
 			<li>
 				Процедура генератора случайной цифры.
-				Начинается с адреса 92 (Rc). Формула последовательности для генерации
+				Начинается с адреса 86 (Rc). Формула последовательности для генерации
 				случайного числа N = {7 &times; N + &pi;}. Хвост процедуры
 				использует
 				<a href="https://sergeanvarov.github.io/russian/mk61/uf/x2.html#id_exp_combine" target="_blank">
-					Недокументированные возможности
+					недокументированные возможности
 				</a> оператора <span class="but">ВП</span> для восстановления 7, с заменой её
 				на первую цифру случайного числа.
 			</li>
@@ -620,7 +604,7 @@ a[target="_blank"] {
 			Ввод числа мин с проверкой. Сохраняется счётчик количества мин и делается
 			его проверка на &ges; 1 через
 			<span class="but_f">F</span><span class="op_f">Lg</span>,
-			и на &les; 62, используя разницу с Rd и
+			и на &les; 63, используя разницу с Rd и
 			<span class="but_f">F</span><span class="op_f">&radic;</span>.
 		</p>
 		<p>
@@ -630,7 +614,7 @@ a[target="_blank"] {
 		<p>
 			<strong>Адреса 12..24</strong>. Расстановка мин.
 			Дважды используется процедура генерации (Rc) случайной цифры 1..9 для получения
-			двузначного числа координаты. Через процедуру проверки (R9) проверяется,
+			двузначного числа координаты без нулей. Через процедуру проверки (R7) проверяется,
 			что мина не ставится повторно. И если её там нет, то используя факт,
 			что маска бита остался в RY (а Re содержит номер поля для бита), полученный
 			при проверке ноль убирается с помощью <span class="but">+</span> и результат
@@ -643,25 +627,23 @@ a[target="_blank"] {
 			хода пользователя. Адрес этого кода хранится в Ra.
 		</p>
 		<p>
-			<strong>Адреса 27..34</strong>. Проверка ввода пользователя.
-			После простой проверки на &ges; 0 и сохранения в R7, с помощью
+			<strong>Адреса 27..35</strong>. Проверка ввода пользователя.
+			После простой проверки на &gt; 0 и сохранения в R0, с помощью
 			<a href="https://sergeanvarov.github.io/russian/mk61/uf/x2.html#id_exp_SR" target="_blank">
-				Недокументированные возможности
+				недокументированной возможности
 			</a> удаляется первая значащая (не ноль) цифра, чтобы проверить, что число содержит
 			более одной цифры. А затем, что не более двух, т.&#8239;к. Lg(9) меньше единицы и
-			целая часть нулевая. Для больших чисел это не так.
+			целая часть нулевая. Для бо&#x301;льших чисел это не так.
 		</p>
 		<p>
-			<strong>Адреса 35..40</strong>. Инициализация цикла обхода
-			и проверка мины в ячейке. Константа для обхода из R8 сохраняется
-			в R0. Делается проверка хода пользователя (R7) процедурой из Rc.
+			<strong>Адреса 36..41</strong>. Инициализация цикла обхода
+			и проверка мины в ячейке. Константа для обхода из R9 сохраняется
+			в R3. Делается проверка хода пользователя (R0) процедурой из R7.
 			Если результат удачный (ноль), то этот ноль инициализирует счётчик
 			числа мин вокруг.
 			<br>Стоит пояснить случай не ноль – нарвались на мину.
 			В этом случае число будет меньше единицы, и переход на процедуру
-			проверки (R9) заставит её проверить фактически ячейку 0, потому
-			что для регистра поля 1.0 или 1.0004 без разницы
-			в косвенной адресации, а результат деления на 4 будет всегда 0.
+			проверки (R7) заставит её проверить фактически ячейку 0.
 			А ячейка с номером ноль всегда без мины.
 			Но возврат из процедуры будет уже на адрес 01, как результат
 			<span class="but_b">В/О</span> без
@@ -670,21 +652,20 @@ a[target="_blank"] {
 			от нуля и выдаст ошибку.
 		</p>
 		<p>
-			<strong>Адреса 41..58</strong>. Цикл <q>обхода</q> с подсчётом количества мин.
+			<strong>Адреса 42..59</strong>. Цикл <q>обхода</q> с подсчётом количества мин.
 			Начинается с &minus;11 (почему обычный минус от нуля справа, а не
 			<span class="but">/-/</span>, будет ясно чуть позже), которое прибавляется
 			к координатам выбранной ячейки.
-			Затем делается проверка через процедуру в R9, и если мина найдена, то увеличение
+			Затем делается проверка через процедуру в R7, и если мина найдена, то увеличение
 			счётчика в R5. Затем идёт вычисление прибавки, которое записано в первом разряде
-			регистра R0. После умножения на 10 и сдвига, берётся дробная часть
+			регистра R3. После умножения на 10 и сдвига, берётся дробная часть
 			(первый разряд отсекается), сохраняется. И если больше не осталось, то цикл
 			завершается. А если что-то есть, то целое с дробной частью <q>удачно</q>
-			переходит на минус по адресу 43, тем самым оставляя только этот первый разряд,
+			переходит на минус по адресу 44, тем самым оставляя только этот первый разряд,
 			который снова прибавляется к координатам и т.&#8239;д.
-
 		</p>
 		<p>
-			<strong>Адреса 51..61</strong>. Вывод итога для пользователя.
+			<strong>Адреса 60..62</strong>. Вывод итога для пользователя.
 			Просто вывод значения счётчика и переход на остановку.
 		</p>
 		<p>
