@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta content="true" name="HandheldFriendly">
+	<meta content="width" name="MobileOptimized">
+	<meta content="yes" name="apple-mobile-web-app-capable">
+	<meta name="description" content="Охота на лис. Игра. ПМК. МК-61">
+	<title>Охота на лис</title>
+
+<style>
+
+span.but, span.but_f, span.but_k, span.but_cx, span.but_b, span.reg, span.op_f, span.op_k {
+	border:thin solid black;
+	border-radius:4px;
+	display:inline-block;
+	font-size:1.1em;
+	font-weight:bold;
+	font-family:monospace;
+	text-align:center;
+	min-width:2.3em;
+	white-space:nowrap;
+}
+
+sup {
+	line-height:0;
+}
+
+span.but {
+	background-color:#CCCCCC;
+	color:black;
+}
+
+span.but_f {
+	background-color:#F5E345;
+	color:black;
+}
+
+span.but_k {
+	background-color:LightSkyBlue;
+	color:white;
+}
+
+span.but_cx {
+	background-color:#F00505;
+	color:white;
+}
+
+span.but_b {
+	background-color:black;
+	color:white;
+}
+
+span.reg {
+	background-color:black;
+	color:white;
+}
+
+span.op_f {
+	background-color:black;
+	color:yellow;
+}
+
+span.op_k {
+	background-color:black;
+	color:#00BFFF;
+}
+
+.code {
+	background-color:#103810;
+	color:#77FF77;
+	font-size:1.1em;
+	font-family:monospace;
+	font-weight:bold;
+	padding:1px 2px 1px 2px;
+	white-space:pre;
+}
+
+table {
+	border-collapse:collapse;
+}
+
+table, th, td {
+	border:1px solid black;
+}
+
+.zero {
+	background-color: lightgray;
+}
+
+.selected {
+	background-color: lightblue;
+}
+
+.center {
+	text-align:center;
+}
+
+details summary {
+	cursor: pointer;
+}
+details summary > * {
+	display: inline;
+}
+
+a[target="_blank"] {
+	background: url(https://upload.wikimedia.org/wikipedia/commons/6/64/Icon_External_Link.png) center right no-repeat;
+    padding-right: 0.8em;
+}
+
+</style>
+
+</head>
+
+<body>
+	<header>
+		<h1>Охота на лис</h1>
+	</header>
+	<p>
+		Игра <a href="https://ru.wikipedia.org/wiki/Охота_на_лис_(логическая_игра)" target="_blank">Охота на лис (логическая игра)</a>.
+	</p>
+
+	<h2>Задача</h2>
+
+	<p>
+		Найти всех лис.
+	</p>
+
+	<h2>Общее описание</h2>
+
+	<p>
+		На поле 10 на 10 случайным образом расположены 9 лис. Все в разных клетках.
+		Вы задаёте своё положение, указав координаты клетки (координаты охотника). В ответ
+		<a href="https://ru.wikipedia.org/wiki/Программируемый_калькулятор" target="_blank">ПМК</a>
+		выдаёт количество лис, пеленгуемых из указанной клетки.
+		Это число указывает, сколько лис расположено в одной вертикали, горизонтали и диагоналях с указанной клеткой.
+	</p>
+	<p>
+		Если координаты клетки совпадают с положением
+		одной из лис, то она считается найденной, исключается из дальнейшей пеленгации.
+		В ответ ПМК выводит число оставшихся лис в виде отрицательного числа, чтобы
+		не путать с обычным ответом.
+	</p>
+
+	<h2>Игровой процесс</h2>
+
+	<h3>Начало</h3>
+
+	<p>
+		Перед запуском укажите случайное число от 0 до 1. Оно будет использовано
+		для генерации положений лис, затем
+		<span class="but_b">В/О</span> <span class="but_b">С/П</span>.
+	</p>
+	<p>
+		ПМК расставит лис случайным образом и по окончании выдаст &minus;9, как бы сообщая,
+		что осталось 9 лис. В регистре Y тоже будет &minus;9.
+	</p>
+
+	<h3>Игра</h3>
+
+	<p>
+		Вы задаёте координаты клетки, из которой хотите провести пеленгацию, числом
+		в виде пары цифр, разделённых десятичной точкой.
+		Обычно целая часть – вертикальная координата,
+		а дробная – горизонтальная. Впрочем, можете считать наоборот,
+		для игры это не важно – поле то квадратное!
+		После <span class="but_b">С/П</span> ПМК выдаст результат на экран. Вот возможные результаты:
+	</p>
+	<table>
+		<tr>
+			<th>Число</th>
+			<th>Значение</th>
+		</tr>
+		<tr>
+			<th>0&hellip;9</th>
+			<td>
+				Количество лис, запеленгованных из заданной координаты. Сами координаты
+				находятся в регистре Y. Для игрока, конечно, идеальный ответ это ноль.
+				В этом случае сразу столько клеток поля исключаются из рассмотрения.
+			</td>
+		</tr>
+		<tr>
+			<th>&minus;8&hellip;&minus;1</th>
+			<td>
+				Координаты клетки совпали с координатами одной из лис. Абсолютное значение
+				показывает количество оставшихся лис. Найденная лиса исключается, т. е.
+				в дальнейшем не пеленгуется.
+				Координаты клетки находятся в регистре Y.
+			</td>
+		</tr>
+		<tr>
+			<th>11</th>
+			<td>
+				Вы ввели недопустимые координаты. Разрешено дробное число
+				больше или равное 0 и меньше 10.
+				Неверные координаты клетки находятся в регистре Y.
+				В подсчёте ходов неверный выбор не учитывается.
+			</td>
+		</tr>
+	</table>
+
+
+	<h3>Окончание</h3>
+
+	<p>
+		Если вы нашли всех лис, то на экран выдаётся
+		<span class="code"> 3.3333333-01</span>, как признак окончания игры.
+		В регистре Y указано количество ходов, которые вы сделали за игру.
+	</p>
+	<p>
+		Для начала новой игры введите случайное число от 0 до 1 и
+		нажмите <span class="but_b">С/П</span> (или
+		<span class="but_b">В/0</span> <span class="but_b">С/П</span>).
+	</p>
+
+	<h2>Дополнительная информация</h2>
+
+	<h3>Контроль со стороны ПМК</h3>
+
+	<ul>
+		<li>
+			Если дробная часть введённого числа содержит более одной цифры,
+			то лишние отбрасываются. В регистре Y будет отображаться
+			скорректированное значение.
+		</li>
+		<li>
+			Проверяется, что введённое число в диапазоне [0&hellip;10).
+		</li>
+	</ul>
+
+	<h3>Модификация</h3>
+
+	<p>
+		Общее количество лис для игры можно изменить – облегчить игру.
+		Достаточно в программе по адресу 01 вместо 9 указать другую
+		цифру (но не ноль!).
+	</p>
+	<p>
+		Если есть желание не исключать найденных лис, чтобы они по-прежнему
+		участвовали в пеленгации, то по адресу 41 нужно поставить команду
+		<span class="but_k">K</span><span class="op_k">НОП</span>, вместо
+		<span class="but_k">K</span><span class="but_b">x&rarr;П</span><span class="but">4</span>,
+		а по адресу 60 общее число лис (9), вместо
+		<span class="but_b">П&rarr;x</span><span class="but">3</span>.
+		В этом случае нужно быть внимательней, потому что счётчик оставшихся лис
+		работает. И если вы случайно найдёте ту же лису повторно, то счётчик
+		собьётся и ПМК завершит игру ранее, чем вы найдёте всех лис.
+		Впрочем, этот счётчик тоже можно отключить, введя по адресу 99 команду
+		<span class="but_b">БП</span>, вместо
+		<span class="but_f">F</span><span class="op_f">FL3</span>. В этом случае,
+		когда вы найдёте лису, ПМК будет всегда выдавать &minus;9, и считать лис
+		и окончании игры вам придётся самостоятельно.
+	</p>
+
+	<h3>История</h3>
+	<p>
+		Первая версия (Несчетный А.) впервые была опубликована в журнале
+		<a href="https://iphras.ru/uplfile/sov_ph/nz1985_12.pdf" target="_blank">
+			Наука и жизнь. №12 за 1985</a>.
+		В этой версии поле было 9 x 9, пять лис, без контроля ходов, подсчета лис и т. п.
+	</p>
+	<p>
+		<a href="https://lordbss.narod.ru/pmk49.html" target="_blank">Следующая версия</a>
+		(Иванов Ю., Иртюга П.) была опубликована в журнале <q>Наука и жизнь</q> №10 за 1990. В этой
+		версии уже 8 лис, есть учёт найденных лис, и они уже не участвуют в пеленгации.
+		Подсчитывается количество ходов.
+		Координаты шифруются, чтобы нельзя было подсмотреть значение в регистрах.
+		Но в одной клетке по-прежнему может содержаться несколько лис.
+		В программе содержится малозаметная ошибка: если в процессе начальной расстановки
+		лиса (или несколько) попадала в клетку с координатами 0:0, то она не участвовала в пеленгации.
+	</p>
+	<p>
+		В дальнейшем встречалось в разных источниках ещё несколько модификаций. Вот пример:
+	</p>
+	<p>
+		В <a href="https://web.archive.org/web/20071222194005/http://www.geocities.com/CapeCanaveral/Hall/5525/Foxhunt/Foxhuntru.htm" target="_blank">
+			этом варианте</a>
+		(Булатов А.) по сравнению с предыдущей версией лис уже девять, и они уже все в разных клетках.
+		Но найденные лисы не исключаются из пеленгации. Также о том что игра закончилась,
+		можно догадаться, только увидев что осталось 0 лис. И отсутствует счётчик ходов.
+	</p>
+	<p>
+		Еще <a href="https://davaite-poigraem.1c-umi.ru/filemanager/download/346/Охота%20на%20лис.zip">версия</a>
+		(Храмов С.) в которой почти всё есть. И счётчик ходов, и автозавершение игры, и шифрация,
+		и все лисы по разным норкам. Даже количество лис можно менять, правда в трех местах, и кое-где на +1,
+		что не всегда удобно. Но максимум лис – восемь, что меньше чем у предыдущей версии.
+	</p>
+	<p>
+		В моей модификации всё тоже (шифрация ещё чуть запутаннее), но максимум лис – 9.
+		Ведётся контроль хода игрока. Координаты клетки охотника не нужно подсматривать в отдельном регистре,
+		он находится тут же в стеке.
+		По окончании счётчик ходов тоже выводится в стек.
+	</p>
+
+	<hr>
+
+	<details open="open">
+		<summary>
+			<h2>Далее только для тех, кто не только играет&hellip;</h2>
+		</summary>
+
+		<p>
+			Программа делится на две части. Первая - инициализация и расстановка лис на основе
+			случайного числа, ведённого игроком. Вторая - цикл поиска лис.
+		</p>
+
+		<h3>Распределение регистров</h3>
+		<table>
+			<tr>
+				<th>R0, R7&hellip;Re</th>
+				<td>
+					Координаты 9 лис. Если задано меньше 9 лис, то часть регистров
+					не используется. В числовом выражении регистры 7&hellip;15, где
+					R14 = Re, а R15 = R0.
+				</td>
+			</tr>
+			<tr>
+				<th>R1</th>
+				<td>
+					В первой части счётчик для цикла проверки по ранее
+					рассаженным лисам, чтобы исключить двух лис в одной клетке.
+					Во второй части – ход игрока.
+				</td>
+			</tr>
+			<tr>
+				<th>R2</th>
+				<td>
+					Счётчик для пробега по всем лисам. В первой части чтобы всех
+					расставить, во второй – чтобы сравнить с координатами охотника.
+				</td>
+			</tr>
+			<tr>
+				<th>R3</th>
+				<td>
+					Счётчик ещё не найденных лис.
+				</td>
+			</tr>
+			<tr>
+				<th>R4</th>
+				<td>
+					Индекс регистра текущей лисы, используется совместно со счётчиком в R2.
+				</td>
+			</tr>
+			<tr>
+				<th>R5</th>
+				<td>
+					В первой части это количество уже рассаженных лис + 1.
+					Во второй – сумматор пеленгуемых лис.
+				</td>
+			</tr>
+			<tr>
+				<th>R6</th>
+				<td>
+					Счётчик ходов.
+				</td>
+			</tr>
+		</table>
+
+		<h3>Текст программы</h3>
+
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but">9</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
+				<td><span class="but">0</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">5</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">6</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;10&#8202;|&#8202;</th>
+				<td><span class="but">2</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but_f">F</span><span class="op_f">&pi;</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+				<td><span class="but">7</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but">&times;</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;20&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but">&divide;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+				<td><span class="but">5</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">4</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;30&#8202;|&#8202;</th>
+				<td><span class="but">08</span></td>
+				<td><span class="but">3E</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L1</span></td>
+				<td><span class="but">27</span></td>
+				<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">4</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L2</span></td>
+				<td><span class="but">07</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">4</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;40&#8202;|&#8202;</th>
+				<td><span class="but">/-/</span></td>
+				<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">4</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">5</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;50&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but">&divide;</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ge;0</span></td>
+				<td><span class="but">93</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&lt;0</span></td>
+				<td><span class="but">93</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;60&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
+				<td><span class="but">6</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">4</span></td>
+				<td><span class="but">0</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">5</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ge;0</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;70&#8202;|&#8202;</th>
+				<td><span class="but">66</span></td>
+				<td><span class="but_f">F</span><span class="op_f">&radic;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">&radic;</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+				<td><span class="but">99</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;80&#8202;|&#8202;</th>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+				<td><span class="but">93</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+				<td><span class="but">93</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+				<td><span class="but">&divide;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">&mid;x&mid;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Lg</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;90&#8202;|&#8202;</th>
+				<td><span class="but_f">F</span><span class="op_f">Lg</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+				<td><span class="but">94</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L2</span></td>
+				<td><span class="but">66</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but_b">БП</span></td>
+				<td><span class="but">42</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L3</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;A0&#8202;|&#8202;</th>
+				<td><span class="but">37</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+				<td><span class="but">3</span></td>
+				<td><span class="but_f">F</span><span class="op_f">1/x</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td colspan="5"></td>
+			</tr>
+		</table>
+
+		<h3>Объяснение работы программы</h3>
+
+		<p>
+			<strong>Адреса 00..06</strong>.
+			Для случайного числа используется регистр R0. При 9 лисах он
+			будет в конце перезаписан координатами последней лисы. Начальное значение,
+			заданное игроком сохраняется в нём, остальные регистры инициализируются начальными
+			значениями.
+		</p>
+		<p>
+			<strong>Адреса 07..09</strong>. Приращение счётчика уже рассаженных лис.
+			Используется значение + 1, потому что циклы FLx идут <q>до 1</q>.
+			Возврат из цикла расстановки идёт на
+			адрес 07. Но если новые координаты повторились, то на адрес
+			08, без приращения.
+			Технически, такой счётчик не нужен, т. к. разница между общим количеством лис (R3)
+			и уже рассаженных (R2) и есть нужное значение. Но, для работы цикла нужно сделать
+			ещё + 1 (циклы до 1, а не до нуля). Поэтому R3 + 1 - R2. Или в нотации ПМК
+			<span class="but_b">П&rarr;x</span><span class="but">3</span>
+			<span class="but">1</span>
+			<span class="but">+</span>
+			<span class="but_b">П&rarr;x</span><span class="but">2</span>
+			<span class="but">-</span>.
+			Получается пять команд. При использовании отдельного счётчика всего три:
+			<span class="but_b">x&rarr;П</span><span class="but">5</span>
+			<span class="but_k">K</span><span class="but_b">П&rarr;x</span><span class="but">5</span>
+			<span class="but_b">П&rarr;x</span><span class="but">5</span>.
+		</p>
+		<p>
+			<strong>Адреса 10..24</strong>. Генерация нового значения координат для лисы.
+			Используется следующая последовательность псевдослучайных чисел:
+			N<sub>i+1</sub> = {7 * N<sub>i</sub> + &pi;} – адреса 12..18.
+			Для шифрации координаты R сохраняется как R<sup>4</sup>.
+			Нам нужно число R в виде K.M, где K и M – цифры 0&hellip;9. Для этого нужно
+			случайное число умножить на 100 (адрес 19), взять целую часть (адрес 20)
+			и поделить на 10, т. е.	KM / 10. Но при возведении в квадрат это будет (KM)<sup>2</sup> / 100.
+			Поэтому константа 100 нам понадобится ещё раз. Для это мы сначала вычисляем
+			её, и при извлечении остальных параметров генератора число 100 дойдёт до
+			регистра T в стеке, и при обратном движении продублируется. И на адресах
+			22, 23 мы делим квадрат на эту 100. В конце ещё раз возводим в квадрат.
+		</p>
+		<p>
+			<strong>Адреса 25..33</strong>. Цикл сравнения новой координаты с ранее
+			расставленными. Сначала идёт инициализация индекса регистра. Причём не в 6
+			(чтобы начать с регистра 7), а меньше. Это нужно для одного холостого цикла.
+			В этом случае из R6 извлечётся 0, что точно не равно 5 и один цикл, который
+			нам нужен, пройдёт без проблем. Тем самым мы обходимся без БП на конец
+			цикла. Новое сгенерированное значение с помощью недокументированной команды
+			3E, которая копирует Y в X, дублируем для сохранения.
+			В цикле идёт извлечение ранее введенных координат с приращением
+			индекса. Результат сравнивается с тем, что мы получили от генератора.
+			Если совпало, то переход на другую генерацию (адрес 08) без сохранения.
+		</p>
+		<p>
+			<strong>Адреса 33..36</strong>. Сохранение новой координаты и возврат
+			на начало цикла расстановки. Если цикл проверки с предыдущими закончился,
+			то индекс как раз принял нужное значение для новой лисы, а в X (и в Y) новая координата.
+		</p>
+		<p>
+			<strong>Адреса 37..41</strong>. Отображение числа оставшихся лис.
+			На самом деле этот фрагмент используется во второй части программы для
+			исключения найденной лисы (запись отрицательного числа). Но наша инициализация
+			плавно переходит в этот фрагмент, а отрицательное число записывается
+			в рабочий регистр R1, потому что на выходе в X и Y одно и тоже,
+			а значит разность равна нулю.
+		</p>
+		<p>
+			<strong>Адреса 42..44</strong>. Остановка с отображением результата и
+			выводом в регистр Y хода игрока.
+		</p>
+		<p>
+			<strong>Адреса 45..55</strong>. Корректировка хода игрока и сохранение
+			в регистре R1. Нам для этого нужна константа 10. Но сразу после
+			<span class="but_b">С/П</span> нельзя указать
+			<span class="but">1</span> <span class="but">0</span>, потому что ввод цифр
+			продолжится с тем, что вводил игрок. Поэтому мы используем тот факт, что
+			по окончании цикла в R2 осталась единица. Для дальнейшего использования
+			сохраняем константу 10 в R5 (временно).
+		</p>
+		<p>
+			<strong>Адреса 53..58</strong>. Проверка, что ход игрока в нужном
+			диапазоне: 0 &les; R &lt; 10. Если нет, то идёт переход на конец
+			цикла подсчёта, где R5 ещё увеличится и будет отображён как признак
+			переполнения.
+		</p>
+		<p>
+			<strong>Адреса 59..65</strong>. Приращение счётчика ходов и инициализация
+			переменных перед циклом проверки: число лис в R2, индекс регистра в R4,
+			сумматор в R5.
+		</p>
+		<p>
+			<strong>Адреса 66..97</strong>. Основной цикл второй части программы
+			по подсчёту пеленгаций.
+			Сначала по адресу 66 извлекается неизменённый индекс для сохранения
+			в стеке. Он понадобится, если координаты охотника совпадут
+			с координатами лисы и потребуется на её место записать отрицательное число.
+			Затем для сравнения извлекается ход игрока и координата лисы. Но сначала
+			проверяется, что лиса есть (адрес 69, 70). Если там уже нет, то возврат
+			на начало цикла. Если есть, то дешифрация (адреса 71, 72) и разность
+			координат. При равенстве (ноль) уход на адрес 99. Иначе эта разность
+			сдвигается в стек, а в X вычисляется разность дробных частей, причём в
+			обратном порядке.
+			<br>
+			Тут удобнее ввести формулы. Обозначим координаты лисы
+			как F.f (число), а координаты охотника (в R1), как H.h. Если перейти к дробям,
+			то (F + f/10) и (H + h/10) соответственно. Тогда разность будет
+			(H + h/10) &minus; (F + f/10). А разность дробных частей, как
+			(f/10 &minus; h/10). Если дробные части совпали (адрес 81), то переход на
+			конец цикла с приращением сумматора (адрес 93). Если нет, то
+			мы просто складываем (H + h/10) &minus; (F + f/10) + (f/10 &minus; h/10).
+			В результате получим (H &minus; F). И если целые части совпали (адрес 84),
+			то снова в конец с приращением. Иначе делим (H &minus; F) /
+			(f/10 &minus; h/10). Делитель точно
+			не ноль, это уже проверяли. Если клетки расположены на одной диагонали,
+			то разница между вертикальными и горизонтальными координатами должна совпадать.
+			С учётом того, что целая часть в 10 раз меньше дробной,
+			разница совпадает, если результат деления равен ровно 10 (или &minus;10).
+			Именно эту проверку мы делаем по адресам 88..91. Применение логарифма безопасно,
+			потому что обе части дроби точно не нулевые.
+			Если диагонального совпадения нет, то проскакиваем приращение сумматора и
+			сразу на конец цикла (адрес 94). После проверки всех лис мы просто
+			выводим сумматор (R5) в регистр X и переходим на ожидание хода игрока.
+		</p>
+		<p>
+			<strong>Адреса 99..A4</strong>. Лиса обнаружена.
+			Проверка, что ещё остались лисы (R3), если
+			нет, то завершение игры. Тут нужно пояснить фрагмент с адреса 37.
+			Сначала в стек было загнано значение регистра R4 (адрес 66). Потом в
+			результате сравнения получили 0 (адрес 74), а значение R4 до увеличения
+			осталось в регистре Y. Когда мы перейдём на адрес 37, то счётчик в R3
+			уменьшится, разность с нулём оставит значение индекса для R4. Что и
+			будет использовано для сохранения отрицательного числа на месте
+			обнаруженной лисы, с одновременным отображением счётчика оставшихся лис.
+		</p>
+
+	</details>
+</body>
+
+</html>
