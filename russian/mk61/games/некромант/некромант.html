@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta content="true" name="HandheldFriendly">
+	<meta content="width" name="MobileOptimized">
+	<meta content="yes" name="apple-mobile-web-app-capable">
+	<meta name="description" content="Некромант. Игра. ПМК. МК-61">
+	<title>Некромант</title>
+
+<style>
+
+span.but, span.but_f, span.but_k, span.but_cx, span.but_b, span.reg, span.op_f, span.op_k {
+	border:thin solid black;
+	border-radius:4px;
+	display:inline-block;
+	font-size:1.1em;
+	font-weight:bold;
+	font-family:monospace;
+	text-align:center;
+	min-width:2.3em;
+	white-space:nowrap;
+}
+
+sup {
+	line-height:0;
+}
+
+span.but {
+	background-color:#CCCCCC;
+	color:black;
+}
+
+span.but_f {
+	background-color:#F5E345;
+	color:black;
+}
+
+span.but_k {
+	background-color:LightSkyBlue;
+	color:white;
+}
+
+span.but_cx {
+	background-color:#F00505;
+	color:white;
+}
+
+span.but_b {
+	background-color:black;
+	color:white;
+}
+
+span.reg {
+	background-color:black;
+	color:white;
+}
+
+span.op_f {
+	background-color:black;
+	color:yellow;
+}
+
+span.op_k {
+	background-color:black;
+	color:#00BFFF;
+}
+
+.code {
+	background-color:#103810;
+	color:#77FF77;
+	font-size:1.1em;
+	font-family:monospace;
+	font-weight:bold;
+	padding:1px 2px 1px 2px;
+	white-space:pre;
+}
+
+table {
+	border-collapse:collapse;
+}
+
+table, th, td {
+	border:1px solid black;
+}
+
+.zero {
+	background-color: lightgray;
+}
+
+.selected {
+	background-color: lightblue;
+}
+
+.center {
+	text-align:center;
+}
+
+details summary {
+	cursor: pointer;
+}
+details summary > * {
+	display: inline;
+}
+
+a[target="_blank"] {
+	background: url(https://upload.wikimedia.org/wikipedia/commons/6/64/Icon_External_Link.png) center right no-repeat;
+    padding-right: 0.8em;
+}
+
+</style>
+
+</head>
+
+<body>
+	<header>
+		<h1>Некромант</h1>
+	</header>
+
+	<h2>Пролог</h2>
+	<p>
+		Вы некромант, работаете по профессии.
+		Договорились с местными, что разберётесь с неспокойным кладбищем за вознаграждение.
+		Подготовив всё для мощного заклинания успокоения, вы ночью пришли на погост, а потом,
+		выполнив всё приготовления и запустив заклинание, начали ждать.
+		К сожалению, заклинание медленное и завязано на вас и на место. Поэтому уйти вы не
+		можете, пока оно не сработает. Это около 25 минут.
+	</p>
+	<p>
+		Но зомби тоже почувствовали, что скоро их нежизнь закончится,
+		поэтому начали вылазить с намерением вас уничтожить. Вылазят не спеша, где-то
+		раз в минуту, и двигаются медленно, но с разных сторон.
+	</p>
+	<p>
+		Из-за основного заклинания на <q>зрении</q> вы решили не концентрироваться, поэтому видите только
+		на 3 метра.
+		Запаса сил на разрывные заклинания достаточно, но каждое нужно также готовить не спеша.
+		При этом есть возможность применить заклинание целиком в одну сторону, или более рассеяно
+		и с меньшим эффектом во все стороны.
+		На тот случай, если кто-то всё-таки доберётся до вас, есть амулеты, которые
+		сработают автоматически на уничтожение. Но их только два.
+		Так что третий контакт будет фатальным.
+	</p>
+
+	<h2>Задача</h2>
+	<p>
+		Продержаться 25 минут, уничтожая мертвяков, пока не сработает основное заклинание.
+	</p>
+
+	<h2>Общее описание</h2>
+	<p>
+		Визуально место битвы представлено на экране в виде
+		<span class="code"> 3.CГ 8 E    </span>, где 8 -
+		отображает вас в центре. Слева и справа идут зомби, где буква
+		означает уровень нежизни монстра.
+		Первая цифра на экране (целая часть) означает, сколько <q>жизней</q> у вас в запасе.
+		За один ход (минуту) появляется только один зомби. Либо справа,
+		либо слева, либо вообще нет.
+	</p>
+	<p>
+		В регистре Y отображается количество минут, сколько вам осталось продержаться.
+	</p>
+	<p>
+		Применять можно заклинание удара либо в обе стороны, рассеянное, набрав ноль,
+		либо в одну, которая определяется знаком числа (минус – влево).
+		Зомби идут друг за другом, так что заклинание подействуют только
+		на ближайших на любом расстоянии, остальные продолжат движение.
+		Некоторые зомби достаточно сильные, и их не получится уничтожить,
+		даже трижды применив рассеянное заклинание.
+		И с другой стороны, самые слабые обладают иммунитетом к мощным
+		ударам, используя избыток для собственного восстановления.
+		Вот таблица, поясняющая эффект ударов:
+	</p>
+	<table>
+		<tr>
+			<th>Сила монстра</th>
+			<th>После рассеянного удара</th>
+			<th>После концентрированного удара</th>
+		</tr>
+		<tr>
+			<th><span class="code"> L </span></th>
+			<td>Становится <span class="code"> C </span></td>
+			<td>Становится <span class="code"> Г </span></td>
+		</tr>
+		<tr>
+			<th><span class="code"> С </span></th>
+			<td>Становится <span class="code"> Г </span></td>
+			<td>Становится <span class="code"> E </span></td>
+		</tr>
+		<tr>
+			<th><span class="code"> Г </span></th>
+			<td>Становится <span class="code"> E </span></td>
+			<td>Уничтожается</td>
+		</tr>
+		<tr>
+			<th><span class="code"> E </span></th>
+			<td>Уничтожается</td>
+			<td>Иммунитет! Остаётся <span class="code"> E </span></td>
+		</tr>
+	</table>
+
+	<h2>Игровой процесс</h2>
+
+	<h3>Начало</h3>
+
+	<p>
+		Если не используете эмулятор, где сохранённое состояние уже включает
+		регистры, но необходимо задать константы, которые не меняются между играми:
+	</p>
+	<table>
+		<tr>
+			<th>Регистр</th>
+			<th>Значение</th>
+		</tr>
+		<tr>
+			<th>R4</th>
+			<td>
+				<span class="code"> -.          </span>. Получается
+				так: <span class="but">5</span>
+				<span class="but">5</span>
+				<span class="but_k">K</span><span class="op_k">ИНВ</span>
+				<span class="but_k">K</span><span class="op_k">{x}</span>
+				<span class="but">ВП</span>
+				<span class="but">1</span>
+				<span class="but_k">K</span><span class="op_k">[x]</span>.
+			</td>
+		</tr>
+		<tr>
+			<th>R5</th>
+			<td>Случайное число от 0 до 1. В процессе игры меняется.</td>
+		</tr>
+		<tr>
+			<th>R6</th>
+			<td>25 – начальное количество минут.</td>
+		</tr>
+		<tr>
+			<th>R7</th>
+			<td>74</td>
+		</tr>
+		<tr>
+			<th>R8</th>
+			<td>83</td>
+		</tr>
+		<tr>
+			<th>R9</th>
+			<td>92</td>
+		</tr>
+		<tr>
+			<th>Rb</th>
+			<td>53</td>
+		</tr>
+		<tr>
+			<th>Rc</th>
+			<td>96</td>
+		</tr>
+		<tr>
+			<th>Re</th>
+			<td>1000</td>
+		</tr>
+	</table>
+
+	<h3>Игра</h3>
+
+	<p>
+		После начального <span class="but_b">В/О</span> <span class="but_b">С/П</span>
+		<a href="https://ru.wikipedia.org/wiki/Программируемый_калькулятор" target="_blank">ПМК</a>
+		отобразит поле битвы. Силы зомби, и с какой стороны появляются (если появляются),
+		определяется генератором случайных чисел.
+	</p>
+	<p>
+		Оценив положение и выбрав направление удара нажмите <span class="but_b">С/П</span>.
+		Направление и сила удара определяется знаком числа в регистре X, а само значение не важно:
+	</p>
+	<table>
+		<tr>
+			<th>Число</th>
+			<th>Тип удара</th>
+		</tr>
+		<tr>
+			<th>&lt; 0</th>
+			<td>Концентрированный влево</td>
+		</tr>
+		<tr>
+			<th>= 0</th>
+			<td>Рассеянный в обе стороны</td>
+		</tr>
+		<tr>
+			<th>&gt; 0</th>
+			<td>Концентрированный вправо</td>
+		</tr>
+	</table>
+
+	<p>
+		После остановки ПМК отобразит поле после вашего удара. Если появится
+		<span class="code">--.          </span>, это означает, что как минимум один
+		зомби добрался до вас. После нажатия <span class="but_b">С/П</span> сработает амулет
+		и уничтожит всех, кто вошёл с вами в контакт. Если у вас уже не осталось
+		амулетов к этому моменту, то снова появится тот же знак – вы проиграли.
+	</p>
+
+
+	<h3>Окончание</h3>
+
+	<p>
+		Если вы продержались нужное время, то основное заклинание сработало,
+		погост успокоен и экране отобразится
+		<span class="code"> 1000.       </span> – ваш гонорар за работу.
+		Если неудача, то всё время будет появляться
+		признак <span class="code">--.          </span> –
+		зомби навалились и расправляются с некромантом.
+	</p>
+	<p>
+		Для начала новой игры нажмите
+		<span class="but_b">В/0</span> <span class="but_b">С/П</span>.
+	</p>
+
+	<h2>Дополнительная информация</h2>
+
+	<h3>Модификация</h3>
+
+	<p>
+		Количество <q>жизней</q> зашито в программе.
+		Достаточно в программе по адресу 01 вместо 3 указать другую
+		цифру (но не ноль!). Большее значение – облегчение игры.
+	</p>
+	<p>
+		Количество минут на игру определяется регистром R6. Обязательно больше нуля!
+	</p>
+
+	<h3>История</h3>
+	<p>
+		Игра написана по мотивам ранее опубликованной игры
+		<a href="https://lordbss.narod.ru/pmk46.html" target="_blank">
+			Оборотни</a>.
+		К сожалению в ней не всё хорошо.
+	</p>
+	<p>Неудобства:</p>
+	<ul>
+		<li>
+			Перед каждой игрой нужно по новой вводить количество жизней и минут.
+		</li>
+		<li>
+			Направления удара определяется переключателем Р-ГРД-Г.
+			<q>Дёргать</q> его менее удобно, чем вводить (если вообще вводить) цифру.
+		</li>
+		<li>
+			Оставшееся количество жизней можно посмотреть только в регистре.
+		</li>
+	</ul>
+	<p>Ошибки:</p>
+	<ul>
+		<li>
+			Стрельба влево, если там никого нет,
+			автоматически уничтожала всех(!) монстров справа.
+		</li>
+		<li>
+			Монстры	справа вообще не опасны. При контакте они
+			исчезают без последствий.
+		</li>
+	</ul>
+
+	<hr>
+
+	<details>
+		<summary>
+			<h2>Далее только для тех, кто не только играет&hellip;</h2>
+		</summary>
+
+		<h3>Распределение регистров</h3>
+		<table>
+			<tr>
+				<th>R0</th>
+				<td>
+					Монстры <q>слева</q> в виде дробного числа.
+				</td>
+			</tr>
+			<tr>
+				<th>R1</th>
+				<td> Количество оставшихся минут.</td>
+			</tr>
+			<tr>
+				<th>R2</th>
+				<td>Количество оставшихся жизней.</td>
+			</tr>
+			<tr>
+				<th>R3</th>
+				<td>
+					Рабочий регистр. В процессе генерации экрана используется как
+					счётчик цикла, а затем как уровень удара (1 или 2).
+				</td>
+			</tr>
+			<tr>
+				<th>R4</th>
+				<td><span class="code"> -.          </span>.
+					Оно же является множителем 10.
+				</td>
+			</tr>
+			<tr>
+				<th>R5</th>
+				<td>Очередное случайное число генератора.</td>
+			</tr>
+			<tr>
+				<th>R6</th>
+				<td>25. Для инициализации R1.</td>
+			</tr>
+			<tr>
+				<th>R7</th>
+				<td>74. Адрес подпрограммы движения зомби к центру.</td>
+			</tr>
+			<tr>
+				<th>R8</th>
+				<td>83. Адрес подпрограммы проведения удара.</td>
+			</tr>
+			<tr>
+				<th>R9</th>
+				<td>92. Адрес подпрограммы <q>хитрого</q> сложения.</td>
+			</tr>
+			<tr>
+				<th>Ra</th>
+				<td>
+					Монстры <q>справа</q> в виде дробного числа.
+				</td>
+			</tr>
+			<tr>
+				<th>Rb</th>
+				<td>53. Адрес перехода на концентрированный удар.</td>
+			</tr>
+			<tr>
+				<th>Rc</th>
+				<td>96. Адрес подпрограммы генерации случайного числа на основе множителя в RX.</td>
+			</tr>
+			<tr>
+				<th>Rd</th>
+				<td>Номер регистра для обработки группы монстров. 0 или 10.</td>
+			</tr>
+			<tr>
+				<th>Re</th>
+				<td>
+					1000. Множитель для добавления нового зомби в конец.
+					Признак успешного окончания.
+					Адрес косвенного перехода в начало (00).
+				</td>
+			</tr>
+		</table>
+
+		<h3>Текст программы</h3>
+
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_b">В/О</span></td>
+				<td><span class="but">3</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
+				<td><span class="but">0</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">a</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+				<td><span class="but">2</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">c</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;10&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+				<td><span class="but">5</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">c</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">e</span></td>
+				<td><span class="but">&divide;</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;20&#8202;|&#8202;</th>
+				<td><span class="but">4</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+				<td><span class="but">2</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but">+</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;30&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L3</span></td>
+				<td><span class="but">22</span></td>
+				<td><span class="but">7</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="op_k">ИНВ</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;40&#8202;|&#8202;</th>
+				<td><span class="but_f">F</span><span class="op_f">&pi;</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td><span class="but_k">К</span><span class="op_k">ЗН</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x=0</span><span class="reg">b</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;50&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">8</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">8</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">7</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">7</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;60&#8202;|&#8202;</th>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+				<td><span class="but">70</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L1</span></td>
+				<td><span class="but">08</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">e</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L2</span></td>
+				<td><span class="but">64</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;70&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but">/-/</span></td>
+				<td><span class="but_b">БП</span></td>
+				<td><span class="but">67</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but">В&uarr;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;80&#8202;|&#8202;</th>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+				<td><span class="but_f">F</span><span class="op_f">&orarr;</span></td>
+				<td><span class="but_b">В/О</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="reg">e</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;90&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">&orarr;</span></td>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but_b">В/О</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but">7</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">&pi;</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;A0&#8202;|&#8202;</th>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">5</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td colspan="5"></td>
+			</tr>
+		</table>
+
+		<h3>Объяснение работы программы</h3>
+
+		<p>
+			Сначала поясню несколько неочевидных моментов. Первое – зачем команда
+			<span class="but_b">В/О</span> перенесена в начало. Это чтобы
+			можно было косвенно через 0 в регистре Re быстро перейти в конец подпрограммы.
+		</p>
+		<p>
+			Второе. Шестнадцатеричная цифра <q>A</q> в регистре R4 успешно заменяет
+			десятку (если как множитель находится слева), но смотрится лучше как признак контакта.
+		</p>
+		<p>
+			Последнее, это <strong><q>хитрое сложение</q></strong>. Чтобы его понять, рекомендую почитать
+			<a href="https://sergeanvarov.github.io/russian/mk61/uf/x2.html" target="_blank">
+			  раздел</a> про регистр X2 из статьи по недокументированным возможностям.
+			Так вот, эта подпрограмма, состоящая всего из трёх
+			команд <strong>по адресу 92 (R9)</strong>, в регистре X2 заменяет первую значащую цифру,
+			без изменения порядка числа, на первую цифру числа из регистра Y,
+			знак, порядок и остальные цифры которого не имеют значение.
+			Результат записывается в регистр X, а содержимое Y, как при обычном
+			сложении, исчезает, с подтягиванием стека.
+			Как так получается, можно узнать
+			<a href="https://sergeanvarov.github.io/russian/mk61/uf/x2.html#id_exp_combine" target="_blank">
+				здесь</a>.
+			Остальные <q>фишки</q> по мере изложения.
+		</p>
+		<p>
+			По поводу зомби. Разделены на группы слева (R0) и справа (Ra).
+			Каждая группа состоит из трёх цифр от 0 до 4. Хранится как дробное число вида 0.123.
+			Цифра 1 ближе к центру (к игроку). После хода сдвигается влево,
+			а правый (3-й) разряд пополняется новым монстром. Каждая цифра
+			определяет силу монстра, где ноль – это	его отсутствие.
+			Если при сдвиге (умножении на 10) получается не нулевая целая часть,
+			значит есть контакт игрока с монстром.
+			При подготовке поля битвы цифры на экране инвертируются (в шестнадцатеричном представлении)
+			для наглядности, а разряды из R0 ещё и разворачиваются в обратном порядке.
+			В дальнейшем будем использовать термин число-группа.
+		</p>
+		<p>
+			Разберём вспомогательные процедуры. Про <q>хитрое</q> сложение уже сказали.
+			Перейдём к <strong>генератору случайных чисел</strong> (псевдослучайных, конечно).
+			Подпрограмма с <strong>адреса 96 (Rc)</strong> сначала генерит очередное случайное число
+			по формуле N<sub>i+1</sub> = {7 * N<sub>i</sub> + &pi;}, а затем умножает
+			его на множитель, которых до вызова был в RX. В программе используется
+			только два варианта. Множитель 2 – результат 0, 1 для выбора группы зомби.
+			Множитель 5 – результат	0&hellip;4 для уровня очередного монстра.
+		</p>
+		<p>
+			<strong>Подпрограмма сдвига монстров к центру по адресу 74 (R7)</strong>. Индекс группы
+			находится в Rd. Поэтому число просто умножается на 10, копируется
+			временно в RY, дробная часть сохраняется обратно, а результат умножения,
+			для анализа контакта, возвращается в RX. Тут не очевидна команда
+			<span class="but_b">x&rarr;П</span><span class="reg">d</span> по адресу
+			80. Так вот, сама подпрограмма точно вызывается дважды. Первый раз с
+			RD = 10 (точнее = R4), и вот, чтобы записать ноль в RD для повторного вызова
+			это и делается. Конечно, дробная часть может быть и не нулевая, но
+			из той же статьи из
+			<a href="https://sergeanvarov.github.io/russian/mk61/uf/indirect_addr.html#id_lt1" target="_blank">
+				раздела по косвенной адресации</a> видно,
+			что числа в степени &minus;01 (или &minus;02, &minus;03)
+			не меняются при косвенном использовании. А последние цифры мантиссы всегда
+			остаются нулевыми: число-группа использует только три первых разряда.
+		</p>
+
+		<p>
+			<strong>Подпрограмма проведения удара с адреса 83 (R8)</strong>.
+			Как обычно, индекс группы в Rd.
+			Сначала отсекается вариант, что группа целиком пустая
+			(вот где нужен Re с возвратом через адрес 00). Потом используется <q>хитрое</q>
+			сложение. Для этого просто единица заменяется на первую значащую
+			цифру в группе (ближайший монстр). Потом от результата отнимается сила удара (1 или 2). А затем
+			снова используем <q>хитрое</q> сложение, но уже чтобы результирующую цифру подставить на
+			место первой значащей цифры в числе-группе. Может и ноль, кстати.
+			Вот здесь и видно, как у монстра <span class="code"> E </span> работает
+			иммунитет. Ему соответствует цифра 1, и
+			при вычитании 1 &minus; 2 = &minus;1. А
+			<q>хитрое</q> сложение знаки игнорирует, вот и получается, как по легенде,
+			лишняя энергия используется для восстановления.
+		</p>
+		<p>
+			Возможно обратили внимание, что у предыдущей подпрограммы нет команды
+			<span class="but_b">В/О</span>, и код продолжает выполнять что-то другое
+			с адреса 92. Это просто экономия одной команды. От процедуры проведения
+			удара результат не ожидается, поэтому если что-то ещё сделает в стеке,
+			то ничего страшного. А потом всё равно встретится <span class="but_b">В/О</span>.
+		</p>
+		<p>
+			Ну вот, все процедуры рассмотрели, можно переходить к основному коду.
+		</p>
+
+		<p>
+			<strong>Адреса 01..07</strong>.
+			Инициализация переменных игры начальными значениями.
+		</p>
+		<p>
+			<strong>Адреса 08..12</strong>.
+			Запись индекса группы в Rd, в которую будет добавлен новый монстр.
+			Как уже упоминалось про процедуру генерации случайного числа, на выходе
+			будет 0 или 1. Умноженное на 10 и даст 0 или 10.
+		</p>
+		<p>
+			<strong>Адреса 03..19</strong>.
+			Генерация нового монстра и добавление его в конец группы. К этому моменту
+			в числе-группе точно нет последнего разряда, так что <q>плюс</q> безопасен.
+		</p>
+		<p>
+			<strong>Адреса 20..34</strong>.
+			Этот фрагмент разворачивает разряды из регистра R0, добавляя ещё ноль справа,
+			и одну цифру слева (какую не важно, т. к. инверсия всё равно
+			эту цифру в 8 превратит, но в частности это всегда 4).
+			Т. е. число 0.321 будет преобразовано в 4<strong>123</strong>0.
+			Как именно, оставляю как упражнение читателю. Тут нет ничего
+			сложного или недокументированного.
+		</p>
+		<p>
+			<strong>Адреса 35..39</strong>.
+			Добавление признака игрока (7 это инверсное 8) и второй группы. Не важно,
+			что дробное число. Для инверсии важны только цифры. Вот, уже получилось
+			почти то, что нужно. Только в RY нет счётчика дней и первый разряд 8,
+			а не число жизней. Всё это добавляется далее.
+		</p>
+		<p>
+			<strong>Адреса 40..46</strong>.
+			Вывод поля битвы. Тут делается ещё одно действие. Внесение цифры 2 в регистр R3,
+			как значение силы удара <q>по умолчанию</q>. Делается это нестандартно.
+			Команда <span class="but_f">F</span><span class="op_f">&pi;</span>,
+			как побочный эффект, сбросит X в X1. Т. е. наша картинка пока
+			<q>отдохнёт</q> там. В это время в стек догружаются другие нужные константы.
+			И опять же вместо <span class="but_b">П&rarr;x</span><span class="but">2</span>
+			используется
+			<span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">3</span>,
+			чтобы в R3 тройку (да &pi; при косвенном использования ведёт себя как тройка) заменить на два.
+			И потом, используя <q>хитрое сложение</q> и тот факт, что при
+			<span class="but_f">F</span><span class="op_f">Вx</span> картинка
+			из X1 попадёт в X2, получим нужный результат.
+		</p>
+		<p>
+			<strong>Адреса 47..55</strong>.
+			Проведение удара. Поясню, что для удара в обе стороны, нужно дважды
+			вызвать процедуру в R8, но при значении R3 = 1. Если посмотреть код прямо,
+			пока исключив вариант не ноль, то это именно и делается.
+			Ноль заносится в Rd. R3 уменьшается, делается вызов.
+			Затем в Rd заносится 10 (длинновато, конечно) и повторяется вызов.
+			А теперь посмотрим на случай, если игрок указал не ноль. Тогда знак числа
+			сразу (через Rb) попадёт на
+			<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>
+			(так вот он зачем тут!), превращаясь в 0.1 (что фактически ноль) и 10.
+			А R3 останется двойкой. И процедура будет вызвана только один раз.
+			Как раз и есть концентрированный удар в одном направлении.
+		</p>
+		<p>
+			<strong>Адреса 56..59</strong>.
+			Движение монстров. Саму процедуру мы уже рассмотрели, как и пояснение,
+			почему второй раз индекс группы в Rd уже будет нулевым.
+		</p>
+		<p>
+			<strong>Адреса 60..67</strong>.
+			Проверка на контакт, и если сумма целых чисел групп нулевая (нет контакта), то
+			переход на начало с уменьшением счётчика минут. При исчерпании – вывод
+			признака успешного окончания.
+		</p>
+		<p>
+			<strong>Адреса 68..73</strong>.
+			Обработка контакта. Тут проще начать с адреса 70, куда идёт переход при контакте.
+			C него в Rx готовиться признак контакта, а затем идёт обратный переход на
+			финальный <span class="but_b">С/П</span>. И только после него проверятся
+			счётчик жизней. Вот такая хитрая карусель для сокращения одного
+			<span class="but_b">С/П</span>.
+		</p>
+
+		<p>
+			Вот и всё. Дальше в программе идут процедуры, которые мы уже рассмотрели.
+		</p>
+
+	</details>
+</body>
+
+</html>
