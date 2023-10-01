@@ -1690,13 +1690,14 @@
 	const ANGLE_IN_GRAD = 12;
 	const ANGLE_IN_DEGREE = 11;
 	let angleMeasure = ANGLE_IN_RADIAN;
+	let STEP_COUNT = 280;
 
 	const stepExec = (forceUpdateRegs = true) => {
 		IK1303.keybY = 1;
 		IK1303.keybX = angleMeasure;
 		const newDisplayValues = new Array(12).fill(0xF);
 		const newDisplayPointsPresent = new Array(12).fill(false);
-		for (let k = 1; k <= 560; k++) {
+		for (let k = 1; k <= STEP_COUNT; k++) {
 			for (let i = 0; i < 42; i++) {
 				tick();
 			}
@@ -1891,7 +1892,9 @@
 	};
 
 	const calcChangeSpeed = () => {
-		execDelay = (document.getElementById('change_speed').checked) ? SHORT_DELAY : NORMAL_DELAY;
+		const fast = (document.getElementById('change_speed').checked);
+		execDelay = fast ? SHORT_DELAY : NORMAL_DELAY;
+		STEP_COUNT = fast ? 16 * 280 : 280;
 	}
 
 	const turnOn = () => {
