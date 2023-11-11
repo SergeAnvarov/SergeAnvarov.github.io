@@ -111,7 +111,7 @@ a[target="_blank"] {
 	<h2>История</h2>
 
 	<p>
-		По логике работы это копия программы Лунолёт-1 из статьи <q>Истинная правда</q> журнала
+		По логике работы и алгоритмам это копия программы Лунолёт-1 из статьи <q>Истинная правда</q> журнала
 		<a href="http://zhurnalko.net/=nauka-i-tehnika/tehnika-molodezhi/1985-06--num55" target="_blank">
 			Техника Молодёжи №6 за 1985.
 		</a>
@@ -121,15 +121,30 @@ a[target="_blank"] {
 		</a>
 	</p>
 	<p>
-		По управлению и вычислению всё то же самое. Единственное исключение по учёту времени. Т.к. в исходной
-		программе расход никак не контролировался, то оставлен только вариант суммирования времени
-		(в исходной версии Rc=0 и R0=&minus;1). Соотвественно, нужно перед началом занулить RC,
-		а R0 используется программой для своих целей.
+		Отличия от исходной версии.
 	</p>
+	<ul>
+		<li>
+			Учёт времени сделан по другому. Т. к. в исходной
+			программе перелимит никак не контролировался, то оставлен только вариант суммирования времени
+			(в исходной версии Rc=0 и R0=&minus;1). Соответственно, нужно перед началом занулить Rc,
+			а R0 используется программой для своих целей.
+			Если хочется сделать обратный отсчёт, то по адресу 53 в программе нужно
+			<span class="but">+</span> заменить на <span class="but">-</span>.
+		</li>
+		<li>
+			Предельное ускорение, выдерживаемое экипажем, хранится в R1, а не в R7.
+		</li>
+		<li>
+			Аварийный сигнал сделан другим.
+		</li>
+	</ul>
 	<p>
-		Главное отличие только в размере программы. Она на 17(!) команд короче.
-		И по-прежнему подходит для
-		<a href="https://ru.wikipedia.org/wiki/Электроника_Б3-34" target="_blank">ПМК</a> Б3-34.
+		Главное отличие только в размере программы. Она на 20(!) команд короче.
+		Фактически это демонстрация, как можно оптимизировать программу.
+		И код по-прежнему подходит для
+		<a href="https://ru.wikipedia.org/wiki/Электроника_Б3-34" target="_blank">ПМК</a> Б3-34
+		(обратите внимание на вычисление модуля по программным адресам 15–16).
 	</p>
 
 	<h2>Игровой процесс</h2>
@@ -147,19 +162,26 @@ a[target="_blank"] {
 		</tr>
 		<tr>
 			<th>R0</th>
-			<td>Рабочий. Обычно расход топлива в одну секуду в кг.</td>
+			<td>Рабочий. Время на манёвр в сек.</td>
 		</tr>
 		<tr>
 			<th>R1</th>
-			<td>Рабочий. Расход топлива за манёвр в кг.</td>
+			<td>
+				Константа. Предельное ускорение, выдерживаемое экипажем
+				без потери сознания от перегрузок в м/с&sup2;.
+				Для задачи как в оригинале =  29.43 (3g).
+			</td>
 		</tr>
 		<tr>
 			<th>R2</th>
-			<td>Рабочий. Обычно время на менёвр в сек.</td>
+			<td>Рабочий. Расход топлива в кг. в одну секунду.</td>
 		</tr>
 		<tr>
 			<th>R3</th>
-			<td>Рабочий. Достигнутое двигателем ускорение в м/с&sup2;.</td>
+			<td>
+				Рабочий. Достигнутое двигателем ускорение в м/с&sup2;.
+				При реверсе отрицательное.
+			</td>
 		</tr>
 		<tr>
 			<th>R4</th>
@@ -184,26 +206,37 @@ a[target="_blank"] {
 		</tr>
 		<tr>
 			<th>R7</th>
-			<td>
-				Константа. Предельная ускорение, выдерживаемое экипажем
-				без потери сознания от перегрузок в м/с&sup2;.
-				Для задачи как в оригинале =  29.43 (3g).
-			</td>
+			<td>Константа 21. Используется как адрес подпрограммы.</td>
 		</tr>
 		<tr>
 			<th>R8</th>
-			<td>Константа 56. Используется как адрес подпрограммы.</td>
+			<td>Константа 65. Используется как адрес подпрограммы.</td>
 		</tr>
 		<tr>
 			<th>R9</th>
 			<td>
 				Индикатор аварийной ситуации.
-				Шестнадцатеричная <span class="code"> Г.          </span>.
-				Получается как
+				Тут хранится
+				<a href="https://ru.wikipedia.org/wiki/Еггогология#«3ГГОГи»" target="_blank">
+					ЗГ0ГГ.
+				</a>
+				Формально <span class="code"> 0.       257</span>, но такое, конечно,
+				на экране ПМК не отображается.
+				<br>
+				Получается так:
 				<span class="but_cx">CX</span>,
+				<span class="but">В&uarr;</span>,
 				<span class="but_f">F</span><span class="op_f">1/x</span>,
 				<span class="but">ВП</span>,
-				<span class="but">ВП</span>.
+				<span class="but_f">F</span><span class="op_f">cos<sup>-1</sup></span>,
+				<span class="but_cx">CX</span>,
+				<span class="but">&lt;-&gt;</span>,
+				<span class="but_b">x&rarr;П</span><span class="but">9</span>,
+				<span class="but_cx">CX</span>,
+				<span class="but_k">K</span><span class="but_b">БП</span><span class="but">9</span>.
+				<br>
+				Можно извлечь его из R9 и убедиться, что он именно такой, по методике, описанной
+				в статье по ЗГ0ГГам.
 			</td>
 		</tr>
 		<tr>
@@ -216,7 +249,7 @@ a[target="_blank"] {
 		<tr>
 			<th>Rb</th>
 			<td>
-				Достинутая скорость движения в м/с&sup2;.
+				Достигнутая скорость движения в м/с&sup2;.
 				Положительная – вверх, отрицательная – вниз.
 				Изначально нулевая.
 			</td>
@@ -244,7 +277,7 @@ a[target="_blank"] {
 		<span class="but_b">В/О</span>, <span class="but_b">С/П</span>.
 		На индикаторе в регистре X отображается текущая высота. В регистре
 		Y скорость движения. Остальные параметры, главным образом запас топлива,
-		можно помотреть в регистрах.
+		можно посмотреть в регистрах.
 	</p>
 	<p>
 		Для выполнения манёвра указываем объём топлива в кг., затем <span class="but_b">ПП</span>.
@@ -253,22 +286,20 @@ a[target="_blank"] {
 		нажимаем <span class="but_b">ПП</span>, <span class="but">/-/</span> и <span class="but_b">С/П</span>.
 	</p>
 	<p>
-		Если на индикаторе отображается <span class="code"> Г.          </span>,
-		значит потеряли сознания или кончилось топливо.
-		После этого нужно нажать <span class="but_b">С/П</span>, не меняя состояние
-		стека. Если всё-таки хочется понять, что именно, то в регистре Y
-		в случае пустого бака будет стоять число 3660 (константа из R6).
+		Если на индикаторе отображается <span class="code"> 3Г.0ГГ      </span>,
+		значит потеряли сознания от перегрузки. Если
+		<span class="code"> 3Г0Г.Г      </span> – кончилось топливо.
+		После этого нужно(!) нажать <span class="but">&lt;-&gt;</span>.
+		В случае пустого бака будет стоять число 3660 (константа из R6).
 		В случае перегрузки будет превышение ускорения над предельным в м/с&sup2;.
-		Перед нажатием <span class="but_b">С/П</span> обязательно верните это
-		число в регистр Y.
+		Оно же время "отключки" в сек., в течение которого корабль будет неуправляемым.
+		Затем нужно нажать <span class="but_b">С/П</span>, не меняя состояние
+		стека.
+		Если вы случайно сразу нажали <span class="but_b">С/П</span>, то ПМК вернётся в ту же
+		точку, намекая, что ввод был некорректный.
 	</p>
 	<p>
-		После окончания расчёта манёвра будет отображено в RX и RY высота и скорость.
-	</p>
-	<p>
-		Если произошла перегрузка, то корабль будет неуправляемым в течение
-		определённого времени, которое зависит от величины этой перегрузки.
-		Время отключки будет после вычислений в R2.
+		После окончания расчёта манёвра в RX и RY будут отображены высота и скорость.
 	</p>
 	<p>
 		В случае окончания топлива корабль останется неуправляемым
@@ -282,7 +313,7 @@ a[target="_blank"] {
 		Например, совершив один взлёт и одну посадку.
 	</p>
 	<p>
-		Перед началом очередной игры нужно будет обнулить регистры Ra, Rb, Rc
+		Перед началом очередной игры нужно будет обнулить регистры Ra, Rb, Rc.
 		Задать начальное количество топлива в Rd, и нажать
 		<span class="but_b">В/О</span>, <span class="but_b">С/П</span>.
 	</p>
@@ -297,7 +328,7 @@ a[target="_blank"] {
 	<h3>Пример полёта</h3>
 
 	<p>
-		Вот результаты менёвров из исходной статьи, но без художественного описания.
+		Вот результаты манёвров из исходной статьи, но без художественного описания.
 	</p>
 	<table>
 		<tr>
@@ -313,15 +344,16 @@ a[target="_blank"] {
 				<span class="but">3</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> Г.          </span></td>
+			<td><span class="code"> 3Г.0ГГ      </span></td>
 			<td><span class="code"> 4.94527  -01</span></td>
 		</tr>
 		<tr>
 			<td>
+				<span class="but">&lt;-&gt;</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> 169.16434   </span></td>
-			<td><span class="code"> 84.112447   </span></td>
+			<td><span class="code"> 169.16435   </span></td>
+			<td><span class="code"> 84.11245    </span></td>
 		</tr>
 		<tr>
 			<td>
@@ -330,8 +362,8 @@ a[target="_blank"] {
 				<span class="but">2</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> 334.14923   </span></td>
-			<td><span class="code"> 80.872447   </span></td>
+			<td><span class="code"> 334.14925   </span></td>
+			<td><span class="code"> 80.87245    </span></td>
 		</tr>
 		<tr>
 			<td>
@@ -341,15 +373,16 @@ a[target="_blank"] {
 				<span class="but">3</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> Г.          </span></td>
+			<td><span class="code"> 3Г.0ГГ      </span></td>
 			<td><span class="code"> 1.246981    </span></td>
 		</tr>
 		<tr>
 			<td>
+				<span class="but">&lt;-&gt;</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> 915.81037   </span></td>
-			<td><span class="code"> 166.02328   </span></td>
+			<td><span class="code"> 915.81041   </span></td>
+			<td><span class="code"> 166.02329   </span></td>
 		</tr>
 		<tr>
 			<td>
@@ -360,8 +393,8 @@ a[target="_blank"] {
 				<span class="but">0</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> 9174.604    </span></td>
-			<td><span class="code">-28.37672    </span></td>
+			<td><span class="code"> 9174.6052   </span></td>
+			<td><span class="code">-28.37671    </span></td>
 		</tr>
 		<tr>
 			<td>
@@ -371,8 +404,8 @@ a[target="_blank"] {
 				<span class="but">2</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> 9150.9201   </span></td>
-			<td><span class="code"> 4.692804    </span></td>
+			<td><span class="code"> 9150.9213   </span></td>
+			<td><span class="code"> 4.692814    </span></td>
 		</tr>
 		<tr>
 			<td>
@@ -385,8 +418,8 @@ a[target="_blank"] {
 				<span class="but">/-/</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> 9043.5015   </span></td>
-			<td><span class="code">-26.176535   </span></td>
+			<td><span class="code"> 9043.5028   </span></td>
+			<td><span class="code">-26.176525   </span></td>
 		</tr>
 		<tr>
 			<td>
@@ -396,8 +429,8 @@ a[target="_blank"] {
 				<span class="but">5</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> 8984.4211   </span></td>
-			<td><span class="code"> 2.54439     </span></td>
+			<td><span class="code"> 8984.4225   </span></td>
+			<td><span class="code"> 2.5444      </span></td>
 		</tr>
 		<tr>
 			<td>
@@ -407,8 +440,8 @@ a[target="_blank"] {
 				<span class="but">0</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> 2652.4162   </span></td>
-			<td><span class="code">-143.25561   </span></td>
+			<td><span class="code"> 2652.4185   </span></td>
+			<td><span class="code">-143.2556    </span></td>
 		</tr>
 		<tr>
 			<td>
@@ -419,15 +452,16 @@ a[target="_blank"] {
 				<span class="but">3</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> Г.          </span></td>
-			<td><span class="code"> 20.163494   </span></td>
+			<td><span class="code"> 3Г.0ГГ      </span></td>
+			<td><span class="code"> 20.163493   </span></td>
 		</tr>
 		<tr>
 			<td>
+				<span class="but">&lt;-&gt;</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> 2122.6174   </span></td>
-			<td><span class="code">-31.99999    </span></td>
+			<td><span class="code"> 2122.6199   </span></td>
+			<td><span class="code">-31.999978   </span></td>
 		</tr>
 		<tr>
 			<td>
@@ -438,8 +472,8 @@ a[target="_blank"] {
 				<span class="but">0</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> 1313.7023   </span></td>
-			<td><span class="code">-48.891516   </span></td>
+			<td><span class="code"> 1313.7051   </span></td>
+			<td><span class="code">-48.891504   </span></td>
 		</tr>
 		<tr>
 			<td>
@@ -450,8 +484,8 @@ a[target="_blank"] {
 				<span class="but">5</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> 514.8881    </span></td>
-			<td><span class="code">-57.617047   </span></td>
+			<td><span class="code"> 514.8911    </span></td>
+			<td><span class="code">-57.617035   </span></td>
 		</tr>
 		<tr>
 			<td>
@@ -463,15 +497,16 @@ a[target="_blank"] {
 				<span class="but">5</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> Г.          </span></td>
-			<td><span class="code"> 7.065726    </span></td>
+			<td><span class="code"> 3Г.0ГГ      </span></td>
+			<td><span class="code"> 7.065725    </span></td>
 		</tr>
 		<tr>
 			<td>
+				<span class="but">&lt;-&gt;</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> 389.78611   </span></td>
-			<td><span class="code">-16.749934   </span></td>
+			<td><span class="code"> 389.78923   </span></td>
+			<td><span class="code">-16.749921   </span></td>
 		</tr>
 		<tr>
 			<td>
@@ -482,8 +517,8 @@ a[target="_blank"] {
 				<span class="but">2</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> 13.50788    </span></td>
-			<td><span class="code">-17.457179   </span></td>
+			<td><span class="code"> 13.51129    </span></td>
+			<td><span class="code">-17.457166   </span></td>
 		</tr>
 		<tr>
 			<td>
@@ -495,15 +530,16 @@ a[target="_blank"] {
 				<span class="but">7</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> Г.          </span></td>
+			<td><span class="code"> 3Г.0ГГ      </span></td>
 			<td><span class="code"> 20.95483    </span></td>
 		</tr>
 		<tr>
 			<td>
+				<span class="but">&lt;-&gt;</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> 7.049163    </span></td>
-			<td><span class="code">-17.268622   </span></td>
+			<td><span class="code"> 7.052854    </span></td>
+			<td><span class="code">-17.268609   </span></td>
 		</tr>
 		<tr>
 			<td>
@@ -515,11 +551,12 @@ a[target="_blank"] {
 				<span class="but">7</span>
 				<span class="but_b">СП</span>
 			</td>
-			<td><span class="code"> Г.          </span></td>
+			<td><span class="code"> 3Г0Г.Г      </span></td>
 			<td><span class="code"> 3660.       </span></td>
 		</tr>
 		<tr>
 			<td>
+				<span class="but">&lt;-&gt;</span>
 				<span class="but_b">СП</span>
 			</td>
 			<td><span class="code"> 0.          </span></td>
@@ -548,44 +585,58 @@ a[target="_blank"] {
 		<tr>
 			<th>&#8202;00&#8202;|&#8202;</th>
 			<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
-			<td><span class="but">В&uarr;</span></td>
-			<td><span class="but_f">F</span><span class="op_f">x&ge;0</span></td>
-			<td><span class="but">71</span></td>
-			<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="but">9</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
-			<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
-			<td><span class="but">63</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
+			<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="but">7</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x&lt;0</span></td>
+			<td><span class="but">73</span></td>
+			<td><span class="but">2</span></td>
+			<td><span class="but">&times;</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">8</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+			<td><span class="but">&lt;-&gt;</span></td>
+			<td><span class="but">&minus;</span></td>
 		</tr>
 		<tr>
 			<th>&#8202;10&#8202;|&#8202;</th>
+			<td><span class="but_f">F</span><span class="op_f">&radic;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+			<td><span class="but">&minus;</span></td>
+			<td><span class="but_b">БП</span></td>
+			<td><span class="but">63</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+			<td><span class="but_f">F</span><span class="op_f">&radic;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
 			<td><span class="but">&minus;</span></td>
 			<td><span class="but_f">F</span><span class="op_f">x&lt;0</span></td>
-			<td><span class="but">64</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
-			<td><span class="but_b">С/П</span></td>
-			<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
-			<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
-			<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="but">9</span></td>
-			<td><span class="but">&divide;</span></td>
 		</tr>
 		<tr>
 			<th>&#8202;20&#8202;|&#8202;</th>
+			<td><span class="but">77</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+			<td><span class="but_b">С/П</span></td>
+			<td><span class="but">В&uarr;</span></td>
 			<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+			<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="but">9</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
 			<td><span class="but">+</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;30&#8202;|&#8202;</th>
+			<td><span class="but">&times;</span></td>
 			<td><span class="but">&divide;</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
 			<td><span class="but">&times;</span></td>
 			<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
-			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">8</span></td>
+			<td><span class="but_f">F</span><span class="op_f">&orarr;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+			<td><span class="but">&divide;</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
 		</tr>
 		<tr>
-			<th>&#8202;30&#8202;|&#8202;</th>
+			<th>&#8202;40&#8202;|&#8202;</th>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">8</span></td>
 			<td><span class="but">+</span></td>
 			<td><span class="but_b">x&rarr;П</span><span class="reg">b</span></td>
 			<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
@@ -595,66 +646,132 @@ a[target="_blank"] {
 			<td><span class="but">&times;</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
 			<td><span class="but">+</span></td>
-			<td><span class="but_b">x&rarr;П</span><span class="reg">a</span></td>
-		</tr>
-		<tr>
-			<th>&#8202;40&#8202;|&#8202;</th>
-			<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
-			<td><span class="but">+</span></td>
-			<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
-			<td><span class="but">&minus;</span></td>
-			<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
-			<td><span class="but_f">F</span><span class="op_f">x&lt;0</span></td>
-			<td><span class="but">00</span></td>
 		</tr>
 		<tr>
 			<th>&#8202;50&#8202;|&#8202;</th>
-			<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">a</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+			<td><span class="but">+</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+			<td><span class="but">&times;</span></td>
+			<td><span class="but">&minus;</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;60&#8202;|&#8202;</th>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+			<td><span class="but_k">К</span><span class="op_f">x&lt;0</span><span class="but">9</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
 			<td><span class="but">&divide;</span></td>
-			<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
 			<td><span class="but_b">БП</span></td>
-			<td><span class="but">29</span></td>
+			<td><span class="but">40</span></td>
 			<td><span class="but">В&uarr;</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
 			<td><span class="but">&minus;</span></td>
 		</tr>
 		<tr>
-			<th>&#8202;60&#8202;|&#8202;</th>
+			<th>&#8202;70&#8202;|&#8202;</th>
 			<td><span class="but">&times;</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
 			<td><span class="but_b">В/О</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+			<td><span class="but">14</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
-			<td><span class="but_b">С/П</span></td>
-			<td><span class="but_cx">Cx</span></td>
-			<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
-			<td><span class="but">&lt;-&gt;</span></td>
-			<td><span class="but_b">БП</span></td>
-		</tr>
-		<tr>
-			<th>&#8202;70&#8202;|&#8202;</th>
-			<td><span class="but">17</span></td>
-			<td><span class="but">+</span></td>
-			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">8</span></td>
-			<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
-			<td><span class="but">&lt;-&gt;</span></td>
-			<td><span class="but">&minus;</span></td>
-			<td><span class="but_f">F</span><span class="op_f">&radic;</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
-			<td><span class="but">&minus;</span></td>
-			<td><span class="but_b">БП</span></td>
-		</tr>
-		<tr>
-			<th>&#8202;80&#8202;|&#8202;</th>
-			<td><span class="but">52</span></td>
-			<td colspan="9"></td>
+			<td colspan="2"></td>
 		</tr>
 	</table>
+
+	<h3>Хитрости при оптимизации</h3>
+
+	<p>
+		Распишем, за счёт чего была достигнута оптимизация размера.
+		Сначала простые.
+	</p>
+
+	<ul>
+		<li>
+			Отказ от хранения объёма топлива в регистре.
+			Оно просто сдигается в стек. Используется в делении по адресу 31 и
+			по адресу 37. При необходимости вычисляется по адресу 58.
+			Выгода из-за отказа от команд сохранения и извлечения. И высвобожден
+			регистр.
+		</li>
+		<li>
+			Отказ от хранения направления учёта времени (прямое или обратное).
+			Заменено на жесткое прибавление по адресу 53. При желании легко
+			изменить на минус. Высвобожден регистр.
+		</li>
+		<li>
+			Изменение процедуры расчёта по адресу 65 - обратное по знаку.
+			В результате по адресу 47 идёт сразу умножение со значением времени, которое
+			сохранилось в стеке (и не отрицательное, как в оригинале).
+		</li>
+		<li>
+			Кроме ускорения (R3), все числа неотрицательные. Что сокращает расчёты.
+			Для этого расход топлива в сек. вычисляется позже (адреса 35–38), чем
+			ускорение (адреса 27–34).
+		</li>
+		<li>
+			Высвобождённые регистры R7 и R8 используются для косвенных переходов.
+		</li>
+	</ul>
+
+	<p>
+		Теперь более изощрённые.
+	</p>
+
+	<ul>
+		<li>
+			Конечно, это использование ЗГ0ГГа. Благодаря его извлечению из регистра
+			он автоматически делает остановку программы и переходит на адрес, определяемый
+			порядком. В нашем случае на адрес 25. Благодаря тому, что он нулевой, автоматически
+			получается в стеке нулевой объём топлива (корабль без управления), а также этот
+			ноль используется в косвенном переходе по адресу 61.
+			<br>
+			Тут, пожалуй, к месту, объяснить как получается такой ЗГ0ГГ. Дело в том, что если
+			на экране <a href="https://sergeanvarov.github.io/russian/mk61/uf/glossary.html#id_F" target="_blank">пустышка</a>,
+			и происходит ввод порядка, то ПМК код последующей команды, не вызывающей
+			сдвиг в стеке, воспринимает как порядок. Причём умноженный на 10 и применённый к регистру Y.
+			Т. е. если после <span class="but">ВП</span> над пустышкой ввести
+			<span class="but_f">F</span><span class="op_f">x<sup>2</sup></span>, то код команды 22 будет
+			умножен на 10 и новый порядок 220 будет применён к регистру Y (мантисса RY учитывается как
+			нормализованная с точкой после первой цифры, существующий порядок игнорируется).
+			Нам нужен порядок 250. Это операция
+			<span class="but_f">F</span><span class="op_f">&orarr;</span>, которая, к сожалению, точно
+			сдвигает стек и <q>фокус</q> не получается. Выручает команда
+			<span class="but_f">F</span><span class="op_f">cos<sup>-1</sup></span>, код которой 1A,
+			но ПМК его воспринимает как порядок FF0 (250). При этом, он помнит, что порядок начинается
+			с единицы, т. е. отображает как ЕГГ0Г. Благодаря косвенной адресации, к числу автоматом
+			дописывается 7 нулей, порядок становится равным 257 и это уже нормальный ЗГ0ГГ.
+			<br> Есть и минус. Стек адресов возврата портится. И если все, кроме ближайшего,
+			зануляются (ЗГ0ГГ то нулевой), то последний меняется на 70
+			(7 от хвоста порядка, 0 от знака ЗГ0ГГа).
+			<br>
+			Забавно, что в ситуации перегрузки ЗГ0ГГ появляется в регистре X (адрес 35), но так это команда не
+			<a href="https://sergeanvarov.github.io/russian/mk61/uf/x2.html#id_affect" target="_blank">X2-влияющая</a>,
+			то остановки не происходит. Пошагово это, конечно, уже не так.
+		</li>
+		<li>
+			Адрес перехода (63) по адресу 14 является также командой
+			<span class="but_b">П&rarr;x</span><span class="but">3</span>. И на него идёт переход
+			с адреса 75.
+		</li>
+		<li>
+			Адрес перехода (40) по адресу 65 является также командой
+			<span class="but_b">x&rarr;П</span><span class="but">0</span>, которая нужна как в ветках
+			04–14, так и в 62–63. Поэтому процедура из R8 начинается с адреса 65. Т. е. сразу
+			после перехода на адрес 40 происходит вызов подпрограммы, которая тут же сохраняет
+			текущее значение в R0.
+			<br>
+			И не спрашивайте, как мне так удачно удалось скомпоновать порядок команд.
+		</li>
+	</ul>
 
 </body>
 
