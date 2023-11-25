@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta content="true" name="HandheldFriendly">
+	<meta content="width" name="MobileOptimized">
+	<meta content="yes" name="apple-mobile-web-app-capable">
+	<meta name="description" content="Расстановка ферзей. МК-61">
+	<title>Расстановка ферзей</title>
+
+<style>
+
+span.but, span.but_f, span.but_k, span.but_cx, span.but_b, span.reg, span.op_f, span.op_k {
+	border:thin solid black;
+	border-radius:4px;
+	display:inline-block;
+	font-size:1.1em;
+	font-weight:bold;
+	font-family:monospace;
+	text-align:center;
+	min-width:2.3em;
+	white-space:nowrap;
+}
+
+sup {
+	line-height:0;
+}
+
+span.but {
+	background-color:#CCCCCC;
+	color:black;
+}
+
+span.but_f {
+	background-color:#F5E345;
+	color:black;
+}
+
+span.but_k {
+	background-color:LightSkyBlue;
+	color:white;
+}
+
+span.but_cx {
+	background-color:#F00505;
+	color:white;
+}
+
+span.but_b {
+	background-color:black;
+	color:white;
+}
+
+span.reg {
+	background-color:black;
+	color:white;
+}
+
+span.op_f {
+	background-color:black;
+	color:yellow;
+}
+
+span.op_k {
+	background-color:black;
+	color:#00BFFF;
+}
+
+.code {
+	background-color:#103810;
+	color:#77FF77;
+	font-size:1.1em;
+	font-family:monospace;
+	font-weight:bold;
+	padding:1px 2px 1px 2px;
+	white-space:pre;
+}
+
+table {
+	border-collapse:collapse;
+}
+
+table, th, td {
+	border:1px solid black;
+}
+
+.center {
+	text-align:center;
+}
+
+details summary {
+	cursor: pointer;
+}
+details summary > * {
+	display: inline;
+}
+
+a[target="_blank"] {
+	background: url(https://upload.wikimedia.org/wikipedia/commons/6/64/Icon_External_Link.png) center right no-repeat;
+    padding-right: 0.8em;
+}
+
+</style>
+
+</head>
+
+<body>
+	<header>
+		<h1>Расстановка ферзей</h1>
+	</header>
+	<p>
+		Реализация алгоритма первого нахождения расстановки 8 ферзей на
+		шахматной доске, которые не бьют друг друга.
+	</p>
+	<h2>Задача</h2>
+	<p>
+		См. <a href="https://ru.wikipedia.org/wiki/Задача_о_восьми_ферзях" target="_blank">
+			Задача о восьми ферзях.</a>
+	</p>
+	<h2>Реализация</h2>
+	<p>
+		Реализован адгоритм со страницы
+		<a href="https://pmk.arbinada.com/category/00030.html" target="_blank">
+			Benchmark 8 ферзей.</a>
+		Только реализация более компактная. Вместо 74 команд используются 46.
+		Регистры Ra-Re не используются программой. Задействовав которые, для
+		косвенной адресации, можно было бы сократить ещё на 7 команд.
+	</p>
+	<p>
+		Для выполнения нажмите <span class="but_b">В/О</span>,
+		<span class="but_b">С/П</span>.
+	</p>
+	<p>
+		С учётом того, что все ферзи должны быть на разных горизонталях, то
+		в регистрах R1-R8 будут записаны номера вертикалей для
+		соответствующего ферзя.
+	</p>
+
+	<h3>Распределение регистров</h3>
+
+	<table>
+		<tr>
+			<th>R0</th>
+			<td>
+				Номер вертикали для нового ферзя.
+			</td>
+		</tr>
+		<tr>
+			<th>R1-R8</th>
+			<td>
+				Номера вертикалей ферзей 1-8.
+			</td>
+		</tr>
+		<tr>
+			<th>R9</th>
+			<td>
+				Сколько ферзей уже удалось расставить.
+			</td>
+		</tr>
+	</table>
+
+	<h3>Текст программы</h3>
+
+	<table class="center">
+		<tr>
+			<th>&#8202;#&#8202;|&#8202;</th>
+			<th>00</th>
+			<th>01</th>
+			<th>02</th>
+			<th>03</th>
+			<th>04</th>
+			<th>05</th>
+			<th>06</th>
+			<th>07</th>
+			<th>08</th>
+			<th>09</th>
+		</tr>
+		<tr>
+			<th>&#8202;00&#8202;|&#8202;</th>
+			<td><span class="but_cx">Cx</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">9</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+			<td><span class="but">14</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+			<td><span class="but">1</span></td>
+			<td><span class="but">+</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">9</span></td>
+			<td><span class="but">9</span></td>
+			<td><span class="but">&minus;</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;10&#8202;|&#8202;</th>
+			<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+			<td><span class="but">45</span></td>
+			<td><span class="but">8</span></td>
+			<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">9</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+			<td><span class="but">1</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+			<td><span class="but">&minus;</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x&lt;0</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;20&#8202;|&#8202;</th>
+			<td><span class="but">02</span></td>
+			<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+			<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+			<td><span class="but">&minus;</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+			<td><span class="but">33</span></td>
+			<td><span class="but_k">К</span><span class="op_k">&mid;x&mid;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+			<td><span class="but">&minus;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;30&#8202;|&#8202;</th>
+			<td><span class="but">+</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+			<td><span class="but">16</span></td>
+			<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+			<td><span class="but">1</span></td>
+			<td><span class="but">&minus;</span></td>
+			<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">9</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+			<td><span class="but">14</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;40&#8202;|&#8202;</th>
+			<td><span class="but">1</span></td>
+			<td><span class="but">&minus;</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">9</span></td>
+			<td><span class="but_b">БП</span></td>
+			<td><span class="but">33</span></td>
+			<td><span class="but_b">С/П</span></td>
+			<td colspan="4"></td>
+		</tr>
+	</table>
+
+</body>
+
+</html>
