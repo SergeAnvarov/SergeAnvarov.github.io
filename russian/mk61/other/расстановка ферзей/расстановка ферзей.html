@@ -111,7 +111,7 @@ a[target="_blank"] {
 		<h1>Расстановка ферзей</h1>
 	</header>
 	<p>
-		Реализация алгоритма первого нахождения расстановки 8 ферзей на
+		Реализация алгоритма нахождения расстановки 8 ферзей на
 		шахматной доске, которые не бьют друг друга.
 	</p>
 	<h2>Задача</h2>
@@ -121,21 +121,54 @@ a[target="_blank"] {
 	</p>
 	<h2>Реализация</h2>
 	<p>
-		Реализован адгоритм со страницы
+		Реализован алгоритм со страницы
 		<a href="https://pmk.arbinada.com/category/00030.html" target="_blank">
 			Benchmark 8 ферзей.</a>
-		Только реализация более компактная. Вместо 74 команд используются 46.
-		Регистры Ra-Re не используются программой. Задействовав которые, для
-		косвенной адресации, можно было бы сократить ещё на 7 команд.
+		Отличия от приведённой там программы:
+	</p>
+	<ul>
+		<li>
+			Реализация более компактная. Вместо 74 команд используются 49.
+		</li>
+		<li>
+			Набор команд совместим с Б3-34 (МК-54).
+		</li>
+		<li>
+			Находит все расстановки.
+		</li>
+		<li>
+			Регистры Ra&hellip;Re не используются программой (Ra&hellip;Rd для Б3-34).
+			Задействовав которые, для косвенной адресации,
+			можно было бы сократить длину программы ещё на 7 (6) команд.
+		</li>
+	</ul>
+	<p>
+		Для начала расчёта нажмите <span class="but_b">В/О</span>,
+		<span class="but_b">С/П</span>. После остановки будет
+		<span class="code"> 0.          </span> –
+		найдена очередная, в данном случае первая, расстановка.
 	</p>
 	<p>
-		Для выполнения нажмите <span class="but_b">В/О</span>,
-		<span class="but_b">С/П</span>.
-	</p>
-	<p>
-		С учётом того, что все ферзи должны быть на разных горизонталях, то
-		в регистрах R1-R8 будут записаны номера вертикалей для
+		С учётом того, что все ферзи должны быть на разных вертикалях, то
+		в регистрах R1&hellip;R8 будут записаны номера горизонталей для
 		соответствующего ферзя.
+	</p>
+	<p>
+		Для следующей расстановки нажмите <span class="but_b">С/П</span>.
+	</p>
+	<p>
+		Значения первой расстановки для контроля: 8, 4, 1, 3, 6, 2, 7, 5.
+		Или в шахматной нотации: Фa8, Фb4, Фc1, Фd3, Фe6, Фf2, Фg7, Фh5.
+		Как ни странно, первая расстановка получается дольше всех.
+		Остальные вычисляются быстрее, но с разной скоростью.
+		Ещё долго думает в конце, после 92-й расстановки, убеждаясь,
+		что больше подходящих нет.
+	</p>
+	<p>
+		Когда все расстановки будут сделаны
+		<a href="https://ru.wikipedia.org/wiki/Программируемый_калькулятор" target="_blank">ПМК</a>
+		вместо нуля отобразит
+		<span class="code">-1.          </span>
 	</p>
 
 	<h3>Распределение регистров</h3>
@@ -144,13 +177,13 @@ a[target="_blank"] {
 		<tr>
 			<th>R0</th>
 			<td>
-				Номер вертикали для нового ферзя.
+				Номер горизонтали для нового ферзя.
 			</td>
 		</tr>
 		<tr>
-			<th>R1-R8</th>
+			<th>R1&hellip;R8</th>
 			<td>
-				Номера вертикалей ферзей 1-8.
+				Номера горизонталей ферзей 1&hellip;8.
 			</td>
 		</tr>
 		<tr>
@@ -160,6 +193,11 @@ a[target="_blank"] {
 			</td>
 		</tr>
 	</table>
+	<p>
+		В процессе работы ПМК сам инициализирует
+		все необходимые регистры, поэтому их начальное
+		значение до запуска программы не играет роли.
+	</p>
 
 	<h3>Текст программы</h3>
 
@@ -193,7 +231,7 @@ a[target="_blank"] {
 		<tr>
 			<th>&#8202;10&#8202;|&#8202;</th>
 			<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
-			<td><span class="but">45</span></td>
+			<td><span class="but">46</span></td>
 			<td><span class="but">8</span></td>
 			<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">9</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
@@ -210,14 +248,15 @@ a[target="_blank"] {
 			<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
 			<td><span class="but">&minus;</span></td>
 			<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
-			<td><span class="but">33</span></td>
-			<td><span class="but_k">К</span><span class="op_k">&mid;x&mid;</span></td>
+			<td><span class="but">34</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+			<td><span class="but_f">F</span><span class="op_f">&radic;</span></td>
 			<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
 			<td><span class="but">&minus;</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
 		</tr>
 		<tr>
 			<th>&#8202;30&#8202;|&#8202;</th>
+			<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
 			<td><span class="but">+</span></td>
 			<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
 			<td><span class="but">16</span></td>
@@ -227,17 +266,19 @@ a[target="_blank"] {
 			<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">9</span></td>
 			<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
 			<td><span class="but">14</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
 		</tr>
 		<tr>
 			<th>&#8202;40&#8202;|&#8202;</th>
+			<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
 			<td><span class="but">1</span></td>
 			<td><span class="but">&minus;</span></td>
 			<td><span class="but_b">x&rarr;П</span><span class="but">9</span></td>
-			<td><span class="but_b">БП</span></td>
-			<td><span class="but">33</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x&lt;0</span></td>
+			<td><span class="but">34</span></td>
 			<td><span class="but_b">С/П</span></td>
-			<td colspan="4"></td>
+			<td><span class="but_b">БП</span></td>
+			<td><span class="but">40</span></td>
+			<td colspan="1"></td>
 		</tr>
 	</table>
 
