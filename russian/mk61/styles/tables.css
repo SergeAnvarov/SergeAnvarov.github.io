@@ -21,3 +21,7 @@ tr.trblack_black td {
 td.nowrap {
 	white-space:nowrap;
 }
+
+td.wall_color {
+	background-color:darkgrey;
+}
