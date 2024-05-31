@@ -1319,7 +1319,7 @@
 			this.output = 0;
 			this.keybX = 0;
 			this.keybY = 0;
-			this.decimalPoint = 0;
+			this.elevenPoint = false;
 			this.pointsPresent = new Array(14).fill(false);
 			this.needUpdateDisplay = false;
 		}
@@ -1446,10 +1446,8 @@
 					this.S1 = this.keybY;
 					this.T = 1;
 				}
-				if ((tickDiv3 < 12) && (this.L > 0)) {
-					this.decimalPoint = tickDiv3;
-				}
 				this.pointsPresent[tickDiv3] = this.L > 0;
+				this.elevenPoint = this.pointsPresent[11];
 				this.needUpdateDisplay = true;
 			}
 			for (let bitIndex = 12; bitIndex < 15; bitIndex++, restOfBits >>>= 1) {
@@ -1579,8 +1577,8 @@
 	};
 
 	const updateDisplay = () => {
-		if (inProgramMode !== (IK1302.decimalPoint === 11)) {
-			inProgramMode = !inProgramMode;
+		if (inProgramMode !== IK1302.elevenPoint) {
+			inProgramMode = IK1302.elevenPoint;
 			changeBrightness();
 		}
 		displayValueImages.forEach((img, i) => (img.src = IMAGES_OF_DIGITS[displayValues[i]]));
@@ -2164,7 +2162,7 @@
 			stateStr += hexStr(chipIK13.output);
 			stateStr += hexStr(chipIK13.keybX);
 			stateStr += hexStr(chipIK13.keybY);
-			stateStr += hexStr(chipIK13.decimalPoint);
+			stateStr += (chipIK13.elevenPoint) ? 'B' : '0'; // B = 11
 			stateStr += chipIK13.pointsPresent.map(Number).map(String).join('');
 			stateStr += (chipIK13.needUpdateDisplay) ? '1' : '0';
 		}
@@ -2251,7 +2249,7 @@
 			chipIK13.output = fromHex(stateStr[332 + 162 * iChip]);
 			chipIK13.keybX = fromHex(stateStr[333 + 162 * iChip]);
 			chipIK13.keybY = fromHex(stateStr[334 + 162 * iChip]);
-			chipIK13.decimalPoint = fromHex(stateStr[335 + 162 * iChip]);
+			chipIK13.elevenPoint = (fromHex(stateStr[335 + 162 * iChip]) === 11);
 			for (let iPoint = 0; iPoint < 14; iPoint++) {
 				chipIK13.pointsPresent[iPoint] = parseInt(stateStr[iPoint + 336 + 162 * iChip], 10) !== 0;
 			}
