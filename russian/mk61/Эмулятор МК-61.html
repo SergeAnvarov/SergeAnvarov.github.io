@@ -1699,17 +1699,17 @@
 			for (let i = 0; i < 42; i++) {
 				tick();
 			}
-			if (IK1302.needUpdateDisplay) {
-				for (let i = 0; i < 9; i++) {
-					newDisplayValues[i] = IK1302.R[(8 - i) * 3];
-					newDisplayPointsPresent[i] = IK1302.pointsPresent[9 - i];
-				}
-				for (let i = 9; i < 12; i++) {
-					newDisplayValues[i] = IK1302.R[(20 - i) * 3];
-					newDisplayPointsPresent[i] = IK1302.pointsPresent[21 - i];
-				}
-				IK1302.needUpdateDisplay = false;
+		}
+		if (IK1302.needUpdateDisplay) {
+			for (let i = 0; i < 9; i++) {
+				newDisplayValues[i] = IK1302.R[(8 - i) * 3];
+				newDisplayPointsPresent[i] = IK1302.pointsPresent[9 - i];
 			}
+			for (let i = 9; i < 12; i++) {
+				newDisplayValues[i] = IK1302.R[(20 - i) * 3];
+				newDisplayPointsPresent[i] = IK1302.pointsPresent[21 - i];
+			}
+			IK1302.needUpdateDisplay = false;
 		}
 		IK1302.keybX = 0;
 		IK1302.keybY = 0;
