@@ -1693,14 +1693,15 @@
 	const stepExec = (forceUpdateRegs = true) => {
 		IK1303.keybY = 1;
 		IK1303.keybX = angleMeasure;
-		const newDisplayValues = new Array(12).fill(0xF);
-		const newDisplayPointsPresent = new Array(12).fill(false);
-		for (let k = 1; k <= STEP_COUNT; k++) {
-			for (let i = 0; i < 42; i++) {
-				tick();
-			}
+		for (let i = 1; i <= STEP_COUNT * 42; i++) {
+			tick();
 		}
+		IK1302.keybX = 0;
+		IK1302.keybY = 0;
+
 		if (IK1302.needUpdateDisplay) {
+			const newDisplayValues = new Array(12).fill(0xF);
+			const newDisplayPointsPresent = new Array(12).fill(false);
 			for (let i = 0; i < 9; i++) {
 				newDisplayValues[i] = IK1302.R[(8 - i) * 3];
 				newDisplayPointsPresent[i] = IK1302.pointsPresent[9 - i];
@@ -1709,18 +1710,15 @@
 				newDisplayValues[i] = IK1302.R[(20 - i) * 3];
 				newDisplayPointsPresent[i] = IK1302.pointsPresent[21 - i];
 			}
+			const needUpdate =
+				arrayNotEqual(newDisplayValues, displayValues) ||
+				arrayNotEqual(newDisplayPointsPresent, displayPointsPresent);
+			if (needUpdate) {
+				displayValues = newDisplayValues;
+				displayPointsPresent = newDisplayPointsPresent;
+				updateDisplay();
+			}
 			IK1302.needUpdateDisplay = false;
-		}
-		IK1302.keybX = 0;
-		IK1302.keybY = 0;
-
-		const needUpdate =
-			arrayNotEqual(newDisplayValues, displayValues) ||
-			arrayNotEqual(newDisplayPointsPresent, displayPointsPresent);
-		if (needUpdate) {
-			displayValues = newDisplayValues;
-			displayPointsPresent = newDisplayPointsPresent;
-			updateDisplay();
 		}
 		if (forceUpdateRegs || (IR2_1.tickIndex === 84)) {
 			updateRegisters(intDiv(IR2_1.tickIndex, 84));
