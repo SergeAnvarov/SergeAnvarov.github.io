@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta content="true" name="HandheldFriendly">
+	<meta content="width" name="MobileOptimized">
+	<meta content="yes" name="apple-mobile-web-app-capable">
+	<meta name="description" content="Аэропорт. Игра. ПМК. МК-61">
+	<title>Аэропорт-2</title>
+
+<style>
+
+span.but, span.but_f, span.but_k, span.but_cx, span.but_b, span.reg, span.op_f, span.op_k {
+	border:thin solid black;
+	border-radius:4px;
+	display:inline-block;
+	font-size:1.1em;
+	font-weight:bold;
+	font-family:monospace;
+	text-align:center;
+	min-width:2.3em;
+	white-space:nowrap;
+}
+
+sup {
+	line-height:0;
+}
+
+span.but {
+	background-color:#CCCCCC;
+	color:black;
+}
+
+span.but_f {
+	background-color:#F5E345;
+	color:black;
+}
+
+span.but_k {
+	background-color:LightSkyBlue;
+	color:white;
+}
+
+span.but_cx {
+	background-color:#F00505;
+	color:white;
+}
+
+span.but_b {
+	background-color:black;
+	color:white;
+}
+
+span.reg {
+	background-color:black;
+	color:white;
+}
+
+span.op_f {
+	background-color:black;
+	color:yellow;
+}
+
+span.op_k {
+	background-color:black;
+	color:#00BFFF;
+}
+
+.code {
+	background-color:#103810;
+	color:#77FF77;
+	font-size:1.1em;
+	font-family:monospace;
+	font-weight:bold;
+	padding:1px 2px 1px 2px;
+	white-space:pre;
+}
+
+table {
+	border-collapse:collapse;
+}
+
+table, th, td {
+	border:1px solid black;
+}
+
+.zero {
+	background-color: lightgray;
+}
+
+.selected {
+	background-color: lightblue;
+}
+
+.center {
+	text-align:center;
+}
+
+details summary {
+	cursor: pointer;
+}
+details summary > * {
+	display: inline;
+}
+
+a[target="_blank"] {
+	background: url(https://upload.wikimedia.org/wikipedia/commons/6/64/Icon_External_Link.png) center right no-repeat;
+    padding-right: 0.8em;
+}
+
+</style>
+
+</head>
+
+<body>
+	<header>
+		<h1>Аэропорт-2</h1>
+	</header>
+
+	<h2>Общее описание</h2>
+	<p>
+		Вы – диспетчер в небольшом аэропорту. Ваша обязанность вовремя отправлять
+		самолёт, чтобы удовлетворить пассажиров, купивших билеты на свой рейс.
+		Если вы не будете справляться со своими обязанностями, то вам будут делать выговор.
+		Если выговоров больше трёх, то вас отстраняют от работы.
+	</p>
+	<p>
+		Существует четыре рейса, но самолёт только один. Вместимость – 100 пассажиров.
+		Компания заинтересована в прибыли, поэтому кассиры продают билеты
+		исходя из более оптимистичных прогнозов – до 200 мест на рейс.
+		Номер рейса и количество пассажиров, купивших билеты, определяется
+		датчиком случайных чисел. Каждый день продают билеты только на один рейс.
+	</p>
+	<p>
+		Узнав на какой рейс и какое количество билетов было продано, вы выбираете
+		в какой рейс полетит самолёт. Это не обязательно тот, куда купили билеты.
+		Можно посмотреть общее количество проданных билетов на каждый рейс в
+		регистрах R1&hellip;R4, а потом решать.
+	</p>
+	<p>
+		Если самолёт не смог забрать всех желающих, то оставшиеся пассажиры
+		оставляют жалобу. За жалобу на определённый рейс начисляется два штрафных
+		балла. Если все улетели, то штрафные баллы этого рейса забываются.
+		Но если их накопится десять, т. е. на этом рейсе пять раз не все улетели,
+		то вам делается выговор, а в качестве компенсации компания дарит
+		один билет на этот рейс бесплатно.
+	</p>
+
+	<h2>Задача</h2>
+	<p>
+		Доказать, что вы хороший диспетчер. Критерием успешности будет
+		наличие только одного рейса, где количество билетов не более 100,
+		а на остальных рейсах пусто. Но этот критерий начинается
+		проверяться только после 20-ти обязательных для проверки дней, хотя
+		жалобы и выговоры работают сразу.
+	</p>
+
+	<h2>Игровой процесс</h2>
+
+	<h3>Начало</h3>
+
+	<p>
+		Если не используете эмулятор, где сохранённое состояние уже включает
+		регистры. Если нет, то необходимо задать константы, которые не меняются между играми:
+	</p>
+	<table>
+		<tr>
+			<th>Регистр</th>
+			<th>Значение</th>
+		</tr>
+		<tr>
+			<th>R8</th>
+			<td><span class="code"> 8.          </span></td>
+		</tr>
+		<tr>
+			<th>R9</th>
+			<td><span class="code"> 9.0000083-01</span></td>
+		</tr>
+		<tr>
+			<th>Rd</th>
+			<td>
+				<span class="code">-1.-      -01</span>.
+				Признак окончания игры.
+				Получается так:
+				<span class="code"> 112.        </span>
+				<span class="but">В&uarr;</span>
+				<span class="code"> 108.        </span>
+				<span class="but_k">K</span><span class="op_k">&or;</span>
+				<span class="but">/-/</span>
+				<span class="but_k">K</span><span class="op_k">{x}</span>.
+			</td>
+		</tr>
+		<tr>
+			<th>Re</th>
+			<td>
+				<span class="code"> Е.ГГ0Г 26 19</span>.
+				Признак ошибки при неверном вводе номера рейса.
+				Получается так:
+				<span class="code"> 55505726.   </span>
+				<span class="but">В&uarr;</span>
+				<span class="code"> 888088.     </span>
+				<span class="but_k">K</span><span class="op_k">&or;</span>
+				<span class="but_k">K</span><span class="but">-</span>
+				<span class="but">ВП</span>
+				<span class="but">1</span>
+				<span class="but">9</span>.
+			</td>
+		</tr>
+	</table>
+	<p>
+		Следующие переменные можно изменять до игры. Они влияют на её характеристики:
+	</p>
+	<table>
+		<tr>
+			<th>Регистр</th>
+			<th>Значение</th>
+		</tr>
+		<tr>
+			<th>Ra</th>
+			<td>
+				<span class="code"> 100.        </span>.
+				Вместимость самолёта. Обязательно целое число.
+			</td>
+		</tr>
+		<tr>
+			<th>Rb</th>
+			<td>
+				<span class="code"> 200.        </span>.
+				Верхняя граница количества проданных билетов.
+				Т. е. будет продано от нуля до 199 билетов.
+				Может быть и дробным.
+			</td>
+		</tr>
+		<tr>
+			<th>Rc</th>
+			<td>
+				Начальное значение датчика случайных чисел.
+				В процессе игры модифицируется программой.
+			</td>
+		</tr>
+	</table>
+
+	<h3>Игра</h3>
+
+	<p>
+		После начального <span class="but_b">В/О</span> <span class="but_b">С/П</span>
+		<a href="https://ru.wikipedia.org/wiki/Программируемый_калькулятор" target="_blank">ПМК</a>
+		отобразит номер рейса и количество проданных на него билетов в виде:
+		<span class="code"> 2-000118.   </span>. Здесь показано, что на второй рейс
+		было продано 118 билетов.
+	</p>
+	<p>
+		При оценке количества билетов на каждом рейсе в регистре R1&hellip;R4
+		число может содержать дробное число.
+		Оно обозначает количество штрафных баллов за этот рейс. При успешной отправке
+		всех желающих баллы <q>сгорают</q> без последствий. За 10 баллов – выговор.
+		Число выговоров можно посмотреть в регистре R5.
+	</p>
+	<p>
+		После принятия решения вводим номер рейса от 1 до 4 и нажимаем <span class="but_b">С/П</span>.
+		Если будет введено некорректное число, то ПМК выдаст ошибку 26:
+		<span class="code"> Е.ГГ0Г 26 26</span>. Само неверное значение можно
+		посмотреть в регистре R7. В этом случае введите правильное
+		число и нажмите <span class="but_b">С/П</span>. Дробная часть не является ошибкой, а
+		просто игнорируется, т. е. 2.7 и 2 воспринимаются одинаково, но 27 уже ошибка.
+	</p>
+	<p>
+		После отправки самолёта (<span class="but_b">С/П</span>) ПМК уменьшит
+		в соответствующем регистре число билетов и покажет результат новых
+		продаж в том же виде, как в начале. Число оставшихся <q>обязательных</q>
+		дней (+1) можно посмотреть в регистре R0.
+	</p>
+
+	<h3>Окончание</h3>
+
+	<p>
+		Если ПМК выдал на экран <span class="code">-1.-      -01</span>,
+		это значит, что игра закончена. В этом случае успешность определяется
+		регистром Y. Если в нём &minus;1, то вас отстранили.
+		Иначе – количество дней, прошедших с начала работы.
+	</p>
+	<p>
+		Для начала новой игры нажмите <span class="but_b">С/П</span> или
+		<span class="but_b">В/0</span> <span class="but_b">С/П</span>.
+	</p>
+
+	<h2>Дополнительная информация</h2>
+
+	<h3>Модификация</h3>
+
+	<p>
+		Кроме упомянутых выше переменных в Ra и Rb также можно задать:
+	</p>
+	<ul>
+		<li>
+			Максимально допустимое число выговоров – цифра по адресу 57.
+			По умолчанию 3.
+		</li>
+		<li>
+			Допустимое число рейсов с непроданными билетами для успешного
+			окончания – цифра по адресу 62. По умолчанию единица.
+		</li>
+		<li>
+			Количество десятков <q>обязательных</q> дней – цифра по адресу 07.
+			По умолчанию 2, т. е. 20 дней.
+		</li>
+	</ul>
+
+	<h3>История</h3>
+	<p>
+		Это модификация ранее опубликованной игры
+		<a href="https://lordbss.narod.ru/pmk200.html" target="_blank">
+			Аэропорт</a>.
+	</p>
+	<p>
+		В текущей версии немного изменился формат вывода.
+		Основные изменения:
+	</p>
+	<ul>
+		<li>
+			Улучшенный датчик случайных чисел.
+		</li>
+		<li>
+			Контроль ввода.
+		</li>
+		<li>
+			Автоматическая очистка регистров перед новой игрой.
+		</li>
+		<li>
+			Верхняя граница количества проданных билетов вынесена
+			в отдельный регистр Rb. Именно эта велична определяет
+			сложность игры. При значениее 200 вы будете чаще
+			проигрывать. При 100 – почти всегда выигрывать.
+		</li>
+	</ul>
+	<p>
+		Несмотря на эти все доработки, программа получилась ещё и на 10 команд короче.
+	</p>
+
+	<hr>
+
+	<details>
+		<summary>
+			<h2>Далее только для тех, кто не только играет&hellip;</h2>
+		</summary>
+
+		<h3>Распределение регистров</h3>
+		<table>
+			<tr>
+				<th>R0</th>
+				<td>
+					Счётчик обязательных дней. При достижении 1 используется
+					для проверки завершения игры.
+				</td>
+			</tr>
+			<tr>
+				<th>R1&hellip;R4</th>
+				<td>Количество проданных билетов на соответствующий рейс.</td>
+			</tr>
+			<tr>
+				<th>R5</th>
+				<td>Счётчик выговоров.</td>
+			</tr>
+			<tr>
+				<th>R6</th>
+				<td>Счётчик прошедших дней.</td>
+			</tr>
+			<tr>
+				<th>R7</th>
+				<td>Номер выбранного рейса.</td>
+			</tr>
+			<tr>
+				<th>R8</th>
+				<td>8 – адрес начала цикла программы.</td>
+			</tr>
+			<tr>
+				<th>R9</th>
+				<td>
+					<span class="code"> 9.0000083-01</span>.
+					Адрес процедуры генерации случайного числа (83),
+					и константа меньше 1 для ситуации, когда
+					ровно 100 билетов + штрафные баллы. Важно, что
+					больше 0.8.
+				</td>
+			</tr>
+			<tr>
+				<th>Ra</th>
+				<td>
+					<span class="code"> 100.        </span>.
+					Вместимость самолёта.
+				</td>
+			</tr>
+			<tr>
+				<th>Rb</th>
+				<td>
+					<span class="code"> 200.        </span>.
+					Верхняя граница количества проданных билетов.
+					Т. е. будет продано от нуля до 199 билетов.
+				</td>
+			</tr>
+			<tr>
+				<th>Rc</th>
+				<td>
+					Начальное значение датчика случайных чисел.
+					В процессе игры модифицируется программой.
+				</td>
+			</tr>
+			<tr>
+				<th>Rd</th>
+				<td>
+					<span class="code">-1.-      -01</span>.
+					Признак окончания игры.
+					Используется для получения видеоизображения –
+					вторая шестнадцатеричная цифра. Численное
+					значение &minus;0.2 используется для
+					учёта штрафов. Как адрес перехода на 00
+					для начала новой игры.
+				</td>
+			</tr>
+			<tr>
+				<th>Re</th>
+				<td>
+					<span class="code"> Е.ГГ0Г 26 19</span>.
+					Признак ошибки при неверном вводе номера рейса.
+					Используется и как адрес перехода (26)
+					на вывод кода ошибки.
+				</td>
+			</tr>
+			</table>
+
+		<h3>Текст программы</h3>
+
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_cx">Cx</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">4</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">5</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">6</span></td>
+				<td><span class="but">2</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;10&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="op_k">ЗН</span></td>
+				<td><span class="but">4</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">7</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">7</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
+				<td><span class="but">ВП</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;20&#8202;|&#8202;</th>
+				<td><span class="but">7</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+				<td><span class="but_k">К</span><span class="op_k">&or;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+				<td><span class="but">6E</span></td>
+				<td><span class="but_k">К</span><span class="op_k">max</span></td>
+				<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
+				<td><span class="but">ВП</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;30&#8202;|&#8202;</th>
+				<td><span class="but">7</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">7</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="reg">e</span></td>
+				<td><span class="but">4</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&lt;0</span><span class="reg">e</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;40&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+				<td><span class="but_k">К</span><span class="op_k">max</span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">7</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+				<td><span class="but">62</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;50&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">7</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+				<td><span class="but">62</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but">3</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but">&minus;</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;60&#8202;|&#8202;</th>
+				<td><span class="but_f">F</span><span class="op_f">x&ge;0</span></td>
+				<td><span class="but">80</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L0</span></td>
+				<td><span class="but">10</span></td>
+				<td><span class="but">5</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;70&#8202;|&#8202;</th>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="but">8</span></td>
+				<td><span class="but">.</span></td>
+				<td><span class="but_k">К</span><span class="op_k">ЗН</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="but">8</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L0</span></td>
+				<td><span class="but">66</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;80&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td><span class="but_k">К</span><span class="but_b">БП</span><span class="reg">d</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">&pi;</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;90&#8202;|&#8202;</th>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_b">В/О</span></td>
+				<td colspan="5"></td>
+			</tr>
+		</table>
+
+		<h3>Объяснение работы программы</h3>
+
+		<p>
+			Алгоритм программы довольно простой. С помощью датчика случайных
+			чисел определяем номер рейса (1&hellip;4), затем количество проданных
+			билетов. Суммируем, сохраняем, а выводим на экран новое количество проданных.
+			Затем по указанному пользователю рейсу проводим вычитание ёмкости самолёта.
+			Если осталось меньше единицы, то сохраняем ноль. Если больше нуля, то
+			добавляем штрафные баллы, сохраняем. А если в результате получилось целое число,
+			то ещё увеличиваем счёт выговоров (5 раз по 0.2 будет целое).
+		</p>
+		<p>
+			Если <q>обязательные</q> дни кончились, до делаем ещё проверку, что
+			осталось мало рейсов, где остались билеты для анализа завершения.
+		</p>
+
+		<p>
+			Начнём с простого – процедура генерации случайного числа (ГСЧ). Она начинается с
+			адреса 83 (R9) и ожидает на входе в RX множитель, а в RY – добавка.
+			Процедура генерит очередное случайное число, умножает на множитель, и
+			затем складывает целую часть и добавку. Для генерации очередного случайного
+			числа используется последовательность
+			N<sub>i+1</sub> = {N<sub>i</sub> * 11 + &pi;}. Если множитель обозначить как
+			M, а добавку как A, то на выходе получим [N<sub>i+1</sub> * M] + A.
+		</p>
+		<p>
+			Теперь можно рассмотреть по порядку. Начальная инициализация. Адреса 00..09.
+			Тут важно, что из-за того, что цикл проверяется в конце, то вместо 20 используется
+			21. К тому же эта единица используется отдельно без двадцати, для очередного
+			цикла, когда <q>обязаловка</q> уже прошла.
+		</p>
+		<p>
+			Для генерации номера рейса для процедуры ГСЧ нужно задать A = 1, M = 4.
+			Поэтому по адресам 10..13 сначала задаётся 1 через
+			<span class="but_k">К</span><span class="op_k">ЗН</span>, иначе в стеке
+			её не отделить от ввода 4.
+		</p>
+		<p>
+			Затем, по адресам 14..17 похожим образом задаётся A = текущее значение
+			билетов в выбранном рейсе, M = наш максимум из Rb. Результат сохраняется.
+			Далее, по адресам 18..22, пользуясь тем, что в X1 сохранилось то, что прибавилось,
+			формируем число	7-й степени, где первая цифра это номер рейса и остаток – эта прибавка.
+		</p>
+		<p>
+			Чтобы понять, как формируется видеоизображение, рекомендую почитать
+			<a href="https://sergeanvarov.github.io/russian/mk61/uf/x2.html" target="_blank">
+			  раздел</a> про регистр X2 из статьи по недокументированным возможностям.
+			Для начала по адресам 23..24 на месте второй цифры формируется
+			знак минус (шестнадцатеричное A).
+			Полученное число вида 8.-000xxx с помощью X2-влияющего сравнения по адресам 25..26
+			(которое всегда верно) сохраняется в X2.
+			Далее в RX подставляется число из RY. Почему вместо
+			<span class="but">&lt;-&gt;</span> используется
+			<span class="but_k">К</span><span class="op_k">max</span> поясню позднее.
+			В нашем случае RY – семизначное число, которое точно больше 8.{с чем-то}.
+			Команды по адресам 28..29 восстановят запомненное изображение из X2, но
+			первую цифру оставят (номер рейса). 7-й порядок вводится для наглядности.
+		</p>
+		<p>
+			Проверка границ ввода пользователя по адресам 33..38 простая.
+			Главное посмотрим, куда идёт переход в случае ошибки. На адрес 26.
+			А там у нас 6E = код команды
+			<span class="but_b">П&rarr;x</span><span class="reg">e</span>.
+			Так как команда сравнения всегда верна, адрес перехода в основной ветке
+			был для нас не важен. Подставив вместо адреса код 6E мы сэкономили на команде.
+			ПМК извлечёт из Re константу ошибки и далее добавит 7-ю степень. Но в RY
+			тоже есть число. Вот чтобы первая цифра от этого числа
+			не попала в RX и используется
+			<span class="but_k">К</span><span class="op_k">max</span>, потому что
+			код ошибки сам по себе это очень большое число.
+		</p>
+		<p>
+			Приращение счётчика дней по адресу 39. Вычитание ёмкости самолёта по адресам
+			40..42. Далее извлекается число, которое меньше 1, но больше всех штрафов,
+			если они есть. Это важно, потому что могло быть 100.08, и при
+			вычитании 100 остаётся не ноль. Затем берётся максимум. Всё, что меньше
+			единицы заменится на эту константу и целая часть от неё даст ноль.
+			Если же билеты действительно остались, то сравнение по адрес 47
+			пропустит на дополнительную проверку.
+		</p>
+		<p>
+			Наша разность осталась в RY, поэтому по адресам 49..51 производится
+			сложение (Rd же отрицательное) с 0.2 и это сохраняется. А затем
+			по адресам 53..55 проводится проверка, что общая сумма штрафов
+			стала целым числом. В этом случае по адресам 56..62 идёт
+			приращение счётчика выговоров и сравнение с заданным пределом.
+		</p>
+		<p>
+			Если всё нормально, то по адресу 62 извлекается единица – нужна
+			для проверки окончания игры. Цикл по адресу 63..64 отправит на
+			начало <q>при обязаловке</q>. Если же она закончилась, то нужно
+			проверять условия окончания игры.
+		</p>
+		<p>
+			Условие: в каждом рейсе не более 100. Рейсов, где не ноль не более
+			одного. Вот единица по адресу по адресу 62 и используется как сумматор.
+			Сохраняется в стеке. Для обхода всех рейсов и извлечения используется один
+			и тот же регистр R0. Поэтому перед окончанием цикла по адресу 76
+			он извлекается до уменьшения, и по адресу 66 восстанавливается.
+			По адресам 68..71 проверяется, что сумма не более 100. Затем
+			по адресу 72 в RX восстанавливается извлечённое по адресу 69
+			значение без сдвига стека
+			(см. <a href="https://sergeanvarov.github.io/russian/mk61/uf/x2.html#id_point" target="_blank"></a>).
+			И если он не ноль
+			(<span class="but_k">К</span><span class="op_k">ЗН</span>), то
+			он отнимается от нашего счётчика, который в RY. И проверяется,
+			что он не отрицательный.
+		</p>
+		<p>
+			Так как цикл может прерваться раньше, чем регистр R0 станет
+			равным единице,	то переход в начало идёт на адрес 08, а не на 10,
+			чтобы записать в R0 единицу.
+		</p>
+		<p>
+			Если все проверки прошли успешно, то адресам 79..81
+			вывод счётчика прошедших дней, признака окончания игры и остановка.
+			Команда по адресу 82 врнёт на адрес 00 – новая игра.
+		</p>
+		<p>
+			Вот и всё. Дальше идёт подпрограмма ГСЧ, которую уже рассмотрели.
+		</p>
+
+	</details>
+</body>
+
+</html>
