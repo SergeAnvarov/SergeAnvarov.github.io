@@ -1,0 +1,11 @@
+К[x]   xП2   xП3   Flg  Сx    xП6  xП0  xП1   xПB   xПE
+<->    7     ×     Fπ   +     К{x} В↑   ВП    2     К[x]
+KПП9   Kx<0A FВх   KxП7 -     FL2  10   Пx3   /-/   xП5
+Пx4    Пx5   С/П   xП4  Kx≥0D ПxA  -    Kx<0D 0     xП5
+Fcosᐨ¹ xП2   КПx6  КПx2 Пx2   Fx≥0 30   KПП9  Kx≥0C FВх
+Пx4    Пx2   ПxA   ÷    -     Fx≠0 98   FВх   К{x}  Пx4
+К{x}   -     Kx≠08 +    Kx≠08 FВх  ÷    Fx²   Fcos  Kx=0C
+КПx5   KБПC  ÷     xП7  Fѻ    4    ÷    К[x]  FВх   К{x}
+ПxD    /-/   xПD   Fx≥0 72    ÷    F10ˣ К[x]  <->   1
++      F10ˣ  +     КПx7 <->   К(+) -    В/О   <->   KxП7
+FL3    27    Пx6   Пx9  С/П
