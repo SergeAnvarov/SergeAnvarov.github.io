@@ -768,7 +768,7 @@
 			<li>
 				<p>
 					<span class="but_f">F</span><span class="op_f">tg<sup>-1</sup></span>
-					для чисел N всегда даёт ноль:
+					для чисел N всегда даёт ноль (точнее 10.<sup>|-160</sup>):
 				</p>
 				<table class="center">
 					<tr>
@@ -1259,6 +1259,108 @@
 	</section>
 
 	<hr>
+
+	<section id="id_another">
+		<header><h2>Оказывается таких два!</h2></header>
+		<p>
+			На самом деле можно получить числа, которые выглядят точно так же, но
+			у них неявный порядок не -160, а -16. Их можно получить, только начинать нужно не с
+			<span class="code"> 1.       -E0</span>, а с <span class="code"> 1.       -EE</span>,
+			и убрав 22 в порядке, а не 20. Визуально они ничем не отличаются!
+		</p>
+		<p>
+			Так же приведём программу для получения 14 разных чисел с таким порядком:
+		</p>
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">3</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but">9</span></td>
+				<td><span class="but_f">F</span><span class="op_f">1/x</span></td>
+				<td><span class="but_k">К</span><span class="op_k">ИНВ</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but">/-/</span></td>
+				<td><span class="but">ВП</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;10&#8202;|&#8202;</th>
+				<td><span class="but">2</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but">В&uarr;</span></td>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but">/-/</span></td>
+				<td><span class="but">2</span></td>
+				<td><span class="but">2</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+				<td><span class="but">0</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;20&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">e</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">НОП</span></td>
+				<td><span class="but">ВП</span></td>
+				<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="reg">e</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L0</span></td>
+				<td><span class="but">18</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;30&#8202;|&#8202;</th>
+				<td><span class="but_b">С/П</span></td>
+				<td colspan="9"></td>
+			</tr>
+		</table>
+		<p>
+			В общем, все выводы выше для них подходят, заострим внимание на отличиях.
+		</p>
+		<p>
+			Сложение и вычитание всё то же, но только числа -16 не считают "родней" числа -160,
+			и между собой складываются как с другими.
+		</p>
+		<p>
+			При умножении и делении с ними проще: правила те же, но порядок -16, т.е. они
+			не зануляются и их порядок сразу виден:
+			0.7 &times; 2.<sup>|&minus;00</sup> = 1.4<sup>|&minus;16</sup>:
+		</p>
+		<p>
+			Из <a href="glossary.html#id_yellow_num">Жёлтых</a> функций отличия в
+			<span class="but_f">F</span><span class="op_f">&radic;</span>, которая их считает
+			как числа с порядком -09.
+			Тригонометрические функции дают то же результат, что для -160, только
+			<span class="but_f">F</span><span class="op_f">tg<sup>-1</sup></span> уже
+			на зануляется, а даёт -16 степень.
+			Квадраты чисел тоже дают -16 степень.
+			Степенные функции и логарифмы дают то же самый результат, видимо для них порядок роли не играет.
+		</p>
+		<p>
+			<a href="glossary.html#id_blue_num">Синие</a> функции ведут себя так же.
+		</p>
+		<p>
+			Во внутреннем представлении ПМК для чисел -16 степени цифры порядка представлены
+			числами 9, 9, 10. А для -160 числами 9, 10, 0. Визуально их не отличить.
+		</p>
+
+	</section>
 
 	<section id="id_sum">
 		<header><h2>Итог</h2></header>
