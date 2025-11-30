@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta content="true" name="HandheldFriendly">
+	<meta content="width" name="MobileOptimized">
+	<meta content="yes" name="apple-mobile-web-app-capable">
+	<meta name="description" content="Крестики-нолики 4x4. Игра. ПМК. МК-61">
+	<title>Крестики-нолики 4x4</title>
+
+<style>
+
+span.but, span.but_f, span.but_k, span.but_cx, span.but_b, span.reg, span.op_f, span.op_k {
+	border:thin solid black;
+	border-radius:4px;
+	display:inline-block;
+	font-size:1.1em;
+	font-weight:bold;
+	font-family:monospace;
+	text-align:center;
+	min-width:2.3em;
+	white-space:nowrap;
+}
+
+sup {
+	line-height:0;
+}
+
+span.but {
+	background-color:#CCCCCC;
+	color:black;
+}
+
+span.but_f {
+	background-color:#F5E345;
+	color:black;
+}
+
+span.but_k {
+	background-color:LightSkyBlue;
+	color:white;
+}
+
+span.but_cx {
+	background-color:#F00505;
+	color:white;
+}
+
+span.but_b {
+	background-color:black;
+	color:white;
+}
+
+span.reg {
+	background-color:black;
+	color:white;
+}
+
+span.op_f {
+	background-color:black;
+	color:yellow;
+}
+
+span.op_k {
+	background-color:black;
+	color:#00BFFF;
+}
+
+.code {
+	background-color:#103810;
+	color:#77FF77;
+	font-size:1.1em;
+	font-family:monospace;
+	font-weight:bold;
+	padding:1px 2px 1px 2px;
+	white-space:pre;
+}
+
+table {
+	border-collapse:collapse;
+}
+
+table, th, td {
+	border:1px solid black;
+}
+
+.center {
+	text-align:center;
+}
+
+details summary {
+	cursor: pointer;
+}
+details summary > * {
+	display: inline;
+}
+
+a[target="_blank"] {
+	background: url(https://upload.wikimedia.org/wikipedia/commons/6/64/Icon_External_Link.png) center right no-repeat;
+    padding-right: 0.8em;
+}
+
+</style>
+
+</head>
+
+<body>
+	<header>
+		<h1>Крестики-нолики 4x4</h1>
+	</header>
+	<p>
+		Логическая игра между
+		<a href="https://ru.wikipedia.org/wiki/Электроника_МК-61"target="_blank">ПМК</a>
+		и игроком на квадратном поле 4 на 4 клетки.
+	</p>
+
+	<h2>Задача</h2>
+
+	<p>
+		Поставить в ряд четыре знака. Более подробно об игре можно прочитать
+		<a href="https://ru.wikipedia.org/wiki/Крестики-нолики" target="_blank">здесь</a>.
+		В данной игре используются расширенные диагонали.
+	</p>
+
+	<h2>Игровое поле</h2>
+
+	<h3>Нумерация клеток</h3>
+
+	<p>
+		Координаты задаются парой чисел от 1 до 4.
+	</p>
+	<p>
+		Вот таблица координат в виде X:Y, где X по горизонтали, Y по вертикали.
+	</p>
+	<table>
+		<tr><td>1:4</td><td>2:4</td><td>3:4</td><td>4:4</td></tr>
+		<tr><td>1:3</td><td>2:3</td><td>3:3</td><td>4:3</td></tr>
+		<tr><td>1:2</td><td>2:2</td><td>3:2</td><td>4:2</td></tr>
+		<tr><td>1:1</td><td>2:1</td><td>3:1</td><td>4:1</td></tr>
+	</table>
+
+	<h3>Вертикали</h3>
+
+	<table>
+		<tr><td>&nbsp;1&nbsp;</td><td>&nbsp;2&nbsp;</td><td>&nbsp;3&nbsp;</td><td>&nbsp;4&nbsp;</td></tr>
+		<tr><td>&nbsp;1&nbsp;</td><td>&nbsp;2&nbsp;</td><td>&nbsp;3&nbsp;</td><td>&nbsp;4&nbsp;</td></tr>
+		<tr><td>&nbsp;1&nbsp;</td><td>&nbsp;2&nbsp;</td><td>&nbsp;3&nbsp;</td><td>&nbsp;4&nbsp;</td></tr>
+		<tr><td>&nbsp;1&nbsp;</td><td>&nbsp;2&nbsp;</td><td>&nbsp;3&nbsp;</td><td>&nbsp;4&nbsp;</td></tr>
+	</table>
+
+	<h3>Горизонтали</h3>
+
+	<table>
+		<tr><td>&nbsp;4&nbsp;</td><td>&nbsp;4&nbsp;</td><td>&nbsp;4&nbsp;</td><td>&nbsp;4&nbsp;</td></tr>
+		<tr><td>&nbsp;3&nbsp;</td><td>&nbsp;3&nbsp;</td><td>&nbsp;3&nbsp;</td><td>&nbsp;3&nbsp;</td></tr>
+		<tr><td>&nbsp;2&nbsp;</td><td>&nbsp;2&nbsp;</td><td>&nbsp;2&nbsp;</td><td>&nbsp;2&nbsp;</td></tr>
+		<tr><td>&nbsp;1&nbsp;</td><td>&nbsp;1&nbsp;</td><td>&nbsp;1&nbsp;</td><td>&nbsp;1&nbsp;</td></tr>
+	</table>
+
+	<h3>Диагонали левонаклонные, расширенные</h3>
+
+	<table>
+		<tr><td>&nbsp;1&nbsp;</td><td>&nbsp;2&nbsp;</td><td>&nbsp;3&nbsp;</td><td>&nbsp;4&nbsp;</td></tr>
+		<tr><td>&nbsp;4&nbsp;</td><td>&nbsp;1&nbsp;</td><td>&nbsp;2&nbsp;</td><td>&nbsp;3&nbsp;</td></tr>
+		<tr><td>&nbsp;3&nbsp;</td><td>&nbsp;4&nbsp;</td><td>&nbsp;1&nbsp;</td><td>&nbsp;2&nbsp;</td></tr>
+		<tr><td>&nbsp;2&nbsp;</td><td>&nbsp;3&nbsp;</td><td>&nbsp;4&nbsp;</td><td>&nbsp;1&nbsp;</td></tr>
+	</table>
+
+	<h3>Диагонали правонаклонные, расширенные</h3>
+
+	<table>
+		<tr><td>&nbsp;3&nbsp;</td><td>&nbsp;2&nbsp;</td><td>&nbsp;1&nbsp;</td><td>&nbsp;4&nbsp;</td></tr>
+		<tr><td>&nbsp;2&nbsp;</td><td>&nbsp;1&nbsp;</td><td>&nbsp;4&nbsp;</td><td>&nbsp;3&nbsp;</td></tr>
+		<tr><td>&nbsp;1&nbsp;</td><td>&nbsp;4&nbsp;</td><td>&nbsp;3&nbsp;</td><td>&nbsp;2&nbsp;</td></tr>
+		<tr><td>&nbsp;4&nbsp;</td><td>&nbsp;3&nbsp;</td><td>&nbsp;2&nbsp;</td><td>&nbsp;1&nbsp;</td></tr>
+	</table>
+
+	<p>
+		Итого существует 16 линий, по которым можно установить 4 знака.
+	</p>
+
+	<h2>Начало игры</h2>
+
+	<p>
+		Однократно, перед серией игр вводятся константы:
+	</p>
+	<table>
+		<tr>
+			<th>Регистр</th>
+			<th>Значение</th>
+		</tr>
+		<tr>
+			<th>Ra</th>
+			<td>
+				<span class="code"> Г.       -02</span>.<br>
+				Получается так: <span class="code"> 55.         </span>
+				<span class="but">B&uparrow;</span>
+				<span class="code"> 88.         </span>
+				<span class="but_k">K</span><span class="op_k">&or;</span>
+				<span class="but_k">K</span><span class="op_k">{x}</span>
+				<span class="but">ВП</span>
+				<span class="but">/-/</span>
+				<span class="but">1</span>
+			</td>
+		</tr>
+		<tr>
+			<th>Rb</th>
+			<td><span class="code"> 88888834.   </span></td>
+		</tr>
+		<tr>
+			<th>Rc</th>
+			<td><span class="code"> 2.2600029-01</span></td>
+		</tr>
+		<tr>
+			<th>Rd</th>
+			<td><span class="code"> 4.1200076-01</span></td>
+		</tr>
+	</table>
+
+	<p>
+		Переключатель Р-ГРД-Г необходимо установить в Г.
+	</p>
+
+	<p>
+		Перед началом каждой игры в регистры R4&hellip;R7 вводится число
+		<span class="code"> 44444.4     </span>, в регистр R9 ноль.
+		И необходимо убедиться, что в RA число положительное. Если нет,
+		то нужно сменить знак и сохранить. Затем
+		<span class="but_b">В/0</span> <span class="but_b">С/П</span>,
+		и далее ввод хода.
+	</p>
+	<p>
+		Если загрузили образ в эмулятор, то там это уже всё сделано, кроме
+		<span class="but_b">В/0</span> <span class="but_b">С/П</span>.
+	</p>
+	<p>
+		Если есть желание, чтобы первый ход делал ПМК, то сделайте RA
+		отрицательным, введите в R0 число больше 0 и меньше 99. Затем
+		<span class="but_b">Б/П</span> <span class="but">07</span> <span class="but_b">С/П</span>.
+	</p>
+
+
+	<h2>Игровой процесс</h2>
+
+	<p>
+		Результаты ходов можно записывать на бумаге или помнить в уме.
+		Сам ПМК помнит уже занятые клетки.
+		Игрок указывает свой выбор так:
+		X <span class="but_b">ПП</span> Y <span class="but_b">С/П</span>,
+		где X и Y координаты клетки, куда игрок ставит свой знак.
+	</p>
+	<p>
+		В ответ, в результате раздумий, ПМК может выдать на экран (регистр X):
+	</p>
+	<ul>
+		<li>
+			Число от 1 до 4. Ответный ход. Координаты выбранной ПМК клетки находятся в регистрах X и Y соответственно.
+			Если вдруг запутались между X и Y, то можно посмотреть в регистрах R1(X), R2(Y).
+			После этого игрок делает свой ход и игра продолжается.
+		</li>
+		<li>
+			<span class="code">-99999999.   </span> – игрок выбрал клетку, которая уже
+			занята. Свой <q>неудачный</q> ход можно посмотреть в регистрах R1(X), R2(Y). Нужно повторить ввод.
+			Если на любой ход выдаётся такое, значит всё игровое поле уже занято, и это ничья и конец игре.
+		</li>
+		<li>
+			<span class="code"> 8.       -0n</span> – выграл ПМК, поставив в ряд 4 знака.
+			n – это цифра от 1 до 4. Победный ход ПМК можно посмотреть в регистрах R1(X), R2(Y).
+			По сути номер ряда, где ПМК выставил 4 знака, равно 5 - n. Если хочется узнать, где именно,
+			то нужно просмотреть регистры R4&hellip;R7. Тот регистр, в котором встречается восьмёрка,
+			и определяет где именно: R7 – вертикали, R6 – горизонтали, R5 - диагонали левонаклонные,
+			R4 - диагонали правонаклонные. Номера рядов в них указаны в разделе про игровое поле.
+		</li>
+		<li>
+			Ноль – все ходы исчерпаны, но никто не поставил в ряд 4 знака, значит ничья.
+			Конец игре.
+			Это может произойти, только если первым начинал ПМК, и после хода игрока он
+			не может найти свободные клетки.
+		</li>
+	</ul>
+	<p>
+		Увы, но проиграть ПМК не может. Алгоритм игры достаточно надёжен.
+	</p>
+
+	<h2>Контроль ходов</h2>
+
+	<p>
+		Если в качестве координат указать не целое число от 1 до 4, то ПМК автоматически
+		выполнить следующие преобразования:
+	</p>
+	<ul>
+		<li>
+			Если есть дробная часть, то она будет отброшена.
+		</li>
+		<li>
+			Полученное число с шагом 4 <q>передвигается</q> в диапазон 1&hellip;4.
+			Например, &minus;1 становится тройкой, ноль – четвёркой, а 9 становится единицей.
+		</li>
+	</ul>
+	<p>
+		Регистры R1 и R2 после этого содержат уже скорректированные значения, впрочем,
+		увидеть это можно, только если ход был в уже занятую клетку, потому что после
+		ответного хода там уже выбор ПМК.
+	</p>
+
+	<h2>Историческая справка</h2>
+
+	<p>
+		Эта версия игры родилась уже в 2025 году на канале Телеграм
+		<a href="https://t.me/mk61s" target="_blank">t.me/mk61s</a>
+		по микрокалькуляторам МК61/МК52/МК85.
+		Исходно игра, вместе с алгоритмом, была предложена пользователем
+		<a href="https://t.me/Hs_On" target="_blank">Hs On</a>
+		в секции <q>Спортивное программирование</q> для
+		дальнейшей оптимизации.
+	</p>
+	<p>
+		Поскольку я тоже поучаствовал в её оптимизации, то решил выложить и здесь.
+	</p>
+
+	<hr>
+
+	<details open="open">
+		<summary>
+			<h2>Далее только для тех, кто не только играет...</h2>
+		</summary>
+
+		<h3>Текст программы</h3>
+
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_b">В/О</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">b</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x=0</span><span class="but">3</span></td>
+				<td><span class="but">4</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+				<td><span class="but">4</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;10&#8202;|&#8202;</th>
+				<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
+				<td><span class="but_b">ПП</span></td>
+				<td><span class="but">EB</span></td>
+				<td><span class="but_k">К</span><span class="op_k">&and;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x=0</span><span class="reg">c</span></td>
+				<td><span class="but">9</span></td>
+				<td><span class="but">8</span></td>
+				<td><span class="but_b">ПП</span></td>
+				<td><span class="but">58</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;20&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+				<td><span class="but_k">К</span><span class="op_k">max</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x=0</span><span class="reg">c</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">8</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L2</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;30&#8202;|&#8202;</th>
+				<td><span class="but">11</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L1</span></td>
+				<td><span class="but">09</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">8</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">d</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">d</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;40&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="op_k">&or;</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">9</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;50&#8202;|&#8202;</th>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+				<td><span class="but">97</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but">/-/</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">a</span></td>
+				<td><span class="but_f">F</span><span class="op_f">tg</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">e</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;60&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+				<td><span class="but_b">ПП</span></td>
+				<td><span class="but">72</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;70&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+				<td><span class="but">/-/</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">d</span></td>
+				<td><span class="but_k">К</span><span class="but_b">БП</span><span class="reg">e</span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but">4</span></td>
+				<td><span class="but">&divide;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;80&#8202;|&#8202;</th>
+				<td><span class="but">4</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ge;0</span></td>
+				<td><span class="but">85</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x=0</span><span class="reg">a</span></td>
+				<td><span class="but">4</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_b">В/О</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;90&#8202;|&#8202;</th>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+				<td><span class="but_k">К</span><span class="op_k">&and;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="reg">a</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but">&divide;</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;A0&#8202;|&#8202;</th>
+				<td><span class="but_k">К</span><span class="op_k">{x}</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x<sup>2</sup></span></td>
+				<td><span class="but">+</span></td>
+				<td colspan="5"></td>
+			</tr>
+		</table>
+
+		<h3>Распределение регистров</h3>
+
+		<table>
+			<tr><th>Регистр</th><th>Значение</th></tr>
+			<tr>
+				<th>R0</th>
+				<td>
+					При анализе – значение максимальной оценки.
+					При сохранении хода (ПМК или игрока) – индекс регистра 4&hellip;7.
+				</td>
+			</tr>
+			<tr>
+				<th>R1</th>
+				<td>Текущая координата X.</td>
+			</tr>
+			<tr>
+				<th>R2</th>
+				<td>Текущая координата Y.</td>
+			</tr>
+			<tr>
+				<th>R3</th>
+				<td>
+					При анализе координата X клетки с максимальной оценкой.
+					При ответе игроку может быть изменено для отображения
+					дополнительной информации для игрока.
+				</td>
+			</tr>
+			<tr>
+				<th>R4</th>
+				<td>
+					Накопленные значения для оценки правонаклонных диагоналей.
+					Первоначально указывается число 44444.4.
+				</td>
+			</tr>
+			<tr>
+				<th>R5</th>
+				<td>
+					Накопленные значения для оценки левонаклонных диагоналей.
+					Первоначально указывается число 44444.4.
+				</td>
+			</tr>
+			<tr>
+				<th>R6</th>
+				<td>
+					Накопленные значения для оценки горизонталей.
+					Первоначально указывается число 44444.4.
+				</td>
+			</tr>
+			<tr>
+				<th>R7</th>
+				<td>
+					Накопленные значения для оценки вертикалей.
+					Первоначально указывается число 44444.4.
+				</td>
+			</tr>
+			<tr>
+				<th>R8</th>
+				<td>Координата Y клетки с максимальной оценкой.</td>
+			</tr>
+			<tr>
+				<th>R9</th>
+				<td>Битовая маска уже сделанных ходов.</td>
+			</tr>
+			<tr>
+				<th>Ra</th>
+				<td>
+					&plusmn;0.Г-02
+					Многозначная переменная. При умножении это обратная величина от 10, что
+					используется в вычислениях. Знак зависит от того, для кого сохраняется текущий  ход.
+					Минус – для игрока.
+					Также используется для косвенного перехода на нулевой адрес, а тангенс (в градусах)
+					даёт число 0.5235988^-03, что тоже используется как адрес процедуры.
+				</td>
+			</tr>
+			<th>Rb</th>
+			<td>
+				Константа <span class="code"> 88888834.   </span>.
+				Начальные восьмёрки используются для определения победы, чтобы проверить победный бит.
+				Хвостик (34) используется как адрес перехода.
+			</td>
+			<tr>
+				<th>Rc</th>
+				<td>
+					Константа <span class="code"> 2.2600029-01</span>.
+					Само значение используется для преобразования координаты
+					1&hellip;4 в биты 1,2,4,8.
+					Хвостик (29) используется как адрес перехода.
+				</td>
+			</tr>
+			<tr>
+				<th>Rd</th>
+				<td>
+					Константа <span class="code"> 4.1200076-01</span>.
+					Само значение используется для вычисления оценки.
+					Хвостик (76) используется как адрес функции коррекции.
+				</td>
+			</tr>
+			<tr>
+				<th>Re</th>
+				<td>
+					Адрес подпрограммы. При анализе = 98. При сохранении хода по смыслу как 88 (см. Ra).
+					Меняется программно.
+				</td>
+			</tr>
+		</table>
+
+		<h3>Идеи реализации</h3>
+
+		<p>
+			Для осуществления оценки положения ПМК хранит <q>вес</q> каждой из 16-ти линий.
+			Для этого используется одна цифра. Если ПМК ставит знак на линию, то к цифре прибавляет единица.
+			Если игрок – отнимается. Нейтральное значение равно 4, таким образом цифра всегда остается положительной.
+			Обычный диапазон от 1 до 7. Если кто-то ставит четыре подряд, то будет
+			либо 0, либо 8. При текущем алгоритме ноль ПМК не допустит.
+		</p>
+		<p>
+			Для хранения четырёх однотипных линий используется 4 разряда числа.
+			Первый разряд – единицы, второй – десятки и т.д. Т.е. номер разряда считается от точки влево.
+			Вот откуда начальные 4<strong>4444</strong>.4.
+			Разряд после запятой используется для сбалансированной оценки линии (алгоритм позднее).
+			Начальная 4 <q>зарезервирована</q> под выполнение битовых операций. Это может быть любая
+			цифра, просто 4 <q>эстетичнее</q>.
+		</p>
+		<p>
+			Кроме того, чтобы не повторять ходы и при анализе пропускать уже занятые клетки, ПМК
+			хранит битовое поле всех клеток. Для поля 4x4 и использованию шестнадцатеричных цифр
+			одного регистра хватит за глаза.
+		</p>
+
+		<h3>Основной алгоритм</h3>
+
+		<p>
+			Кратко алгоритм можно разбить на следующие шаги:
+		</p>
+		<ul>
+			<li>Ввод хода игрока.</li>
+			<li>Внесение изменений в веса линий на основе хода игрока.</li>
+			<li>Выбор лучшего ответа.</li>
+			<li>Внесение изменений в веса линий на основе выбора ПМК.</li>
+			<li>Вывод результата и ожидание ввода</li>
+		</ul>
+		<p>
+			Теперь рассмотрим каждый шаг подробнее.
+		</p>
+
+		<h3>Ввод хода игрока</h3>
+
+		<p>
+			Тут две задачи: скорректировать введённые данные, чтобы координаты были
+			в диапазоне 1&hellip;4, и проверить, что полученная клетка ещё не использовалась
+			ранее.
+		</p>
+		<p>
+			Пока не обращаем внимания на порядок выполнения и <q>перескоки</q> – это всё
+			связано с оптимизацией программы по размеру.
+		</p>
+		<p>
+			Начинается ввод с команды по адресу 04 и затем уже <q>скачок</q> на адрес 34: вызов
+			функции косвенно по Rb.
+			Прежде, чем сохранить ввод игрока координата подвергается обработке функции по адресу
+			в регистре Rd. Назовём её <dfn>функцией коррекции</dfn>.
+			Эта функция с адреса 76 выполняет то, что заявлено в начале в части корректировки: приводит
+			любое число в диапазон 1&hellip;4 следующим образом:
+		</p>
+		<ul>
+			<li>Отбрасывает дробную часть.</li>
+			<li>Делит целое на 4 и дробную часть умножает обратно на 4.</li>
+			<li>Если результат меньше или равен нулю, то к нему прибавляется 4.</li>
+		</ul>
+		<p>
+			В функции единственная особенность, это ранний выход по условию
+			<span class="but_k">К</span><span class="op_f">x=0</span><span class="reg">a</span>, которое
+			при ненулевом значении перебрасывает на адрес 00, где стоит <span class="but_b">В/0</span>.
+		</p>
+		<p>
+			После сохранения координат в R1, R2 далее, с адреса 39, идёт <dfn>функция преобразования
+			координат в битовую маску</dfn>. Предварительно в стек загоняется текущее битовое поле
+			всех ходов, хранящееся в R9. Затем значение 1&hellip;4 из R2 преобразуется в
+			числа 1,2,4,8 по формуле: K[10<sup>R2&times;Rc</sup>]. Константа в Rc подобрана
+			так, чтобы получался нужный результат. Значение из R1 используется, чтобы
+			<q>отодвинуть</q> полученный бит в нужный разряд.
+		</p>
+		<p>
+			Пусть, для примера, R1 = 3 и R2 = 4. Тогда K[10<sup>4&times;Rc</sup>] = 8,
+			а 10<sup>3</sup> = 1000. После сложения получим 1008. Т.е. бит 4 в 3-м разряде
+			(первая цифра в битовых операциях не участвует, поэтому 3-й).
+		</p>
+		<p>
+			Далее с помощью конъюнкции полученный бит добавляется и сохраняется в R9.
+			Это же значение (8, пусть с чем-то) инициализирует индекс в R0, который потом
+			<q>пробежит</q> по R7&hellip;R4. А разница между новым R9 и старым,
+			который всё ещё в стеке, потому что битовые операции не сокращают стек, позволит
+			понять, что это новый ход.
+		</p>
+		<p>
+			Если результат нулевой, т.е. новый бит не добавил ничего, т.е. уже был такой ход,
+			то переход на адрес 97, где этот ноль сохраняется в R3, потом какие-то операторы,
+			которые сделают не ноль, потом уйдет на В/0 в начало и таким образом вернётся
+			из функции ввода на адрес 06. Где не ноль условием
+			<span class="but_k">К</span><span class="op_f">x=0</span><span class="but">3</span> будет переброшен
+			на адрес 99. Для нас важно, что R3 уменьшится с нуля до -99999999, потом
+			опять выполнятся какие-то команды в конце, но на этот раз В/0 никуда не вернёт,
+			а продолжит с адреса 01, что в результате покажет игроку содержимое R3, т.е.
+			клетка занята.
+		</p>
+		<p>
+			Если же бит был новый, т.е. по адресу 52 получился не ноль, то&hellip;
+			на этом ввод хода игрока заканчивается и переходи к следующему этапу:
+		</p>
+
+		<h3>Внесение изменений в веса линий на основе хода игрока</h3>
+
+		<p>
+			С адреса 54. Сначала положительное Ra меняется на отрицательное, чтобы учесть
+			отрицательный эффект (для ПМК) хода игрока. Затем тангенсом это значение преобразуется
+			в -0.5235988^-03, и заносится в Re, фактически это более короткий способ для присвоения Re=88.
+			Тут, пожалуй, уместна отсылка на статью, где подробно рассказывается об косвенной адресации:
+			<a href="https://sergeanvarov.github.io/russian/mk61/uf/indirect_addr.html" target="_blank">Косвенная адресация</a>.
+		</p>
+		<p>
+			Далее с адреса 59 по 75 вызывается <dfn>функция обхода типов линий</dfn>.
+			Она четыре раза вызывает процедуру из Re
+			передавая на вход: в RY веса всех линий одного типа (содержимое R7&hellip;R4), а
+			в RX номер разряда, вычисляемый по координатам. Получаются пары:
+		</p>
+		<ul>
+			<li>R7 (вертикали) и R1, как номер вертикали.</li>
+			<li>R6 (горизонтали) и R2, как номер горизонтали.</li>
+			<li>R5 (левонаклонные диагонали) и R1+R2, как номер диагонали.</li>
+			<li>R4 (правонаклонные диагонали) и R1&minus;R2, как номер диагонали.</li>
+		</ul>
+		<p>
+			В последних двух вариантах сумму или разность ещё нужно нормализовать.
+			Функцию нормализации из Rd мы уже рассматривали.
+		</p>
+		<p>
+			Фактический код <q>сливает</q> два последних варианта для сокращения
+			числа команд, и плюс
+			<span class="but_k">К</span><span class="but_b">БП</span><span class="reg">e</span>,
+			вместо
+			<span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span>
+			и <span class="but_b">В/О</span>.
+		</p>
+		<p>
+			Теперь посмотрим, что же делает функция с адреса 88 (Re). Она с помощью степени и
+			умножения на Ra преобразует разряд 1&hellip;4 в числа -1, -10, -100, -1000, а потом
+			проводит банальное сложение с числом в RY, тем самым отнимая вес в нужном разряде.
+		</p>
+		<p>
+			Почему вдруг умножение на
+			<span class="code">-Г.       -02</span>, эквивалентно делению на -10?
+			Тут проще привести ссылку на мою статью по шестнадцатеричным операциям:
+			<a href="https://sergeanvarov.github.io/russian/mk61/uf/hex.html#id_h_mult_y" target="_blank">Операция H
+				<span class="but">&times;</span> Y (умножение)
+			</a>, где видно, что умножение на шестнадцатеричную цифру (кроме E) это как умножение на 10,
+			а <span class="code">-Г.       -02</span>, получается как &minus;10<sup>-2</sup> или как &minus;0.1.
+		</p>
+		<p>
+			Итог через
+			<span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">0</span>
+			сохраняется обратно в соответствующий регистр.
+			Напомню, что изначально R0=8, поэтому последовательный вызов 4 раза сохранит
+			итог в нужных регистрах.
+		</p>
+		<p>
+			С адреса 93 с помощью дизъюнкции с числом из восьмерок (Rb) проводится проверка,
+			что в результате ход не привёл к победе ПМК: переполнению разряда до 8,
+			учитывая, что 4+4=8, где четыре знака в линии от нейтральной 4. Если это не произошло, а для хода игрока всегда так,
+			то возврат из функции с нулём по команде
+			<span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="reg">a</span>.
+		</p>
+		<p>
+			После четырех пробегов это вернёт нас на адрес 06, где ноль успешно пропуститься и мы плавно
+			перейдём к шагу&hellip;
+		</p>
+
+		<h3>Выбор лучшего ответа</h3>
+
+		<p>
+			Идея выбора не сложная. В цикле по всем клеткам, которые ещё не использовались, вызывается
+			функция обхода типов линий для конкретной клетки. Получается оценка конкретной линии. Если
+			её оценка (значение) больше ранее сохранённой (вначале минимальной), то текущие координаты
+			сохраняются как лучший ход, ну и лучшая оценка сохраняется, для последующего сравнения.
+			По окончании цикла получим лучший ход.
+		</p>
+		<p>
+			Теперь технические детали. Текущие координаты хранятся в R1, R2. Получается два вложенных цикла от
+			1 до 4 (точнее от 4 до 1, как это принято в циклах ПМК). Лучшая оценка хранится в R0.
+			Лучшие координаты сохраняются в R3, R8. Текущая оценка сохраняется в стеке.
+		</p>
+		<p>
+			Сама оценка это дробное число, но из-за ошибки оператора
+			<span class="but_k">К</span><span class="op_k">max</span> при работе с нулём, добавляется
+			некое целое число. Первоначально R0 содержит 4, как результат ввода хода игрока. Это и есть
+			минимальная оценка. Затем будут значения 98 с чем-то, что явно больше.
+		</p>
+		<p>
+			Первые команды с адреса 07 очевидны - инициализация циклов. А вот с адреса 11 идёт вызов процедуры
+			со странного адреса. На самом деле <q>EL</q> (или EB) это то же, что <q> 1</q> или (F1), просто
+			такие цифры легко ввести при вводе программы, что не скажешь про цифру F.
+			Тут пригодится прочитать раздел
+			<a href="https://sergeanvarov.github.io/russian/mk61/uf/addr_space.html" target="_blank">
+				Программное адресное пространство</a>,
+			где видно, что F1 соответствует адрес 39. Но там же сказано, что эта <q>тёмная</q>
+			адресация закончится на 47 адресе и уйдёт в 00. А с адреса 39 по 47 идёт
+			функция преобразования координат в битовую маску. Благодаря внезапному возврату на 00
+			(на <span class="but_b">В/0</span>) она действительно превращается в функцию, а не линейный
+			кусок кода. Она вернёт нам битовую маску для текущих R1, R2. Поэтому по адресам 3&hellip;5
+			мы проверим, что эти координаты ещё не задействованы. А если так, то перейдём по Rc (=29)
+			на конец цикла.
+		</p>
+		<p>
+			Далее мы в стек загоняем 98, что является не только начальной оценкой, но и адресом функции
+			оценки и вызываем функцию обхода типов линий. Функцию с адреса 98 рассмотрим позднее.
+		</p>
+		<p>
+			Итоги оценки по адресам 20&hellip;24 мы сравниваем со значением в R0, сохраняя в него максимальную.
+			А если разность между максимум и текущей оценкой нулевая, т.е. она и есть максимальная, то
+			по адресам 25&hellip;28 сохраняем координаты для максимальной оценки.
+		</p>
+		<p>
+			Окончание двух циклов по адресам 29&hellip;32 понятно. А затем мы копируем обратно R3, R8 в R1, R2.
+			Тут видно, что это тот же фрагмент ввода хода игрока, что мы уже рассмотрели.
+			Отличие: Ra станет положительным и взнос текущих R1 и R2 будет в пользу ПМК. При этом проверка на выигрыш
+			ПМК по адресу 90 может оказаться положительным. В этом случае в R3 сохранится не нулевой результат
+			битовой операции, а обход остальных типов линий продолжится.
+			В итоге возврат будет уже на адрес 01.
+		</p>
+		<p>
+			Посмотрим на <dfn>функцию оценки</dfn> по адресу 98 (сердце программы).
+			Она вес текущей линии, с помощью 3-х команд ставит на первое место после запятой, при
+			нейтральном значении 0.4. Причём, веса других линии (правее), тоже участвуют.
+			В идеале нужны все, но только <q>правых</q> достаточно. Затем из этого числа
+			отнимается экспертное значение 0.412 из Rd (см. автора в исторической справке).
+			А квадратичное отклонение и будет результатом. Чем больше, тем лучше значимость хода в эту линию.
+			Полученное значение прибавляется в текущей оценке в стеке.
+		</p>
+		<p>
+			Обратите внимание, что если игрок поставил много знаков в линию, то её значение будем
+			маленьким, а вот квадратичное отклонение наоборот, большим, заставляя ПМК ставить знаки
+			в эту же линию, тем самым прерывая победу игрока.
+		</p>
+
+		<h3>Вывод результата и ожидание ввода</h3>
+
+		<p>
+			Это с адреса 01. Тут вроде всё очевидно. Единственное, вместо R1 выводится R3. Это позволяет
+			выводить игроку дополнительную информацию, путём подмены значения в R3, которое по умолчанию
+			равно значению в R1.
+		</p>
+
+	</details>
+</body>
+
+</html>
