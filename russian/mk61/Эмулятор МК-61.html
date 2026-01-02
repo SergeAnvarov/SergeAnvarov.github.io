@@ -1605,30 +1605,41 @@
 		return DIGIT_CHARS[exponentDigit1] + DIGIT_CHARS[exponentDigit2] + DIGIT_CHARS[exponentDigit3];
 	};
 
-	const getTextOfRegister = (chipIndex, addr) => {
+	// RegisterValue is array[12] of digits 0..F:
+	// 0..7 - mantissa
+	// 8 - sign
+	// 9..11 - exponent
+	// Digits in mantissa and exponent are in reverse order!
+	// Location of the digits by index on the screen: [8|7,6,5,4,3,2,1,0|11,10,9]
+
+	const getRegisterValue = (chipIndex, addr) => {
 		const memory = microChips[chipIndex].M;
-		const exponentDigit1 = memory[addr];
-		const exponentDigit2 = memory[addr - 3];
-		const exponentDigit3 = memory[addr - 6];
+		const result = new Array(12);
+		for (let i = 0; i < 12; i++) {
+			result[i] = memory[addr - 33 + 3 * i];
+		}
+		return result;
+	};
+
+	const getTextOfRegister = (registerValue) => {
+		const exponentDigit1 = registerValue[11];
+		const exponentDigit2 = registerValue[10];
+		const exponentDigit3 = registerValue[9];
 		let exponent = exponentDigit1 * 100 + exponentDigit2 * 10 + exponentDigit3;
 		exponent += (exponent <= 900) ? 0 : -1000;
 		const standartExponent = (exponentDigit1 !== 9) && (exponentDigit2 !== 9) && (exponentDigit3 <= 9); // Not like 1.0^-0E
-		const digits = [];
-		let isSignificantDigit = false;
-		for (let i = 0; i < 8; i++) {
-			const digit = memory[addr - 33 + i * 3];
-			isSignificantDigit = isSignificantDigit || (digit !== 0) || (standartExponent && (i === 7 - exponent));
-			if (isSignificantDigit) {
-				digits.push(digit);
-			}
-		}
-		if (digits.length === 0) {
-			digits.push('0');
-		}
-		const signValue = memory[addr - 9];
-		const signChar = (signValue === 0) ? ' ' : DIGIT_CHARS[signValue + 1];
-		const mantissa = digits.reduce((result, digit) => DIGIT_CHARS[digit] + result, '').padEnd(8); // In reverse order
 		const exponentIsExplicit = (exponent < 0) || (exponent > 7) || !standartExponent;
+		let startOfSignificantDigit = registerValue.slice(0, 8).findIndex(digit => digit !== 0);
+		if (!exponentIsExplicit && (startOfSignificantDigit > (7 - exponent))) {
+			startOfSignificantDigit = 7 - exponent;
+		}
+		const mantissaDigits = registerValue.slice(startOfSignificantDigit, 8);
+		if (mantissaDigits.length === 0) {
+			mantissaDigits.push(0);
+		}
+		const signValue = registerValue[8];
+		const signChar = (signValue === 0) ? ' ' : DIGIT_CHARS[signValue + 1];
+		const mantissa = mantissaDigits.reduce((result, digit) => DIGIT_CHARS[digit] + result, '').padEnd(8); // In reverse order
 		const pointPos = (exponentIsExplicit) ? 1 : exponent + 1;
 		let result = signChar + mantissa.slice(0, pointPos) + '.' + mantissa.slice(pointPos);
 		if (exponentIsExplicit) {
@@ -1642,46 +1653,56 @@
 		return result;
 	};
 
-	// Result as object {memory: arr; indexHigh: int; indexLow: int}
-	const getCommandRef = (index) => {
-		const [chipIndex, initOffset] = ADDRESS_PAGES_OF_MEMORY[
-			PERMUTATION_ADDRESS_PAGES_OF_MEMORY[intDiv(IR2_1.tickIndex, 84)][intDiv(index, 7)]
-		];
-		const indexMod7 = index % 7;
-		const offset = (indexMod7 === 0) ? initOffset : initOffset + indexMod7 * 6 - 42;
-		return {
-			memory: microChips[chipIndex].M,
-			indexHigh: offset,
-			indexLow: offset - 3,
-		};
-	};
-
 	const registersControls = new Array(15);
 	const stackContols = new Array(5);
 	const returnsControls = new Array(5);
 	const commandCounterControl = document.getElementById('command_counter');
 
+	// Cache to prevent frequent UI updates
+	let registersValues; // array of RegisterValue
+	let stackValues; // array of RegisterValue
+	let returnsValues; // array of char[2]
+	let commandCounterValue; // char[2]
+
 	const updateRegisters = (permutation) => {
 		registersControls.forEach((textField, iReg) => {
-			textField.value = getTextOfRegister(
+			const regValue = getRegisterValue(
 				ADDRESS_PAGES_OF_MEMORY[PERMUTATION_ADDRESS_PAGES_OF_MEMORY[permutation][iReg]][0],
 				ADDRESS_PAGES_OF_MEMORY[PERMUTATION_ADDRESS_PAGES_OF_MEMORY[permutation][iReg]][1] - 8
 			);
+			if ((registersValues[iReg] === undefined) || arrayNotEqual(registersValues[iReg], regValue)) {
+				registersValues[iReg] = regValue;
+				textField.value = getTextOfRegister(regValue);
+			}
 		});
 		stackContols.forEach((textField, iStack) => {
-			textField.value = getTextOfRegister(
+			const stackValue = getRegisterValue(
 				ADDRESS_OF_STACK[PERMUTATION_ADDRESS_OF_STACK[permutation][iStack]][0],
 				ADDRESS_OF_STACK[PERMUTATION_ADDRESS_OF_STACK[permutation][iStack]][1]
 			);
+			if ((stackValues[iStack] === undefined) || arrayNotEqual(stackValues[iStack], stackValue)) {
+				stackValues[iStack] = stackValue;
+				textField.value = getTextOfRegister(stackValue);
+			}
 		});
-		returnsControls.forEach((textField, iRet) => {
-			textField.value =
-				DIGIT_CHARS[IK1302.R[ADDRESS_OF_RETURNS[iRet]]] +
-				DIGIT_CHARS[IK1302.R[ADDRESS_OF_RETURNS[iRet] - 3]];
-		});
-		commandCounterControl.value =
+		if (!inProgramMode) {
+			returnsControls.forEach((textField, iRet) => {
+				const retValue =
+					DIGIT_CHARS[IK1302.R[ADDRESS_OF_RETURNS[iRet]]] +
+					DIGIT_CHARS[IK1302.R[ADDRESS_OF_RETURNS[iRet] - 3]];
+				if (returnsValues[iRet] != retValue) { // or undefined
+					returnsValues[iRet] = retValue;
+					textField.value = retValue;
+				}
+			});
+		}
+		const commandValue =
 			DIGIT_CHARS[IK1302.R[ADDRESS_OF_COMMAND_COUNTER]] +
 			DIGIT_CHARS[IK1302.R[ADDRESS_OF_COMMAND_COUNTER - 3]];
+		if (commandValue != commandCounterValue) { // or undefined
+			commandCounterValue = commandValue;
+			commandCounterControl.value = commandValue;
+		}
 	};
 
 	const ANGLE_IN_RADIAN = 10;
@@ -1847,7 +1868,7 @@
 	const disableButtons = (disable) => {
 		document.querySelectorAll('.transparent_button').forEach(elem => (elem.disabled = disable));
 		document.getElementById('angle_measure').disabled = disable;
-	}
+	};
 
 	const turnOff = () => {
 		const clearTextField = textField => (textField.value = '');
@@ -1860,9 +1881,13 @@
 		displayPointsPresent = [];
 		microChips.forEach(chip => chip.reset());
 		registersControls.forEach(clearTextField);
+		registersValues = undefined;
 		stackContols.forEach(clearTextField);
+		stackValues = undefined;
 		returnsControls.forEach(clearTextField);
+		returnsValues = undefined;
 		commandCounterControl.value = '';
+		commandCounterValue = undefined;
 		document.getElementById('suspend').checked = false;
 		document.getElementById('power_pos').style.left = '51px';
 		displayValueImages.forEach(clearImage);
@@ -1891,13 +1916,16 @@
 		const fast = (document.getElementById('change_speed').checked);
 		execDelay = fast ? SHORT_DELAY : NORMAL_DELAY;
 		STEP_COUNT = fast ? 16 * 280 : 280;
-	}
+	};
 
 	const turnOn = () => {
 		if (!isPowerOn) {
 			document.getElementById('power_pos').style.left = '63px';
 			isPowerOn = true;
 			disableButtons(false);
+			registersValues = [];
+			stackValues = [];
+			returnsValues = [];
 			execLoop();
 		}
 	};
@@ -1959,6 +1987,20 @@
 
 	const programMemo = document.getElementById('program');
 
+	// Result as object {memory: arr; indexHigh: int; indexLow: int}
+	const getCommandRef = (index) => {
+		const [chipIndex, initOffset] = ADDRESS_PAGES_OF_MEMORY[
+			PERMUTATION_ADDRESS_PAGES_OF_MEMORY[intDiv(IR2_1.tickIndex, 84)][intDiv(index, 7)]
+		];
+		const indexMod7 = index % 7;
+		const offset = (indexMod7 === 0) ? initOffset : initOffset + indexMod7 * 6 - 42;
+		return {
+			memory: microChips[chipIndex].M,
+			indexHigh: offset,
+			indexLow: offset - 3,
+		};
+	};
+
 	const writeTextToProgram = () => {
 		const writeSingleCommand = (addr, intCode) => {
 			const ref = getCommandRef(addr);
@@ -2001,21 +2043,20 @@
 			.replace(/−/g, '-') // Minus to hyphen
 			.replace(/Х/g, 'X'); // All russian Х to english X
 		if (!(/\S/.test(programText))) {
-			exit; // Only empty string - don't change program
+			return; // Only empty string - don't change program
 		}
 
 		const commands = programText.split(/\s+/).slice(0, 105);
 		let useColumnMode = document.getElementById('column_mode').checked;
 		const lastColumnStartFrom = commands.length - 10; // used only when useColumnMode
-		let repeat = false;
-		do {
+		LoopDoScan:
+		while (true) {
 			// Set all commands to default 0
 			for (let iAddr = 0; iAddr < 105; iAddr++) {
 				writeSingleCommand(iAddr, 0);
 			}
 			let addrIndex = 0;
-			repeat = false;
-			commands.some((cmd) => {
+			for (let cmd of commands) {
 				if ((cmd.length > 2) && (cmd[2] === '.')) {
 					// If command with address prefix like 99.Cx, A4.В/О
 					let firstChar = cmd[0];
@@ -2025,17 +2066,16 @@
 					}
 					const newAddrIndex = Number(firstChar + secondChar);
 					if (!Number.isNaN(newAddrIndex)) {
-						cmd = cmd.slice(3);
-						addrIndex = newAddrIndex;
 						if (useColumnMode) {
 							useColumnMode = false;
-							repeat = true;
-							return true;
+							continue LoopDoScan;
 						}
+						cmd = cmd.slice(3);
+						addrIndex = newAddrIndex;
 					}
 				}
-				if (addrIndex >= 105) { // Stop to exclude address overflow by 'A4.+' '-' '*'
-					return true;
+				if (addrIndex >= 105) { // Stop to exclude address overflow by 'A4.+', '-', '*'
+					break LoopDoScan;
 				}
 				writeSingleCommand(addrIndex, parseCommand(cmd));
 				if (useColumnMode) {
@@ -2043,9 +2083,9 @@
 				} else {
 					addrIndex++;
 				}
-				return false;
-			});
-		} while (repeat);
+			}
+			break;
+		}
 		turnOn();
 	};
 
