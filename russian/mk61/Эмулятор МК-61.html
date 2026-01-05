@@ -1630,7 +1630,10 @@
 		const standartExponent = (exponentDigit1 !== 9) && (exponentDigit2 !== 9) && (exponentDigit3 <= 9); // Not like 1.0^-0E
 		const exponentIsExplicit = (exponent < 0) || (exponent > 7) || !standartExponent;
 		let startOfSignificantDigit = registerValue.slice(0, 8).findIndex(digit => digit !== 0);
-		if ((startOfSignificantDigit < 0) || !exponentIsExplicit && (startOfSignificantDigit > (7 - exponent))) {
+		if (startOfSignificantDigit < 0) {
+			startOfSignificantDigit = 7;
+		}
+		if (!exponentIsExplicit && (startOfSignificantDigit > (7 - exponent))) {
 			startOfSignificantDigit = 7 - exponent;
 		}
 		const mantissaDigits = registerValue.slice(startOfSignificantDigit, 8);
