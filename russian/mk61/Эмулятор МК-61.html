@@ -286,6 +286,12 @@
 											<label><input type="checkbox" id="change_speed" style="margin-top: 25px;">Ускоренный режим</label>
 										</td>
 									</tr>
+									<tr>
+										<td>
+											<br>
+											<label id="inProgramMode" style="color: red;" hidden>Выполняется програма&hellip;</label>
+										</td>
+									</tr>
 								</table>
 							</td>
 						</tr>
@@ -335,6 +341,12 @@
 
 <script>
 	'use strict';
+	/* eslint no-unused-labels: "off" */
+	/* eslint quotes: ["error", "single"] */
+	/* global document */
+	/* global queueMicrotask */
+	/* global window */
+	/* global Image */
 	/* jshint esversion: 8 */
 	/* jshint bitwise: false */
 	/* jshint browser: true */
@@ -843,31 +855,31 @@
 
 	const DIGIT_CHARS = '0123456789-LСГЕ '; // Last is space
 
-	// [0..14], result is [chip index, offset in chip.M]
+	// index = 0..14, result is array [chip index, offset in chip.M]
 	const ADDRESS_PAGES_OF_MEMORY = [
 			[0, 41], [0, 83], [0, 125], [0, 167], [0, 209], [0, 251], [1, 41], [1, 83], [1, 125], [1, 167], [1, 209], [1, 251], [2, 41], [3, 41], [4, 41],
 		];
 
-	// [tickIndex div 84], result 0..14 is index for ADDRESS_PAGES_OF_MEMORY
+	// index = tickIndex div 84, result is array [15] with indexes for ADDRESS_PAGES_OF_MEMORY
 	const PERMUTATION_ADDRESS_PAGES_OF_MEMORY = [
 			[1, 2, 3, 4, 5, 14, 13, 12, 6, 7, 8, 9, 10, 11, 0],
 			[10, 11, 6, 7, 2, 3, 4, 5, 0, 1, 14, 13, 12, 8, 9],
 			[14, 13, 12, 10, 11, 6, 7, 8, 9, 4, 5, 0, 1, 2, 3],
 		];
 
-	// [0..14], result is [chip index, offset in chip.M]
+	// index = 0..14, result is array [chip index, offset in chip.M]
 	const ADDRESS_OF_STACK = [
 			[0, 34], [0, 76], [0, 118], [0, 160], [0, 202], [0, 244], [1, 34], [1, 76], [1, 118], [1, 160], [1, 202], [1, 244], [2, 34], [3, 34], [4, 34],
 		];
 
-	// [tickIndex div 84], result 0..14 is index for ADDRESS_OF_STACK
+	// index = tickIndex div 84, result is array [5] with indexes for ADDRESS_OF_STACK
 	const PERMUTATION_ADDRESS_OF_STACK = [
 			[8, 9, 10, 11, 0],
 			[14, 13, 12, 8, 9],
 			[5, 0, 1, 2, 3],
 		];
 
-	// [0..4], result is offset in IK1302.R
+	// index = 0..4, result is offset in IK1302.R
 	const ADDRESS_OF_RETURNS = [28, 22, 16, 10, 4];
 
 	/*
@@ -1268,7 +1280,7 @@
 	const arrayNotEqual = (a, b) => (a.length !== b.length) || a.some((value, index) => value !== b[index]);
 	const fromHex = text => parseInt(text, 16);
 	const intDiv = (x, y) => (x / y) | 0;
-	const sleep = msecs => new Promise(resolve => setTimeout(resolve, msecs));
+	const sleep = msecs => new Promise(resolve => window.setTimeout(resolve, msecs));
 
 	// Start of classes
 
@@ -1278,7 +1290,7 @@
 		}
 
 		reset() {
-			this.M = new Array(252).fill(0);
+			this.M = new Uint8Array(252).fill(0);
 			this.input = 0;
 			this.output = 0;
 			this.tickIndex = 0;
@@ -1312,9 +1324,9 @@
 		}
 
 		reset() {
-			this.M = new Array(42).fill(0);
-			this.R = new Array(42).fill(0);
-			this.ST = new Array(42).fill(0);
+			this.M = new Uint8Array(42).fill(0);
+			this.R = new Uint8Array(42).fill(0);
+			this.ST = new Uint8Array(42).fill(0);
 			this.S = 0;
 			this.S1 = 0;
 			this.L = 0;
@@ -1549,14 +1561,103 @@
 		}
 	}
 
-	// End of classes
-
 	const IR2_1 = new IR2();
 	const IR2_2 = new IR2();
 	const IK1302 = new IK13(ROM.IK1302);
 	const IK1303 = new IK13(ROM.IK1303);
 	const IK1306 = new IK13(ROM.IK1306);
 	const microChips = [IR2_1, IR2_2, IK1302, IK1303, IK1306];
+
+	class Registry {
+		constructor (uiControl) {
+			this.uiControl = uiControl;
+			// rawValue is array[12] of digits 0..F:
+			// 0..7 - mantissa
+			// 8 - sign
+			// 9..11 - exponent
+			// Digits in mantissa and exponent are in reverse order!
+			// Location of the digits by index on the screen: [8|7,6,5,4,3,2,1,0|11,10,9]
+			this.rawValue = new Array(12).fill(0xF);
+		}
+
+		clear () {
+			this.uiControl.value = '';
+			this.rawValue.fill(0xF);
+		}
+
+		static getNonStandartExponentAsString(exponentDigit1, exponentDigit2, exponentDigit3) {
+			if (exponentDigit1 !== 9) {
+				exponentDigit1 = 15;
+			} else {
+				if (exponentDigit3 !== 0) {
+					exponentDigit3 = 10 - exponentDigit3;
+					if (exponentDigit3 < 0) {
+						exponentDigit3 += 16;
+					}
+					exponentDigit2++;
+				}
+				exponentDigit2 = 10 - exponentDigit2;
+				if (exponentDigit2 < 0) {
+					exponentDigit2 += 16;
+				}
+				exponentDigit1++;
+			}
+			return DIGIT_CHARS[exponentDigit1] + DIGIT_CHARS[exponentDigit2] + DIGIT_CHARS[exponentDigit3];
+		}
+
+		getText() {
+			const exponentDigit1 = this.rawValue[11];
+			const exponentDigit2 = this.rawValue[10];
+			const exponentDigit3 = this.rawValue[9];
+			let exponent = exponentDigit1 * 100 + exponentDigit2 * 10 + exponentDigit3;
+			if (exponent > 900) {
+				exponent -= 1000;
+			}
+			const standartExponent = (exponentDigit1 !== 9) && (exponentDigit2 <= 9) && (exponentDigit3 <= 9);
+			const exponentIsExplicit = (exponent < 0) || (exponent > 7) || !standartExponent;
+
+			// Digit by index: 7,6,5,4,3,2,1,0
+			let indexOfSignificantDigit = this.rawValue.findIndex((digit, index) => (index < 8) && (digit !== 0));
+			if (indexOfSignificantDigit < 0) {
+				indexOfSignificantDigit = 7;
+			}
+			if (!exponentIsExplicit && (indexOfSignificantDigit > (7 - exponent))) {
+				indexOfSignificantDigit = 7 - exponent;
+			}
+			const mantissaDigits = [];
+			for (let i = 7; i >= indexOfSignificantDigit; i--) { // In reverse order
+				mantissaDigits.push(DIGIT_CHARS[this.rawValue[i]]);
+			}
+			if (mantissaDigits.length === 0) {
+				mantissaDigits.push('0');
+			}
+
+			const signValue = this.rawValue[8];
+			const signChar = (signValue === 0) ? ' ' : DIGIT_CHARS[signValue + 1];
+			const mantissa = mantissaDigits.join('').padEnd(8);
+			const pointPos = exponentIsExplicit ? 1 : exponent + 1;
+			let result = signChar + mantissa.slice(0, pointPos) + '.' + mantissa.slice(pointPos);
+
+			if (exponentIsExplicit) {
+				result += '^';
+				result += exponent.toLocaleString(undefined, {minimumIntegerDigits: 2}).padStart(3);  // toLocale: '1' -> '01', '-2' -> '-02', etc
+				if ((exponentDigit2 > 9) || (exponentDigit3 > 9)) {
+					result += '|';
+					result += this.getNonStandartExponentAsString(exponentDigit1, exponentDigit2, exponentDigit3);
+				}
+			}
+			return result;
+		}
+
+		update(chipIndex, offset) {
+			const memory = microChips[chipIndex].M.subarray(offset - 33);
+			const newValue = Array.from({length: 12}, (_, index) => memory[index * 3]);
+			if (arrayNotEqual(this.rawValue, newValue)) {
+				this.rawValue = newValue;
+				this.uiControl.value = this.getText();
+			}
+		}
+	}
 
 	const tick = () => {
 		IK1302.input = IR2_2.output;
@@ -1577,11 +1678,13 @@
 	let displayPointsPresent = [];
 	const displayValueImages = [];
 	const displayPointImages = [];
+	const inProgramModeControl = document.getElementById('inProgramMode');
 
 	const changeBrightness = () => {
 		const opacity = (inProgramMode) ? 0.67 : 1.0;
 		displayValueImages.forEach(img => img.style.opacity = opacity);
 		displayPointImages.forEach(img => img.style.opacity = opacity);
+		inProgramModeControl.hidden = !inProgramMode;
 	};
 
 	const updateDisplay = () => {
@@ -1593,108 +1696,23 @@
 		displayPointImages.forEach((img, i) => img.src = displayPointsPresent[i] ? IMAGE_OF_POINT : '');
 	};
 
-	const getNonStandartExponentAsString = (exponentDigit1, exponentDigit2, exponentDigit3) => {
-		if (exponentDigit1 !== 9) {
-			exponentDigit1 = 15;
-		} else {
-			if (exponentDigit3 !== 0) {
-				exponentDigit3 = 10 - exponentDigit3;
-				if (exponentDigit3 < 0) {
-					exponentDigit3 += 16;
-				}
-				exponentDigit2++;
-			}
-			exponentDigit2 = 10 - exponentDigit2;
-			if (exponentDigit2 < 0) {
-				exponentDigit2 += 16;
-			}
-			exponentDigit1++;
-		}
-		return DIGIT_CHARS[exponentDigit1] + DIGIT_CHARS[exponentDigit2] + DIGIT_CHARS[exponentDigit3];
-	};
-
-	// RegisterValue is array[12] of digits 0..F:
-	// 0..7 - mantissa
-	// 8 - sign
-	// 9..11 - exponent
-	// Digits in mantissa and exponent are in reverse order!
-	// Location of the digits by index on the screen: [8|7,6,5,4,3,2,1,0|11,10,9]
-
-	const getRegisterValue = (chipIndex, offset) => {
-		const memory = microChips[chipIndex].M;
-		const result = new Array(12);
-		for (let i = 0; i < 12; i++) {
-			result[i] = memory[offset - 33 + i * 3];
-		}
-		return result;
-	};
-
-	const getTextOfRegister = (registerValue) => {
-		const exponentDigit1 = registerValue[11];
-		const exponentDigit2 = registerValue[10];
-		const exponentDigit3 = registerValue[9];
-		let exponent = exponentDigit1 * 100 + exponentDigit2 * 10 + exponentDigit3;
-		exponent += (exponent <= 900) ? 0 : -1000;
-		const standartExponent = (exponentDigit1 !== 9) && (exponentDigit2 <= 9) && (exponentDigit3 <= 9);
-		const exponentIsExplicit = (exponent < 0) || (exponent > 7) || !standartExponent;
-		// Digit by index: 7,6,5,4,3,2,1,0
-		let indexOfSignificantDigit = registerValue.findIndex((digit, index) => (index < 8) && (digit !== 0));
-		if (indexOfSignificantDigit < 0) {
-			indexOfSignificantDigit = 7;
-		}
-		if (!exponentIsExplicit && (indexOfSignificantDigit > (7 - exponent))) {
-			indexOfSignificantDigit = 7 - exponent;
-		}
-		const mantissaDigits = [];
-		for (let i = 7; i >= indexOfSignificantDigit; i--) { // In reverse order
-			mantissaDigits.push(DIGIT_CHARS[registerValue[i]]);
-		}
-		if (mantissaDigits.length === 0) {
-			mantissaDigits.push('0');
-		}
-		const signValue = registerValue[8];
-		const signChar = (signValue === 0) ? ' ' : DIGIT_CHARS[signValue + 1];
-		const mantissa = mantissaDigits.join('').padEnd(8);
-		const pointPos = (exponentIsExplicit) ? 1 : exponent + 1;
-		let result = signChar + mantissa.slice(0, pointPos) + '.' + mantissa.slice(pointPos);
-		if (exponentIsExplicit) {
-			result += '^';
-			result += exponent.toLocaleString(undefined, {minimumIntegerDigits: 2}).padStart(3);  // toLocale: '1' -> '01', '-2' -> '-02', etc
-			if ((exponentDigit2 > 9) || (exponentDigit3 > 9)) {
-				result += '|';
-				result += getNonStandartExponentAsString(exponentDigit1, exponentDigit2, exponentDigit3);
-			}
-		}
-		return result;
-	};
-
-	const registersControls = new Array(15);
-	const stackContols = new Array(5);
+	const generalRegs = new Array(15);
+	const stackRegs = new Array(5);
 	const returnsControls = new Array(5);
 	const commandCounterControl = document.getElementById('command_counter');
 
 	// Cache to prevent frequent UI updates
-	let registersValues; // array of RegisterValue
-	let stackValues; // array of RegisterValue
 	let returnsValues; // array of char[2]
 	let commandCounterValue; // char[2]
 
 	const updateRegisters = (permutation) => {
-		registersControls.forEach((textField, iReg) => {
-			const [chipIndex, offset] = ADDRESS_PAGES_OF_MEMORY[PERMUTATION_ADDRESS_PAGES_OF_MEMORY[permutation][iReg]];
-			const regValue = getRegisterValue(chipIndex, offset - 8);
-			if ((registersValues[iReg] === undefined) || arrayNotEqual(registersValues[iReg], regValue)) {
-				registersValues[iReg] = regValue;
-				textField.value = getTextOfRegister(regValue);
-			}
+		generalRegs.forEach((reg, index) => {
+			const [chipIndex, offset] = ADDRESS_PAGES_OF_MEMORY[PERMUTATION_ADDRESS_PAGES_OF_MEMORY[permutation][index]];
+			reg.update(chipIndex, offset - 8);
 		});
-		stackContols.forEach((textField, iStack) => {
-			const [chipIndex, offset] = ADDRESS_OF_STACK[PERMUTATION_ADDRESS_OF_STACK[permutation][iStack]];
-			const stackValue = getRegisterValue(chipIndex, offset);
-			if ((stackValues[iStack] === undefined) || arrayNotEqual(stackValues[iStack], stackValue)) {
-				stackValues[iStack] = stackValue;
-				textField.value = getTextOfRegister(stackValue);
-			}
+		stackRegs.forEach((reg, index) => {
+			const [chipIndex, offset] = ADDRESS_OF_STACK[PERMUTATION_ADDRESS_OF_STACK[permutation][index]];
+			reg.update(chipIndex, offset);
 		});
 		if (!inProgramMode) {
 			returnsControls.forEach((textField, iRet) => {
@@ -1810,8 +1828,10 @@
 					state: lastSignificantState,
 					hint: undoButton.textContent});
 				// For reg sequence add reg prefix. Sample 'Kx=0' + 'c'
-				const hintPrefix = ((lastKeyState === 'wReg') && (item.hint.length === 1)) ? lastHintForUndo : '';
-				undoButton.textContent = `Отменить "${hintPrefix + item.hint}"`;
+				{
+					const hintPrefix = ((lastKeyState === 'wReg') && (item.hint.length === 1)) ? lastHintForUndo : '';
+					undoButton.textContent = `Отменить "${hintPrefix + item.hint}"`;
+				}
 				undoButton.hidden = false;
 				initUndoState();
 				break;
@@ -1879,8 +1899,8 @@
 	};
 
 	const turnOff = () => {
-		const clearTextField = textField => textField.value = '';
 		const clearImage = img => img.src = '';
+		const clearReg = reg => reg.clear();
 		isPowerOn = false;
 		isPaused = false;
 		inProgramMode = false;
@@ -1888,11 +1908,9 @@
 		displayValues = [];
 		displayPointsPresent = [];
 		microChips.forEach(chip => chip.reset());
-		registersControls.forEach(clearTextField);
-		registersValues = undefined;
-		stackContols.forEach(clearTextField);
-		stackValues = undefined;
-		returnsControls.forEach(clearTextField);
+		generalRegs.forEach(clearReg);
+		stackRegs.forEach(clearReg);
+		returnsControls.forEach(textField => textField.value = '');
 		returnsValues = undefined;
 		commandCounterControl.value = '';
 		commandCounterValue = undefined;
@@ -1931,8 +1949,6 @@
 			document.getElementById('power_pos').style.left = '63px';
 			isPowerOn = true;
 			disableButtons(false);
-			registersValues = [];
-			stackValues = [];
 			returnsValues = [];
 			execLoop();
 		}
@@ -2237,7 +2253,7 @@
 	};
 
 	const setStateByText = () => {
-		const text = prompt('Введите сохранённое состояние:');
+		const text = window.prompt('Введите сохранённое состояние:');
 		if (text === null) {
 			return;
 		}
@@ -2376,10 +2392,10 @@
 	// Fill Controls
 
 	for (let iReg = 0; iReg < 15; iReg++) {
-		registersControls[iReg] = document.getElementById(`R${iReg}`);
+		generalRegs[iReg] = new Registry(document.getElementById(`R${iReg}`));
 	}
 	for (let iStack = 0; iStack < 5; iStack++) {
-		stackContols[iStack] = document.getElementById(`S_${iStack}`);
+		stackRegs[iStack] = new Registry(document.getElementById(`S_${iStack}`));
 	}
 	for (let iRet = 0; iRet < 5; iRet++) {
 		returnsControls[iRet] = document.getElementById(`ret_${iRet}`);
