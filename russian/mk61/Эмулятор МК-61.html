@@ -1680,8 +1680,8 @@
 	const displayPointImages = [];
 	const inProgramModeControl = document.getElementById('inProgramMode');
 
-	const changeBrightness = () => {
-		const opacity = (inProgramMode) ? 0.67 : 1.0;
+	const programModeChanged = () => {
+		const opacity = inProgramMode ? 0.67 : 1.0;
 		displayValueImages.forEach(img => img.style.opacity = opacity);
 		displayPointImages.forEach(img => img.style.opacity = opacity);
 		inProgramModeControl.hidden = !inProgramMode;
@@ -1690,14 +1690,14 @@
 	const updateDisplay = () => {
 		if (inProgramMode !== IK1302.elevenPoint) {
 			inProgramMode = IK1302.elevenPoint;
-			changeBrightness();
+			programModeChanged();
 		}
 		displayValueImages.forEach((img, i) => img.src = IMAGES_OF_DIGITS[displayValues[i]]);
 		displayPointImages.forEach((img, i) => img.src = displayPointsPresent[i] ? IMAGE_OF_POINT : '');
 	};
 
-	const generalRegs = new Array(15);
-	const stackRegs = new Array(5);
+	const generalRegisters = new Array(15);
+	const stackRegisters = new Array(5);
 	const returnsControls = new Array(5);
 	const commandCounterControl = document.getElementById('command_counter');
 
@@ -1706,11 +1706,11 @@
 	let commandCounterValue; // char[2]
 
 	const updateRegisters = (permutation) => {
-		generalRegs.forEach((reg, index) => {
+		generalRegisters.forEach((reg, index) => {
 			const [chipIndex, offset] = ADDRESS_PAGES_OF_MEMORY[PERMUTATION_ADDRESS_PAGES_OF_MEMORY[permutation][index]];
 			reg.update(chipIndex, offset - 8);
 		});
-		stackRegs.forEach((reg, index) => {
+		stackRegisters.forEach((reg, index) => {
 			const [chipIndex, offset] = ADDRESS_OF_STACK[PERMUTATION_ADDRESS_OF_STACK[permutation][index]];
 			reg.update(chipIndex, offset);
 		});
@@ -1745,10 +1745,9 @@
 		}
 		IK1302.keybX = 0;
 		IK1302.keybY = 0;
-
+		const newDisplayValues = new Array(12);
+		const newDisplayPointsPresent = new Array(12);
 		if (IK1302.needUpdateDisplay) {
-			const newDisplayValues = new Array(12).fill(0xF);
-			const newDisplayPointsPresent = new Array(12).fill(false);
 			for (let i = 0; i < 9; i++) {
 				newDisplayValues[i] = IK1302.R[(8 - i) * 3];
 				newDisplayPointsPresent[i] = IK1302.pointsPresent[9 - i];
@@ -1757,15 +1756,19 @@
 				newDisplayValues[i] = IK1302.R[(20 - i) * 3];
 				newDisplayPointsPresent[i] = IK1302.pointsPresent[21 - i];
 			}
-			const needUpdate =
-				arrayNotEqual(newDisplayValues, displayValues) ||
-				arrayNotEqual(newDisplayPointsPresent, displayPointsPresent);
-			if (needUpdate) {
-				displayValues = newDisplayValues;
-				displayPointsPresent = newDisplayPointsPresent;
-				updateDisplay();
-			}
 			IK1302.needUpdateDisplay = false;
+		}
+		else {
+			newDisplayValues.fill(0xF);
+			newDisplayPointsPresent.fill(false);
+		}
+		const needUpdate =
+			arrayNotEqual(newDisplayValues, displayValues) ||
+			arrayNotEqual(newDisplayPointsPresent, displayPointsPresent);
+		if (needUpdate) {
+			displayValues = newDisplayValues;
+			displayPointsPresent = newDisplayPointsPresent;
+			updateDisplay();
 		}
 		if (forceUpdateRegs || (IR2_1.tickIndex === 84)) {
 			updateRegisters(intDiv(IR2_1.tickIndex, 84));
@@ -1790,7 +1793,7 @@
 		from.memory.forEach((state, index) => Object.assign(microChips[index], state));
 		if (inProgramMode !== from.inProgramMode) {
 			inProgramMode = from.inProgramMode;
-			changeBrightness();
+			programModeChanged();
 		}
 	};
 
@@ -1904,12 +1907,12 @@
 		isPowerOn = false;
 		isPaused = false;
 		inProgramMode = false;
-		changeBrightness();
+		programModeChanged();
 		displayValues = [];
 		displayPointsPresent = [];
 		microChips.forEach(chip => chip.reset());
-		generalRegs.forEach(clearReg);
-		stackRegs.forEach(clearReg);
+		generalRegisters.forEach(clearReg);
+		stackRegisters.forEach(clearReg);
 		returnsControls.forEach(textField => textField.value = '');
 		returnsValues = undefined;
 		commandCounterControl.value = '';
@@ -1932,7 +1935,7 @@
 	const execLoop = async () => {
 		while (isPowerOn) {
 			if (!isPaused) {
-				stepExec(false);
+				stepExec();
 			}
 			await sleep((inProgramMode) ? execDelay : NORMAL_DELAY);
 		}
@@ -1973,7 +1976,7 @@
 
 	const pressingWithFocus = (buttonId) => {
 		if (isPowerOn && !isPaused) { // Force waiting updates
-			stepExec(false);
+			stepExec();
 		}
 		document.getElementById(buttonId).focus();
 		pressing(buttonId);
@@ -2392,10 +2395,10 @@
 	// Fill Controls
 
 	for (let iReg = 0; iReg < 15; iReg++) {
-		generalRegs[iReg] = new Registry(document.getElementById(`R${iReg}`));
+		generalRegisters[iReg] = new Registry(document.getElementById(`R${iReg}`));
 	}
 	for (let iStack = 0; iStack < 5; iStack++) {
-		stackRegs[iStack] = new Registry(document.getElementById(`S_${iStack}`));
+		stackRegisters[iStack] = new Registry(document.getElementById(`S_${iStack}`));
 	}
 	for (let iRet = 0; iRet < 5; iRet++) {
 		returnsControls[iRet] = document.getElementById(`ret_${iRet}`);
