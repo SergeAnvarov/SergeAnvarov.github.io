@@ -1280,7 +1280,6 @@
 	const arrayNotEqual = (a, b) => (a.length !== b.length) || a.some((value, index) => value !== b[index]);
 	const fromHex = text => parseInt(text, 16);
 	const intDiv = (x, y) => (x / y) | 0;
-	const sleep = msecs => new Promise(resolve => window.setTimeout(resolve, msecs));
 
 	// Start of classes
 
@@ -1341,7 +1340,7 @@
 			this.keybY = 0;
 			this.elevenPoint = false;
 			this.pointsPresent = new Array(14).fill(false);
-			this.needUpdateDisplay = false;
+			this.displayValueChanged = false;
 		}
 
 		getDeepCopy() {
@@ -1468,7 +1467,7 @@
 				}
 				this.pointsPresent[tickDiv3] = this.L > 0;
 				this.elevenPoint = this.pointsPresent[11];
-				this.needUpdateDisplay = true;
+				this.displayValueChanged = true;
 			}
 			for (let bitIndex = 12; bitIndex < 15; bitIndex++, restOfBits >>>= 1) {
 				if ((restOfBits & 1) !== 0) {
@@ -1585,7 +1584,7 @@
 			this.rawValue.fill(0xF);
 		}
 
-		static getNonStandartExponentAsString(exponentDigit1, exponentDigit2, exponentDigit3) {
+		getNonStandartExponentAsString(exponentDigit1, exponentDigit2, exponentDigit3) {
 			if (exponentDigit1 !== 9) {
 				exponentDigit1 = 15;
 			} else {
@@ -1735,19 +1734,21 @@
 	const ANGLE_IN_GRAD = 12;
 	const ANGLE_IN_DEGREE = 11;
 	let angleMeasure = ANGLE_IN_RADIAN;
-	let STEP_COUNT = 280;
+	let STEP_COUNT = 560;
 
-	const stepExec = (forceUpdateRegs = true) => {
-		IK1303.keybX = angleMeasure;
-		IK1303.keybY = 1;
+	const execStep = (forceUpdateRegs = false) => {
+		if (!forceUpdateRegs) {
+			IK1303.keybX = angleMeasure;
+			IK1303.keybY = 1;
+		}
 		for (let i = 1; i <= STEP_COUNT * 42; i++) {
 			tick();
 		}
-		IK1302.keybX = 0;
-		IK1302.keybY = 0;
 		const newDisplayValues = new Array(12);
 		const newDisplayPointsPresent = new Array(12);
-		if (IK1302.needUpdateDisplay) {
+		if (IK1302.displayValueChanged) {
+			IK1302.keybX = 0;
+			IK1302.keybY = 0;
 			for (let i = 0; i < 9; i++) {
 				newDisplayValues[i] = IK1302.R[(8 - i) * 3];
 				newDisplayPointsPresent[i] = IK1302.pointsPresent[9 - i];
@@ -1756,9 +1757,8 @@
 				newDisplayValues[i] = IK1302.R[(20 - i) * 3];
 				newDisplayPointsPresent[i] = IK1302.pointsPresent[21 - i];
 			}
-			IK1302.needUpdateDisplay = false;
-		}
-		else {
+			IK1302.displayValueChanged = false;
+		} else {
 			newDisplayValues.fill(0xF);
 			newDisplayPointsPresent.fill(false);
 		}
@@ -1766,9 +1766,14 @@
 			arrayNotEqual(newDisplayValues, displayValues) ||
 			arrayNotEqual(newDisplayPointsPresent, displayPointsPresent);
 		if (needUpdate) {
+			// const asString = e => (e === 0xF) ? '_' : DIGIT_CHARS[e];
+			// console.log(needUpdate, displayValues.map(asString).join(''), newDisplayValues.map(asString).join(''));
+			const skipUpdate = inProgramMode && (newDisplayValues[0] === 0);
 			displayValues = newDisplayValues;
 			displayPointsPresent = newDisplayPointsPresent;
-			updateDisplay();
+			if (!skipUpdate) {
+				updateDisplay();
+			}
 		}
 		if (forceUpdateRegs || (IR2_1.tickIndex === 84)) {
 			updateRegisters(intDiv(IR2_1.tickIndex, 84));
@@ -1855,7 +1860,7 @@
 		setCalcState(undoItem.state);
 		undoButton.textContent = undoItem.hint;
 		undoButton.hidden = undoStack.isEmpty();
-		queueMicrotask(stepExec);
+		queueMicrotask(execStep);
 	};
 
 	let isPowerOn = false;
@@ -1869,9 +1874,9 @@
 		prepareUndo(buttonId, keyInfo);
 		[IK1302.keybX, IK1302.keybY] = keyInfo.xy;
 		if (execNow) {
-			stepExec(true);
+			execStep(true);
 		} else {
-			queueMicrotask(stepExec);
+			queueMicrotask(execStep);
 		}
 	};
 
@@ -1929,22 +1934,21 @@
 	};
 
 	const NORMAL_DELAY = 300;
-	const SHORT_DELAY = 4;
-	let execDelay = NORMAL_DELAY;
+	let delayBeforeNextExec = NORMAL_DELAY;
 
 	const execLoop = async () => {
 		while (isPowerOn) {
 			if (!isPaused) {
-				stepExec();
+				execStep();
 			}
-			await sleep((inProgramMode) ? execDelay : NORMAL_DELAY);
+			await new Promise(resolve => window.setTimeout(resolve, delayBeforeNextExec));
 		}
 	};
 
 	const calcChangeSpeed = () => {
 		const fast = (document.getElementById('change_speed').checked);
-		execDelay = fast ? SHORT_DELAY : NORMAL_DELAY;
-		STEP_COUNT = fast ? 16 * 280 : 280;
+		delayBeforeNextExec = fast ? 0 : NORMAL_DELAY;
+		STEP_COUNT = fast ? 16 * 560 : 560;
 	};
 
 	const turnOn = () => {
@@ -1975,10 +1979,10 @@
 	};
 
 	const pressingWithFocus = (buttonId) => {
-		if (isPowerOn && !isPaused) { // Force waiting updates
-			stepExec();
+		if (isPowerOn && !isPaused) {
+			execStep(); // Force waiting updates
 		}
-		document.getElementById(buttonId).focus();
+		document.getElementById(buttonId).focus(); // Visual feedback
 		pressing(buttonId);
 	};
 
@@ -2331,7 +2335,7 @@
 		let digitsCount = 0;
 		forLoop:
 		for (let chr of text) {
-			stepExec(true);
+			execStep(true);
 			if (chr >= '0' && chr <= '9') {
 				pressing(`b${chr}`, true);
 				digitsCount++;
@@ -2339,7 +2343,7 @@
 					continue;
 				}
 				digitsCount = 0;
-				stepExec(true);
+				execStep(true);
 				chr = '^'; // Emulate power button after 8 digits
 			}
 			switch (chr) {
@@ -2357,7 +2361,7 @@
 					if (useNeg) {
 						pressing('bNeg', true);
 						useNeg = false;
-						stepExec(true);
+						execStep(true);
 					}
 					pressing('bPower', true);
 					powerButtonIsPressed = true;
@@ -2367,7 +2371,7 @@
 			}
 		}
 		if (useNeg) {
-			stepExec(true);
+			execStep(true);
 			pressing('bNeg', true);
 		}
 	};
