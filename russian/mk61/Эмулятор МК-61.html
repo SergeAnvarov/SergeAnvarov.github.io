@@ -1734,7 +1734,7 @@
 	const ANGLE_IN_GRAD = 12;
 	const ANGLE_IN_DEGREE = 11;
 	let angleMeasure = ANGLE_IN_RADIAN;
-	let STEP_COUNT = 560;
+	let STEP_COUNT = 280;
 
 	const execStep = (forceUpdateRegs = false) => {
 		if (!forceUpdateRegs) {
@@ -1768,11 +1768,11 @@
 		if (needUpdate) {
 			// const asString = e => (e === 0xF) ? '_' : DIGIT_CHARS[e];
 			// console.log(inProgramMode, displayValues.map(asString).join(''), newDisplayValues.map(asString).join(''));
-			const skipUpdate = (newDisplayValues[0] === 0) &&
-			  (inProgramMode ||
-			  (newDisplayValues[9] === 0xf) &&
-			  (newDisplayValues[10] === 0xf) &&
-			  (newDisplayValues[11] === 0xf));
+			const skipUpdate = (newDisplayValues[0] === 0); //&&
+			//   (inProgramMode ||
+			//   (newDisplayValues[9] === 0xf) &&
+			//   (newDisplayValues[10] === 0xf) &&
+			//   (newDisplayValues[11] === 0xf));
 			displayValues = newDisplayValues;
 			displayPointsPresent = newDisplayPointsPresent;
 			if (!skipUpdate) {
@@ -2237,7 +2237,7 @@
 			stateStr += hexStr(chipIK13.keybY);
 			stateStr += (chipIK13.elevenPoint) ? 'B' : '0'; // B = 11
 			stateStr += chipIK13.pointsPresent.map(Number).map(String).join('');
-			stateStr += (chipIK13.needUpdateDisplay) ? '1' : '0';
+			stateStr += (chipIK13.displayValueChanged) ? '1' : '0';
 		}
 		const stateStrLength = stateStr.length;
 		let result = '';
@@ -2326,7 +2326,7 @@
 			for (let iPoint = 0; iPoint < 14; iPoint++) {
 				chipIK13.pointsPresent[iPoint] = parseInt(stateStr[iPoint + 336 + 162 * iChip], 10) !== 0;
 			}
-			chipIK13.needUpdateDisplay = parseInt(stateStr[350 + 162 * iChip], 10) !== 0;
+			chipIK13.displayValueChanged = parseInt(stateStr[350 + 162 * iChip], 10) !== 0;
 		}
 		turnOn();
 	};
