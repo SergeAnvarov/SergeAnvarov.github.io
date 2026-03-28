@@ -1278,8 +1278,9 @@
 	// Misc functions
 
 	const arrayNotEqual = (a, b) => (a.length !== b.length) || a.some((value, index) => value !== b[index]);
-	const fromHex = text => parseInt(text, 16);
+	const fromHex = (text) => parseInt(text, 16);
 	const intDiv = (x, y) => (x / y) | 0;
+    const sleep = (timeout) => new Promise(resolve => window.setTimeout(resolve, timeout));
 
 	// Start of classes
 
@@ -1289,7 +1290,7 @@
 		}
 
 		reset() {
-			this.M = new Uint8Array(252).fill(0);
+			this.M = new Array(252).fill(0);
 			this.input = 0;
 			this.output = 0;
 			this.tickIndex = 0;
@@ -1315,7 +1316,7 @@
 	class IK13 {
 		constructor(aROM) {
 			Object.assign(this, aROM);
-			// Now exclude ROM properties from Object.assign()
+			// Exclude the newly assigned aROM properties from the future Object.assign()
 			for (const propName of Object.keys(this)) {
 				Object.defineProperty(this, propName, {enumerable: false});
 			}
@@ -1323,9 +1324,9 @@
 		}
 
 		reset() {
-			this.M = new Uint8Array(42).fill(0);
-			this.R = new Uint8Array(42).fill(0);
-			this.ST = new Uint8Array(42).fill(0);
+			this.M = new Array(42).fill(0);
+			this.R = new Array(42).fill(0);
+			this.ST = new Array(42).fill(0);
 			this.S = 0;
 			this.S1 = 0;
 			this.L = 0;
@@ -1387,25 +1388,30 @@
 				case 29: this.S1 = adder.sigma; break;
 				// case 30: this.S1 = this.S1; break;
 				case 31: this.S1 |= adder.sigma; break;
-				case 32:
-					this.ST[(this.tickIndex + 2) % 42] = this.ST[(this.tickIndex + 1) % 42];
-					this.ST[(this.tickIndex + 1) % 42] = this.ST[this.tickIndex];
+				case 32: {
+					const tickPlus1 = (this.tickIndex + 1) % 42;
+					this.ST[(this.tickIndex + 2) % 42] = this.ST[tickPlus1];
+					this.ST[tickPlus1] = this.ST[this.tickIndex];
 					this.ST[this.tickIndex] = adder.sigma;
 					break;
+				}
 				case 33: {
-					const x = this.ST[this.tickIndex];
-					this.ST[this.tickIndex] = this.ST[(this.tickIndex + 1) % 42];
-					this.ST[(this.tickIndex + 1) % 42] = this.ST[(this.tickIndex + 2) % 42];
-					this.ST[(this.tickIndex + 2) % 42] = x;
+					const tickPlus1 = (this.tickIndex + 1) % 42;
+					const tickPlus2 = (this.tickIndex + 2) % 42;
+					const current = this.ST[this.tickIndex];
+					this.ST[this.tickIndex] = this.ST[tickPlus1];
+					this.ST[tickPlus1] = this.ST[tickPlus2];
+					this.ST[tickPlus2] = current;
 					break;
 				}
 				case 34: {
+					const tickPlus1 = (this.tickIndex + 1) % 42;
+					const tickPlus2 = (this.tickIndex + 2) % 42;
 					const x = this.ST[this.tickIndex];
-					const y = this.ST[(this.tickIndex + 1) % 42];
-					const z = this.ST[(this.tickIndex + 2) % 42];
+					const y = this.ST[tickPlus1];
 					this.ST[this.tickIndex] = adder.sigma | y;
-					this.ST[(this.tickIndex + 1) % 42] = x | z;
-					this.ST[(this.tickIndex + 2) % 42] = y | x;
+					this.ST[tickPlus1] = x | this.ST[tickPlus2];
+					this.ST[tickPlus2] = y | x;
 					break;
 				}
 				default: // Do nothing
@@ -1567,97 +1573,6 @@
 	const IK1306 = new IK13(ROM.IK1306);
 	const microChips = [IR2_1, IR2_2, IK1302, IK1303, IK1306];
 
-	class Registry {
-		constructor (uiControl) {
-			this.uiControl = uiControl;
-			// rawValue is array[12] of digits 0..F:
-			// 0..7 - mantissa
-			// 8 - sign
-			// 9..11 - exponent
-			// Digits in mantissa and exponent are in reverse order!
-			// Location of the digits by index on the screen: [8|7,6,5,4,3,2,1,0|11,10,9]
-			this.rawValue = new Array(12).fill(0xF);
-		}
-
-		clear () {
-			this.uiControl.value = '';
-			this.rawValue.fill(0xF);
-		}
-
-		getNonStandartExponentAsString(exponentDigit1, exponentDigit2, exponentDigit3) {
-			if (exponentDigit1 !== 9) {
-				exponentDigit1 = 15;
-			} else {
-				if (exponentDigit3 !== 0) {
-					exponentDigit3 = 10 - exponentDigit3;
-					if (exponentDigit3 < 0) {
-						exponentDigit3 += 16;
-					}
-					exponentDigit2++;
-				}
-				exponentDigit2 = 10 - exponentDigit2;
-				if (exponentDigit2 < 0) {
-					exponentDigit2 += 16;
-				}
-				exponentDigit1++;
-			}
-			return DIGIT_CHARS[exponentDigit1] + DIGIT_CHARS[exponentDigit2] + DIGIT_CHARS[exponentDigit3];
-		}
-
-		getText() {
-			const exponentDigit1 = this.rawValue[11];
-			const exponentDigit2 = this.rawValue[10];
-			const exponentDigit3 = this.rawValue[9];
-			let exponent = exponentDigit1 * 100 + exponentDigit2 * 10 + exponentDigit3;
-			if (exponent > 900) {
-				exponent -= 1000;
-			}
-			const standartExponent = (exponentDigit1 !== 9) && (exponentDigit2 <= 9) && (exponentDigit3 <= 9);
-			const exponentIsExplicit = (exponent < 0) || (exponent > 7) || !standartExponent;
-
-			// Digit by index: 7,6,5,4,3,2,1,0
-			let indexOfSignificantDigit = this.rawValue.findIndex((digit, index) => (index < 8) && (digit !== 0));
-			if (indexOfSignificantDigit < 0) {
-				indexOfSignificantDigit = 7;
-			}
-			if (!exponentIsExplicit && (indexOfSignificantDigit > (7 - exponent))) {
-				indexOfSignificantDigit = 7 - exponent;
-			}
-			const mantissaDigits = [];
-			for (let i = 7; i >= indexOfSignificantDigit; i--) { // In reverse order
-				mantissaDigits.push(DIGIT_CHARS[this.rawValue[i]]);
-			}
-			if (mantissaDigits.length === 0) {
-				mantissaDigits.push('0');
-			}
-
-			const signValue = this.rawValue[8];
-			const signChar = (signValue === 0) ? ' ' : DIGIT_CHARS[signValue + 1];
-			const mantissa = mantissaDigits.join('').padEnd(8);
-			const pointPos = exponentIsExplicit ? 1 : exponent + 1;
-			let result = signChar + mantissa.slice(0, pointPos) + '.' + mantissa.slice(pointPos);
-
-			if (exponentIsExplicit) {
-				result += '^';
-				result += exponent.toLocaleString(undefined, {minimumIntegerDigits: 2}).padStart(3);  // toLocale: '1' -> '01', '-2' -> '-02', etc
-				if ((exponentDigit2 > 9) || (exponentDigit3 > 9)) {
-					result += '|';
-					result += this.getNonStandartExponentAsString(exponentDigit1, exponentDigit2, exponentDigit3);
-				}
-			}
-			return result;
-		}
-
-		update(chipIndex, offset) {
-			const memory = microChips[chipIndex].M.subarray(offset - 33);
-			const newValue = Array.from({length: 12}, (_, index) => memory[index * 3]);
-			if (arrayNotEqual(this.rawValue, newValue)) {
-				this.rawValue = newValue;
-				this.uiControl.value = this.getText();
-			}
-		}
-	}
-
 	const tick = () => {
 		IK1302.input = IR2_2.output;
 		IK1302.tick();
@@ -1695,39 +1610,80 @@
 		displayPointImages.forEach((img, i) => img.src = displayPointsPresent[i] ? IMAGE_OF_POINT : '');
 	};
 
-	const generalRegisters = new Array(15);
-	const stackRegisters = new Array(5);
+	const getNonStandartExponentAsString = (exponentDigit1, exponentDigit2, exponentDigit3) => {
+		if (exponentDigit1 !== 9) {
+			exponentDigit1 = 15;
+		} else {
+			if (exponentDigit3 !== 0) {
+				exponentDigit3 = (26 - exponentDigit3) % 16;
+				exponentDigit2++;
+			}
+			exponentDigit2 = (26 - exponentDigit2) % 16;
+			exponentDigit1++;
+		}
+		return DIGIT_CHARS[exponentDigit1] + DIGIT_CHARS[exponentDigit2] + DIGIT_CHARS[exponentDigit3];
+	};
+
+	const getTextOfRegister = (chipIndex, addr) => {
+		const memory = microChips[chipIndex].M;
+		const exponentDigit1 = memory[addr];
+		const exponentDigit2 = memory[addr - 3];
+		const exponentDigit3 = memory[addr - 6];
+		let exponent = exponentDigit1 * 100 + exponentDigit2 * 10 + exponentDigit3;
+		if (exponent > 900) {
+			exponent -= 1000;
+		}
+		const standartExponent = (exponentDigit1 !== 9) && (exponentDigit2 !== 9) && (exponentDigit3 <= 9);
+		const digits = [];
+		let isSignificantDigit = false;
+		for (let i = 0; i < 8; i++) {
+			const digit = memory[addr - 33 + i * 3];
+			isSignificantDigit = isSignificantDigit || (digit !== 0) || (standartExponent && (i === 7 - exponent));
+			if (isSignificantDigit) {
+				digits.push(digit);
+			}
+		}
+		if (digits.length === 0) {
+			digits.push('0');
+		}
+		const signValue = memory[addr - 9];
+		const signChar = (signValue === 0) ? ' ' : DIGIT_CHARS[signValue + 1];
+		const mantissa = digits.reduce((result, digit) => DIGIT_CHARS[digit] + result, '').padEnd(8); // In reverse order
+		const exponentIsExplicit = (exponent < 0) || (exponent > 7) || !standartExponent;
+		const pointPos = exponentIsExplicit ? 1 : exponent + 1;
+		let result = signChar + mantissa.slice(0, pointPos) + '.' + mantissa.slice(pointPos);
+		if (exponentIsExplicit) {
+			result += '^' + exponent
+				.toLocaleString(undefined, {minimumIntegerDigits: 2}) // '1' -> '01', '-2' -> '-02', etc
+				.padStart(3);
+			if ((exponentDigit2 > 9) || (exponentDigit3 > 9)) {
+				result += '|' + getNonStandartExponentAsString(exponentDigit1, exponentDigit2, exponentDigit3);
+			}
+		}
+		return result;
+	};
+
+	const registersControls = new Array(15);
+	const stackContols = new Array(5);
 	const returnsControls = new Array(5);
 	const commandCounterControl = document.getElementById('command_counter');
 
-	// Cache to prevent frequent UI updates
-	let returnsValues; // array of char[2]
-	let commandCounterValue; // char[2]
-
 	const updateRegisters = (permutation) => {
-		generalRegisters.forEach((reg, index) => {
-			const [chipIndex, offset] = ADDRESS_PAGES_OF_MEMORY[PERMUTATION_ADDRESS_PAGES_OF_MEMORY[permutation][index]];
-			reg.update(chipIndex, offset - 8);
+		registersControls.forEach((textField, iReg) => {
+			const memIndex = PERMUTATION_ADDRESS_PAGES_OF_MEMORY[permutation][iReg];
+			textField.value = getTextOfRegister(ADDRESS_PAGES_OF_MEMORY[memIndex][0], ADDRESS_PAGES_OF_MEMORY[memIndex][1] - 8);
 		});
-		stackRegisters.forEach((reg, index) => {
-			const [chipIndex, offset] = ADDRESS_OF_STACK[PERMUTATION_ADDRESS_OF_STACK[permutation][index]];
-			reg.update(chipIndex, offset);
+		stackContols.forEach((textField, iStack) => {
+			const memIndex = PERMUTATION_ADDRESS_OF_STACK[permutation][iStack];
+			textField.value = getTextOfRegister(ADDRESS_OF_STACK[memIndex][0], ADDRESS_OF_STACK[memIndex][1]);
 		});
 		if (!inProgramMode) {
 			returnsControls.forEach((textField, iRet) => {
-				const offset = ADDRESS_OF_RETURNS[iRet];
-				const retValue = DIGIT_CHARS[IK1302.R[offset]] + DIGIT_CHARS[IK1302.R[offset - 3]];
-				if (returnsValues[iRet] != retValue) { // or undefined
-					returnsValues[iRet] = retValue;
-					textField.value = retValue;
-				}
+				const rIndex = ADDRESS_OF_RETURNS[iRet];
+				textField.value = DIGIT_CHARS[IK1302.R[rIndex]] + DIGIT_CHARS[IK1302.R[rIndex - 3]];
 			});
 		}
-		const commandValue = DIGIT_CHARS[IK1302.R[34]] + DIGIT_CHARS[IK1302.R[31]];
-		if (commandValue != commandCounterValue) { // or undefined
-			commandCounterValue = commandValue;
-			commandCounterControl.value = commandValue;
-		}
+		commandCounterControl.value = DIGIT_CHARS[IK1302.R[34]] + DIGIT_CHARS[IK1302.R[31]];
 	};
 
 	const ANGLE_IN_RADIAN = 10;
@@ -1736,43 +1692,38 @@
 	let angleMeasure = ANGLE_IN_RADIAN;
 	let STEP_COUNT = 280;
 
-	const execStep = (forceUpdateRegs = false) => {
-		if (!forceUpdateRegs) {
-			IK1303.keybX = angleMeasure;
-			IK1303.keybY = 1;
-		}
-		for (let i = 1; i <= STEP_COUNT * 42; i++) {
-			tick();
-		}
-		const newDisplayValues = new Array(12);
-		const newDisplayPointsPresent = new Array(12);
-		if (IK1302.displayValueChanged) {
-			IK1302.keybX = 0;
-			IK1302.keybY = 0;
-			for (let i = 0; i < 9; i++) {
-				newDisplayValues[i] = IK1302.R[(8 - i) * 3];
-				newDisplayPointsPresent[i] = IK1302.pointsPresent[9 - i];
+	const stepExec = (forceUpdateRegs = true) => {
+		IK1303.keybY = 1;
+		IK1303.keybX = angleMeasure;
+		const newDisplayValues = new Array(12).fill(0xF);
+		const newDisplayPointsPresent = new Array(12).fill(false);
+		for (let k = 1; k <= STEP_COUNT; k++) {
+			for (let i = 0; i < 42; i++) {
+				tick();
 			}
-			for (let i = 9; i < 12; i++) {
-				newDisplayValues[i] = IK1302.R[(20 - i) * 3];
-				newDisplayPointsPresent[i] = IK1302.pointsPresent[21 - i];
+			if (IK1302.displayValueChanged) {
+				for (let i = 0; i < 9; i++) {
+					newDisplayValues[i] = IK1302.R[(8 - i) * 3];
+					newDisplayPointsPresent[i] = IK1302.pointsPresent[9 - i];
+				}
+				for (let i = 9; i < 12; i++) {
+					newDisplayValues[i] = IK1302.R[(20 - i) * 3];
+					newDisplayPointsPresent[i] = IK1302.pointsPresent[21 - i];
+				}
+				IK1302.displayValueChanged = false;
 			}
-			IK1302.displayValueChanged = false;
-		} else {
-			newDisplayValues.fill(0xF);
-			newDisplayPointsPresent.fill(false);
 		}
+		IK1302.keybX = 0;
+		IK1302.keybY = 0;
 		const needUpdate =
 			arrayNotEqual(newDisplayValues, displayValues) ||
 			arrayNotEqual(newDisplayPointsPresent, displayPointsPresent);
 		if (needUpdate) {
-			// const asString = e => (e === 0xF) ? '_' : DIGIT_CHARS[e];
-			// console.log(inProgramMode, displayValues.map(asString).join(''), newDisplayValues.map(asString).join(''));
-			const skipUpdate = (newDisplayValues[0] === 0); //&&
-			//   (inProgramMode ||
-			//   (newDisplayValues[9] === 0xf) &&
-			//   (newDisplayValues[10] === 0xf) &&
-			//   (newDisplayValues[11] === 0xf));
+			const skipUpdate = (newDisplayValues[0] === 0) &&
+				(inProgramMode ||
+				(newDisplayValues[9] === 0xF) &&
+				(newDisplayValues[10] === 0xF) &&
+				(newDisplayValues[11] === 0xF));
 			displayValues = newDisplayValues;
 			displayPointsPresent = newDisplayPointsPresent;
 			if (!skipUpdate) {
@@ -1840,10 +1791,8 @@
 					state: lastSignificantState,
 					hint: undoButton.textContent});
 				// For reg sequence add reg prefix. Sample 'Kx=0' + 'c'
-				{
-					const hintPrefix = ((lastKeyState === 'wReg') && (item.hint.length === 1)) ? lastHintForUndo : '';
-					undoButton.textContent = `Отменить "${hintPrefix + item.hint}"`;
-				}
+				const hintPrefix = ((lastKeyState === 'wReg') && (item.hint.length === 1)) ? lastHintForUndo : '';
+				undoButton.textContent = `Отменить "${hintPrefix + item.hint}"`;
 				undoButton.hidden = false;
 				initUndoState();
 				break;
@@ -1864,7 +1813,7 @@
 		setCalcState(undoItem.state);
 		undoButton.textContent = undoItem.hint;
 		undoButton.hidden = undoStack.isEmpty();
-		queueMicrotask(execStep);
+		queueMicrotask(stepExec);
 	};
 
 	let isPowerOn = false;
@@ -1878,9 +1827,9 @@
 		prepareUndo(buttonId, keyInfo);
 		[IK1302.keybX, IK1302.keybY] = keyInfo.xy;
 		if (execNow) {
-			execStep(true);
+			stepExec();
 		} else {
-			queueMicrotask(execStep);
+			queueMicrotask(stepExec);
 		}
 	};
 
@@ -1906,13 +1855,13 @@
 	};
 
 	const disableButtons = (disable) => {
-		document.querySelectorAll('.transparent_button').forEach(elem => elem.disabled = disable);
+		document.querySelectorAll('.transparent_button').forEach(elem => (elem.disabled = disable));
 		document.getElementById('angle_measure').disabled = disable;
 	};
 
 	const turnOff = () => {
-		const clearImage = img => img.src = '';
-		const clearReg = reg => reg.clear();
+		const clearTextField = textField => (textField.value = '');
+		const clearImage = img => (img.src = '');
 		isPowerOn = false;
 		isPaused = false;
 		inProgramMode = false;
@@ -1920,12 +1869,10 @@
 		displayValues = [];
 		displayPointsPresent = [];
 		microChips.forEach(chip => chip.reset());
-		generalRegisters.forEach(clearReg);
-		stackRegisters.forEach(clearReg);
-		returnsControls.forEach(textField => textField.value = '');
-		returnsValues = undefined;
+		registersControls.forEach(clearTextField);
+		stackContols.forEach(clearTextField);
+		returnsControls.forEach(clearTextField);
 		commandCounterControl.value = '';
-		commandCounterValue = undefined;
 		document.getElementById('suspend').checked = false;
 		document.getElementById('power_pos').style.left = '51px';
 		displayValueImages.forEach(clearImage);
@@ -1943,16 +1890,16 @@
 	const execLoop = async () => {
 		while (isPowerOn) {
 			if (!isPaused) {
-				execStep();
+				stepExec(false);
 			}
-			await new Promise(resolve => window.setTimeout(resolve, delayBeforeNextExec));
+			await sleep(delayBeforeNextExec);
 		}
 	};
 
 	const calcChangeSpeed = () => {
 		const fast = (document.getElementById('change_speed').checked);
 		delayBeforeNextExec = fast ? 0 : NORMAL_DELAY;
-		STEP_COUNT = fast ? 16 * 560 : 560;
+		STEP_COUNT = fast ? 16 * 280 : 280;
 	};
 
 	const turnOn = () => {
@@ -1960,7 +1907,6 @@
 			document.getElementById('power_pos').style.left = '63px';
 			isPowerOn = true;
 			disableButtons(false);
-			returnsValues = [];
 			execLoop();
 		}
 	};
@@ -1983,8 +1929,8 @@
 	};
 
 	const pressingWithFocus = (buttonId) => {
-		if (isPowerOn && !isPaused) {
-			execStep(); // Force waiting updates
+		if (isPowerOn && !isPaused) { // Force waiting updates
+			stepExec(false);
 		}
 		document.getElementById(buttonId).focus(); // Visual feedback
 		pressing(buttonId);
@@ -2023,11 +1969,11 @@
 	const programMemo = document.getElementById('program');
 
 	// Result as object {memory: arr; indexHigh: int; indexLow: int}
-	const getCommandRef = (addr) => {
+	const getCommandRef = (index) => {
 		const [chipIndex, initOffset] = ADDRESS_PAGES_OF_MEMORY[
-			PERMUTATION_ADDRESS_PAGES_OF_MEMORY[intDiv(IR2_1.tickIndex, 84)][intDiv(addr, 7)]
+			PERMUTATION_ADDRESS_PAGES_OF_MEMORY[intDiv(IR2_1.tickIndex, 84)][intDiv(index, 7)]
 		];
-		const indexMod7 = addr % 7;
+		const indexMod7 = index % 7;
 		const offset = (indexMod7 === 0) ? initOffset : initOffset + indexMod7 * 6 - 42;
 		return {
 			memory: microChips[chipIndex].M,
@@ -2044,7 +1990,7 @@
 		};
 
 		const parseCommand = (commandText) => {
-			const mnemonic = MNEMONICS.find((item) =>
+			const mnemonic = MNEMONICS.find(item =>
   				((item.type === 'REG') && item.text.includes(commandText.slice(0, -1))) ||
 				((item.type !== 'REG') && item.text.includes(commandText))
 			);
@@ -2084,7 +2030,7 @@
 		const commands = programText.split(/\s+/).slice(0, 105);
 		let useColumnMode = document.getElementById('column_mode').checked;
 		const lastColumnStartFrom = commands.length - 10; // used only when useColumnMode
-		LoopDoScan:
+		LoopFullScan:
 		while (true) {
 			// Set all commands to default 0
 			for (let iAddr = 0; iAddr < 105; iAddr++) {
@@ -2103,14 +2049,14 @@
 					if (!Number.isNaN(newAddrIndex)) {
 						if (useColumnMode) {
 							useColumnMode = false;
-							continue LoopDoScan;
+							continue LoopFullScan;
 						}
 						cmd = cmd.slice(3);
 						addrIndex = newAddrIndex;
 					}
 				}
-				if (addrIndex >= 105) { // Stop to exclude address overflow by 'A4.+', '-', '*'
-					break LoopDoScan;
+				if (addrIndex >= 105) { // Stop to exclude address overflow by 'A4.+' '-' '*'
+					break LoopFullScan;
 				}
 				writeSingleCommand(addrIndex, parseCommand(cmd));
 				if (useColumnMode) {
@@ -2118,7 +2064,7 @@
 				} else {
 					addrIndex++;
 				}
-			}
+			} // end scan
 			break;
 		}
 		turnOn();
@@ -2148,7 +2094,7 @@
 				isJumpCode = false;
 				continue;
 			}
-			const mnemonic = MNEMONICS.find((item) =>
+			const mnemonic = MNEMONICS.find(item =>
 				((item.type !== 'REG') && (code === item.code)) ||
 				((item.type === 'REG') && (codeDiv16 === item.code / 16) && (codeMod16 !== 0xF))
 			);
@@ -2168,9 +2114,9 @@
 
 		const columnMode = document.getElementById('column_mode').checked;
 		// Calc column widths
-		const colWidths = new Array((columnMode) ? 11 : 10).fill(0);
+		const colWidths = new Array(columnMode ? 11 : 10).fill(0);
 		commands.forEach((cmd, i) => {
-			const column = (columnMode) ? intDiv(i, 10) : i % 10;
+			const column = columnMode ? intDiv(i, 10) : i % 10;
 			colWidths[column] = Math.max(colWidths[column], cmd.length + 1);
 		});
 
@@ -2182,7 +2128,7 @@
 		if (!document.getElementById('skip_address').checked) {
 			result = result.map((cmd, i) => {
 				const addressPrefix = `${hexChar(intDiv(i, 10))}${i % 10}.`;
-				const addressSpan = (useColorGroups) ? `<span class="color_address">${addressPrefix}</span>` : addressPrefix;
+				const addressSpan = useColorGroups ? `<span class="color_address">${addressPrefix}</span>` : addressPrefix;
 				return addressSpan + cmd;
 			});
 		}
@@ -2235,9 +2181,9 @@
 			stateStr += hexStr(chipIK13.output);
 			stateStr += hexStr(chipIK13.keybX);
 			stateStr += hexStr(chipIK13.keybY);
-			stateStr += (chipIK13.elevenPoint) ? 'B' : '0'; // B = 11
+			stateStr += chipIK13.elevenPoint ? 'B' : '0'; // B = 11
 			stateStr += chipIK13.pointsPresent.map(Number).map(String).join('');
-			stateStr += (chipIK13.displayValueChanged) ? '1' : '0';
+			stateStr += chipIK13.displayValueChanged ? '1' : '0';
 		}
 		const stateStrLength = stateStr.length;
 		let result = '';
@@ -2339,7 +2285,7 @@
 		let digitsCount = 0;
 		forLoop:
 		for (let chr of text) {
-			execStep(true);
+			stepExec();
 			if (chr >= '0' && chr <= '9') {
 				pressing(`b${chr}`, true);
 				digitsCount++;
@@ -2347,7 +2293,7 @@
 					continue;
 				}
 				digitsCount = 0;
-				execStep(true);
+				stepExec();
 				chr = '^'; // Emulate power button after 8 digits
 			}
 			switch (chr) {
@@ -2365,7 +2311,7 @@
 					if (useNeg) {
 						pressing('bNeg', true);
 						useNeg = false;
-						execStep(true);
+						stepExec();
 					}
 					pressing('bPower', true);
 					powerButtonIsPressed = true;
@@ -2375,7 +2321,7 @@
 			}
 		}
 		if (useNeg) {
-			execStep(true);
+			stepExec();
 			pressing('bNeg', true);
 		}
 	};
@@ -2403,10 +2349,10 @@
 	// Fill Controls
 
 	for (let iReg = 0; iReg < 15; iReg++) {
-		generalRegisters[iReg] = new Registry(document.getElementById(`R${iReg}`));
+		registersControls[iReg] = document.getElementById(`R${iReg}`);
 	}
 	for (let iStack = 0; iStack < 5; iStack++) {
-		stackRegisters[iStack] = new Registry(document.getElementById(`S_${iStack}`));
+		stackContols[iStack] = document.getElementById(`S_${iStack}`);
 	}
 	for (let iRet = 0; iRet < 5; iRet++) {
 		returnsControls[iRet] = document.getElementById(`ret_${iRet}`);
@@ -2432,7 +2378,7 @@
 	document.getElementById('in_radian').addEventListener('click', () => changeAngleMeasure(ANGLE_IN_RADIAN));
 	document.getElementById('in_grad').addEventListener('click', () => changeAngleMeasure(ANGLE_IN_GRAD));
 	document.getElementById('in_degree').addEventListener('click', () => changeAngleMeasure(ANGLE_IN_DEGREE));
-	document.getElementById('angle_pos').addEventListener('click', (event) => {
+	document.getElementById('angle_pos').addEventListener('click', event => {
 		let newMeasure = ANGLE_IN_GRAD;
 		if (angleMeasure === ANGLE_IN_GRAD) {
 			newMeasure = (event.offsetX < 7) ? ANGLE_IN_RADIAN : ANGLE_IN_DEGREE;
@@ -2443,13 +2389,13 @@
 		changeAngleMeasure((angleMeasure == ANGLE_IN_DEGREE) ? ANGLE_IN_RADIAN : ANGLE_IN_DEGREE);
 	});
 
-	document.body.addEventListener('keydown', (event) => {
+	document.body.addEventListener('keydown', event => {
 		if (isPowerOn && (document.activeElement !== programMemo) && !event.shiftKey) { // Skip shift prevent Shift+Ins as Ins
 			keyboardHook(event.keyCode);
 		}
 	});
 
-	document.body.addEventListener('paste', (event) => {
+	document.body.addEventListener('paste', event => {
 		if (isPowerOn && (document.activeElement !== programMemo)) {
 			pasteFromClipboard(event);
 		}
