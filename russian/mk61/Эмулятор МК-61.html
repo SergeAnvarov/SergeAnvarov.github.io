@@ -1768,11 +1768,11 @@
 		if (needUpdate) {
 			// const asString = e => (e === 0xF) ? '_' : DIGIT_CHARS[e];
 			// console.log(inProgramMode, displayValues.map(asString).join(''), newDisplayValues.map(asString).join(''));
-			const skipUpdate = (newDisplayValues[0] === 0); //&&
-			//   (inProgramMode ||
-			//   (newDisplayValues[9] === 0xf) &&
-			//   (newDisplayValues[10] === 0xf) &&
-			//   (newDisplayValues[11] === 0xf));
+			const skipUpdate = (newDisplayValues[0] === 0) &&
+			  (inProgramMode ||
+			  (newDisplayValues[9] === 0xf) &&
+			  (newDisplayValues[10] === 0xf) &&
+			  (newDisplayValues[11] === 0xf));
 			displayValues = newDisplayValues;
 			displayPointsPresent = newDisplayPointsPresent;
 			if (!skipUpdate) {
