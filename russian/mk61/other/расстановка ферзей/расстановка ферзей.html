@@ -123,8 +123,10 @@ a[target="_blank"] {
 	<p>
 		Реализован алгоритм со страницы
 		<a href="https://pmk.arbinada.com/category/00030.html" target="_blank">
-			Benchmark 8 ферзей.</a>
-		<a href="http://arbinada.ddns.net/pmk/category/00030.html" target="_blank">или другая ссылка</a>
+			Benchmark 8 ферзей</a>
+		<a href="http://arbinada.ddns.net/pmk/category/00030.html" target="_blank">(альтернативная ссылка).</a>
+	</p>
+	<p>
 		Отличия от приведённой там программы:
 	</p>
 	<ul>
@@ -135,7 +137,7 @@ a[target="_blank"] {
 			Набор команд совместим с Б3-34 (МК-54).
 		</li>
 		<li>
-			Находит все расстановки.
+			Находит все 92 расстановки.
 		</li>
 		<li>
 			Регистры Ra&hellip;Re не используются программой (Ra&hellip;Rd для Б3-34).
@@ -282,6 +284,32 @@ a[target="_blank"] {
 			<td colspan="1"></td>
 		</tr>
 	</table>
+
+	<h2>Измерения скорости</h2>
+
+	<p>
+		Если рассматривать задачу, как измеритель скорости, то первая расстановка получается через такой интервал:
+	</p>
+	<table>
+		<tr>
+			<th>Программа</th>
+			<th>Операционка, оборудование</th>
+			<th>Результат</th>
+		</tr>
+		<tr>
+			<td><a href="https://play.google.com/store/apps/details?id=com.cax.pmk.ext&hl=ru#" target="_blank">Расширенный эмулятор МК 61/54</a></td>
+			<td>Android 13, CPU MTK G95, 8 ядер 2.05 ГГц</td>
+			<td>55 сек.</td>
+		</tr>
+		<tr>
+			<td><a href="../../Эмулятор%20МК-61.html" target="_blank">Эмулятор МК-61</a></td>
+			<td>Windows 7, Яндекс браузер 24.10.3.845, CPU Intel i5-2300, 4 ядра, 2.80 ГГц</td>
+			<td>99 сек.</td>
+		</tr>
+	</table>
+	<p>
+		Это данные при включенном ускорении в этих эмуляторах.
+	</p>
 
 </body>
 

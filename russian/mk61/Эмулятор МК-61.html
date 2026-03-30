@@ -1668,7 +1668,8 @@
 	const returnsControls = new Array(5);
 	const commandCounterControl = document.getElementById('command_counter');
 
-	const updateRegisters = (permutation) => {
+	const updateRegisters = () => {
+		const permutation = intDiv(IR2_1.tickIndex, 84);
 		registersControls.forEach((textField, iReg) => {
 			const memIndex = PERMUTATION_ADDRESS_PAGES_OF_MEMORY[permutation][iReg];
 			textField.value = getTextOfRegister(ADDRESS_PAGES_OF_MEMORY[memIndex][0], ADDRESS_PAGES_OF_MEMORY[memIndex][1] - 8);
@@ -1731,7 +1732,7 @@
 			}
 		}
 		if (forceUpdateRegs || (IR2_1.tickIndex === 84)) {
-			updateRegisters(intDiv(IR2_1.tickIndex, 84));
+			updateRegisters();
 		}
 	};
 
@@ -1854,6 +1855,10 @@
 		}
 	};
 
+	const changeAngleMeasureToRadian = () => changeAngleMeasure(ANGLE_IN_RADIAN);
+	const changeAngleMeasureToGrad = () => changeAngleMeasure(ANGLE_IN_GRAD);
+	const changeAngleMeasureToDegree = () => changeAngleMeasure(ANGLE_IN_DEGREE);
+
 	const disableButtons = (disable) => {
 		document.querySelectorAll('.transparent_button').forEach(elem => (elem.disabled = disable));
 		document.getElementById('angle_measure').disabled = disable;
@@ -1918,7 +1923,7 @@
 		isPaused = event.target.checked;
 		disableButtons(isPaused);
 		if (!isPaused) {
-			queueMicrotask(() => updateRegisters(intDiv(IR2_1.tickIndex, 84)));
+			queueMicrotask(updateRegisters);
 		}
 	};
 
@@ -1944,10 +1949,10 @@
 		if (keyCode === 37) { // ← left arrow
 			switch (angleMeasure) {
 				case ANGLE_IN_DEGREE:
-					changeAngleMeasure(ANGLE_IN_GRAD);
+					changeAngleMeasureToGrad();
 					break;
 				case ANGLE_IN_GRAD:
-					changeAngleMeasure(ANGLE_IN_RADIAN);
+					changeAngleMeasureToRadian();
 					break;
 				default: // No change
 			}
@@ -1956,10 +1961,10 @@
 		if (keyCode === 39) { // → right arrow
 			switch (angleMeasure) {
 				case ANGLE_IN_RADIAN:
-					changeAngleMeasure(ANGLE_IN_GRAD);
+					changeAngleMeasureToGrad();
 					break;
 				case ANGLE_IN_GRAD:
-					changeAngleMeasure(ANGLE_IN_DEGREE);
+					changeAngleMeasureToDegree();
 					break;
 				default: // No change
 			}
@@ -2375,19 +2380,20 @@
 	document.getElementById('text_to_program').addEventListener('click', writeTextToProgram);
 	document.getElementById('use_addons').addEventListener('change', hideDebugControls);
 
-	document.getElementById('in_radian').addEventListener('click', () => changeAngleMeasure(ANGLE_IN_RADIAN));
-	document.getElementById('in_grad').addEventListener('click', () => changeAngleMeasure(ANGLE_IN_GRAD));
-	document.getElementById('in_degree').addEventListener('click', () => changeAngleMeasure(ANGLE_IN_DEGREE));
-	document.getElementById('angle_pos').addEventListener('click', event => {
-		let newMeasure = ANGLE_IN_GRAD;
-		if (angleMeasure === ANGLE_IN_GRAD) {
-			newMeasure = (event.offsetX < 7) ? ANGLE_IN_RADIAN : ANGLE_IN_DEGREE;
-		}
-		changeAngleMeasure(newMeasure);
+	document.getElementById('in_radian').addEventListener('click', changeAngleMeasureToRadian);
+	document.getElementById('in_grad').addEventListener('click', changeAngleMeasureToGrad);
+	document.getElementById('in_degree').addEventListener('click', changeAngleMeasureToDegree);
+	document.getElementById('angle_pos').addEventListener('click', ({offsetX}) => {
+		(angleMeasure !== ANGLE_IN_GRAD) ? changeAngleMeasureToGrad() :
+		  (offsetX < 7) ? changeAngleMeasureToRadian() : changeAngleMeasureToDegree()
+		// let newMeasure = ANGLE_IN_GRAD;
+		// if (angleMeasure === ANGLE_IN_GRAD) {
+		// 	newMeasure = (offsetX < 7) ? ANGLE_IN_RADIAN : ANGLE_IN_DEGREE;
+		// }
+		// changeAngleMeasure(newMeasure);
 	});
-	document.getElementById('angle_measure').addEventListener('click', () => {
-		changeAngleMeasure((angleMeasure == ANGLE_IN_DEGREE) ? ANGLE_IN_RADIAN : ANGLE_IN_DEGREE);
-	});
+	const swapAngleMeasure = () => ((angleMeasure == ANGLE_IN_DEGREE) ? changeAngleMeasureToRadian : changeAngleMeasureToDegree)();
+	document.getElementById('angle_measure').addEventListener('click', swapAngleMeasure);
 
 	document.body.addEventListener('keydown', event => {
 		if (isPowerOn && (document.activeElement !== programMemo) && !event.shiftKey) { // Skip shift prevent Shift+Ins as Ins
