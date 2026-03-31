@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta content="true" name="HandheldFriendly">
+	<meta content="width" name="MobileOptimized">
+	<meta content="yes" name="apple-mobile-web-app-capable">
+	<meta name="description" content="94 цифры числа e. МК-61">
+	<title>94 цифры числа e</title>
+
+<style>
+
+span.but, span.but_f, span.but_k, span.but_cx, span.but_b, span.reg, span.op_f, span.op_k {
+	border:thin solid black;
+	border-radius:4px;
+	display:inline-block;
+	font-size:1.1em;
+	font-weight:bold;
+	font-family:monospace;
+	text-align:center;
+	min-width:2.3em;
+	white-space:nowrap;
+}
+
+sup {
+	line-height:0;
+}
+
+span.but {
+	background-color:#CCCCCC;
+	color:black;
+}
+
+span.but_f {
+	background-color:#F5E345;
+	color:black;
+}
+
+span.but_k {
+	background-color:LightSkyBlue;
+	color:white;
+}
+
+span.but_cx {
+	background-color:#F00505;
+	color:white;
+}
+
+span.but_b {
+	background-color:black;
+	color:white;
+}
+
+span.reg {
+	background-color:black;
+	color:white;
+}
+
+span.op_f {
+	background-color:black;
+	color:yellow;
+}
+
+span.op_k {
+	background-color:black;
+	color:#00BFFF;
+}
+
+.code {
+	background-color:#103810;
+	color:#77FF77;
+	font-size:1.1em;
+	font-family:monospace;
+	font-weight:bold;
+	padding:1px 2px 1px 2px;
+	white-space:pre;
+}
+
+table {
+	border-collapse:collapse;
+}
+
+table, th, td {
+	border:1px solid black;
+}
+
+.center {
+	text-align:center;
+}
+
+details summary {
+	cursor: pointer;
+}
+details summary > * {
+	display: inline;
+}
+
+a[target="_blank"] {
+	background: url(https://upload.wikimedia.org/wikipedia/commons/6/64/Icon_External_Link.png) center right no-repeat;
+    padding-right: 0.8em;
+}
+
+</style>
+
+</head>
+
+<body>
+	<header>
+		<h1>94 цифры числа e</h1>
+	</header>
+	<p>
+		Реализация алгоритма нахождения 94 цифр <a href="https://ru.wikipedia.org/wiki/E_(число)" target="_blank">числа e</a>.
+	</p>
+	<h2>Предыстория</h2>
+	<p>
+		Первый вариант реализаци вычисления чисел числа e был указан в журнале Наука и Жизнь №4 1990 г.:
+		<a href="NiZ.1990-04.CiK_.djvu" target="blank">вырезка в формате djvu</a>. Там получилось только 27 цифр.
+	</p>
+	<p>
+		Примерно через год был опубликован вариант, где цифр уже было 92.
+		<a href="NiZ.1990-04.CiK_.djvu" target="blank">Наука и жизнь №6 1991</a>.
+		По сути, это уже максимум. При вычислениях (нахождение остатка от деления),
+		чтобы не потерять цифры от переполнения, приходится хранить только 6 цифр, а не 7.
+		В результате получаем 15 регистров &times; 6 знаков = 90. Начало можно использовать
+		с переполнением, поэтому 91 цифра после запятой или всего 92.
+	</p>
+	<h2>Реализация</h2>
+	<p>
+		Текущая реализация – это немного улучшенный вариант того, что было опубликовано в журнале:
+	</p>
+	<ul>
+		<li>
+			Программа самостоятельно обнуляет все регистры перед вычислением, что позволяет запустить её многократно,
+			например, для опеределения производительности ПМК.
+		</li>
+		<li>
+			Она ещё и немного короче (на 3 команды).
+		</li>
+	</ul>
+	<p>
+		С учетом того, что в конце вычислений уже можно не боятся переполнений, в последний регистр
+		просто дописаны ещё две цифры числа e. Так и получается 94 цифры (такое небольшое жульничество).
+	</p>
+
+	<h3>Глубина расчёта</h3>
+	<p>
+		Сначала поясню загадочное число 65, используемое в программе, но почему-то мало освещённое в исходной статье.
+		Дело в том, что точность суммы сходящегося ряда (суммы), определяется его последним членом.
+		При вычислении e по формуле ряда &sum; 1&frasl;N!, точность определяется последним 1&frasl;N!
+		Для определения разрядности числа можно использовать обычный десятичный логарифм.
+		Тогда чему он равен, столько и разрядов у числа (точность).
+		Если учесть, что N! = 1&times;2&times;3&times;&hellip;&times;N, а логарифм произведения равен сумме
+		логифмов отдельных членов, то достаточно вычислить lg(1)+lg(2)+&hellip;+lg(N) для получения
+		количества знаков у числа N! Например, если результат больше трех, то число содержит больше трех знаков (четыре).
+	</p>
+	<p>
+		Для вычислений суммы логарифмов составим простую программу:
+	</p>
+	<table class="center">
+		<tr>
+			<th>&#8202;#&#8202;|&#8202;</th>
+			<th>00</th>
+			<th>01</th>
+			<th>02</th>
+			<th>03</th>
+			<th>04</th>
+			<th>05</th>
+			<th>06</th>
+			<th>07</th>
+			<th>08</th>
+			<th>09</th>
+		</tr>
+		<tr>
+			<th>&#8202;00&#8202;|&#8202;</th>
+			<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+			<td><span class="but_cx">Cx</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+			<td><span class="but_f">F</span><span class="op_f">Lg</span></td>
+			<td><span class="but">+</span></td>
+			<td><span class="but_f">F</span><span class="op_f">L0</span></td>
+			<td><span class="but">02</span></td>
+			<td><span class="but_b">С/П</span></td>
+			<td colspan="2"></td>
+		</tr>
+	</table>
+	<p>
+		На входе число N, на выходе сумма логарифмов. Зададим 4 и получим 1.3802112, т.е. 2 знака,
+		как и ожидалось: 1&times;2&times;3&times;4 = 24.
+	</p>
+	<p>
+		А если задать 65, то получим 90.916331, те самые 91 знак после запятой.
+		Вот откуда это число 65 – это предел суммы ряда, чтобы получилась 91 точная цифра.
+	</p>
+
+	<h3>Алгоритм расчёта</h3>
+
+	<p>
+		Сам алгоритм довольно прост. Используя разложению в цепную дробь (см. ссылку в начале по числу e),
+		получается на каждом шаге вычисляется 1/N. Вместо единицы берётся число заведомо
+		больше 6 знаков (10<sup>7</sup>), и выполяется целочисленное деление. Результат (целый, 6 знаков)
+		сохраняется в регистре, а остаток суммируется (с предыдущей суммой вначале равной 10<sup>7</sup>),
+		чтобы провести деление для следующих разрядов.
+		Таким образом пробегаем по всем разрядам (регистрам) и повторяем N (65) раз.
+	</p>
+	<p>
+		В исходной программе алгоритм целочисленного деления и суммирования выполняется в отдельной
+		подпрограмме, а накопленная сумма хранится в стеке. Поэтому делается многократный повтор: вызвать
+		из регистра текущие разряды, вызвать подпрограмму, сохранить. После пробега по всем разрядам уменьшить
+		число N. При обнулении – закончить.
+	</p>
+
+	<h3>Оптимизация</h3>
+
+	<p>
+		Я немного поменял роли. Сумма по прежнему в стеке, но регистр R0 стал использовать для хранения числа N.
+		Поэтому вычисляемые знаки, хранимые ранее в R0, тоже сохраняются в стеке (регистр RT). Но зато это позволило
+		сократить манипуляции в стеке, т.к. сохранять N уже не нужно, да и цикл сделался проще.
+	</p>
+	<p>
+		Кроме того, чтобы сократить длину программу, сделал вызов подпрограммы косвенным (одна команда вместо двух).
+		Т.к. в регистрах хранится только 6 разрядов, то последние 2 разряда регистра Re использовал для хранения адреса
+		попрограммы.
+	</p>
+	<p>
+		Микрооптимизация: для зануления 15 регистров вместо явного числа 15 (две команды), используется дробное число
+		1/65 (функция обратной величины - одна команда), у которого в конце как раз 15.
+		А для косвенной адресации без разницы.
+	</p>
+	<p>
+		По окончании хранимое в стеке начало числа e (в оригинале R0), нужно сбросить в R0. Да и в регистре Re
+		нужно почистить хвоста. Но тут я немного сжульничал. Вместо прокрутки стека (из RT в R0) и прибавления единицы,
+		я просто вычислил средствами ПМК число e (как раз те 7 знаков после запятой, что в RT).
+		Желающие могут проверить, что в конце в RT то же самое, что в R0. Ну и вместо обнуления двух
+		последних разрядов Re просто дописал два настоящих разряда числа e.
+	</p>
+
+	<h3>Результат</h3>
+	<p>
+		Как и в исходной программе резульатат хранится в регистрах R0&hellip;Re.
+		Начало (R0) также на экране. Всего 94 цифры.
+	</p>
+	<p>
+		Для повтора просто нажмите <span class="but_b">В/0</span>
+		<span class="but_b">С/П</span>.
+	</p>
+
+	<h3>Текст программы</h3>
+
+	<table class="center">
+		<tr>
+			<th>&#8202;#&#8202;|&#8202;</th>
+			<th>00</th>
+			<th>01</th>
+			<th>02</th>
+			<th>03</th>
+			<th>04</th>
+			<th>05</th>
+			<th>06</th>
+			<th>07</th>
+			<th>08</th>
+			<th>09</th>
+		</tr>
+		<tr>
+			<th>&#8202;00&#8202;|&#8202;</th>
+			<td><span class="but_b">В/О</span></td>
+			<td><span class="but">6</span></td>
+			<td><span class="but">5</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+			<td><span class="but_f">F</span><span class="op_f">1/x</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+			<td><span class="but_cx">Cx</span></td>
+			<td><span class="but_k">К</span><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;10&#8202;|&#8202;</th>
+			<td><span class="but">06</span></td>
+			<td><span class="but">8</span></td>
+			<td><span class="but">0</span></td>
+			<td><span class="but">+</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">e</span></td>
+			<td><span class="but_cx">Cx</span></td>
+			<td><span class="but">ВП</span></td>
+			<td><span class="but">7</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but">В&uarr;</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;20&#8202;|&#8202;</th>
+			<td><span class="but_f">F</span><span class="op_f">&orarr;</span></td>
+			<td><span class="but_f">F</span><span class="op_f">&orarr;</span></td>
+			<td><span class="but">&lt;-&gt;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;30&#8202;|&#8202;</th>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">4</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">5</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;40&#8202;|&#8202;</th>
+			<td><span class="but_b">x&rarr;П</span><span class="but">6</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">7</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">7</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">8</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">8</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">9</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;50&#8202;|&#8202;</th>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">a</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">b</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">b</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;60&#8202;|&#8202;</th>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="reg">e</span></td>
+			<td><span class="but">ВП</span></td>
+			<td><span class="but">2</span></td>
+			<td><span class="but">/-/</span></td>
+			<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span></td>
+			<td><span class="but">ВП</span></td>
+			<td><span class="but">2</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;70&#8202;|&#8202;</th>
+			<td><span class="but_f">F</span><span class="op_f">L0</span></td>
+			<td><span class="but">11</span></td>
+			<td><span class="but">2</span></td>
+			<td><span class="but">5</span></td>
+			<td><span class="but">+</span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="reg">e</span></td>
+			<td><span class="but">1</span></td>
+			<td><span class="but_f">F</span><span class="op_f">e<sup>x</sup></span></td>
+			<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+			<td><span class="but_b">С/П</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;80&#8202;|&#8202;</th>
+			<td><span class="but">&lt;-&gt;</span></td>
+			<td><span class="but_cx">Cx</span></td>
+			<td><span class="but">&minus;</span></td>
+			<td><span class="but">+</span></td>
+			<td><span class="but">В&uarr;</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+			<td><span class="but">&divide;</span></td>
+			<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+			<td><span class="but">&times;</span></td>
+		</tr>
+		<tr>
+			<th>&#8202;90&#8202;|&#8202;</th>
+			<td><span class="but">&minus;</span></td>
+			<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+			<td><span class="but">95</span></td>
+			<td><span class="but">ВП</span></td>
+			<td><span class="but">6</span></td>
+			<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+			<td><span class="but_b">П&rarr;x</span><span class="but">0</span></td>
+			<td><span class="but">&divide;</span></td>
+			<td><span class="but_b">В/О</span></td>
+			<td colspan="1"></td>
+		</tr>
+	</table>
+
+	<h3>Детали программы</h3>
+
+	<h4>Подпрограмма с адреса 80</h4>
+	<p>
+		На входе в стеке предполагается:
+	</p>
+	<table>
+		<tr>
+			<th>Регистр стека</th>
+			<th>Значение</th>
+		</tr>
+		<tr>
+			<th>RX</th>
+			<td>Очередные 6 разрядов, обозначим как K.</td>
+		</tr>
+		<tr>
+			<th>RY</th>
+			<td>Игнорируем. Там предыдущий результат, нам он не нужен. Обозначим как M.</td>
+		</tr>
+		<tr>
+			<th>RZ</th>
+			<td>Накопленная сумма, может быть 8 разрядной. Обозначим как S.</td>
+		</tr>
+		<tr>
+			<th>RT</th>
+			<td>Начальные 6 или 7 разрядов числа e. Как R0 в оригинале. Обозначим как H.</td>
+		</tr>
+	</table>
+	<p>
+		На выходе должны получить:
+	</p>
+	<table>
+		<tr>
+			<th>Регистр стека</th>
+			<th>Значение</th>
+		</tr>
+		<tr>
+			<th>RX</th>
+			<td>Новое K = [(K+S)/N], результат целочисленного деления.</td>
+		</tr>
+		<tr>
+			<th>RY</th>
+			<td>Новое S, как остаток от деления выше.</td>
+		</tr>
+		<tr>
+			<th>RZ</th>
+			<td>H.</td>
+		</tr>
+		<tr>
+			<th>RT</th>
+			<td>H.</td>
+		</tr>
+	</table>
+	<p>
+		Теперь по порядку, что выполняется в подпрограмме:
+	</p>
+	<ol>
+		<li>Удаляется M, путём сброса в ноль и его вычитания.</li>
+		<li>K+S продвигается в стек и вычисляется [(K+S)/N].</li>
+		<li>Из K+S вычитается N&times;[(K+S)/N], получается остаток.</li>
+		<li>
+			Результат проверяется на ноль. Это возможно в самом конце, при N=1 делится без остатка.
+			Заодно проверка делает результат устойчивым к операции
+			<span class="but">ВП</span><span class="but">6</span>
+			(см. <a href="https://sergeanvarov.github.io/russian/mk61/uf/x2.html#id_affect" target="_blank">X2-влияющая команда</a>).
+		</li>
+		<li>
+			Благодаря тому, что команда <span class="but">ВП</span> регистр X1 не трогает, где осталось N&times;[(K+S)/N], мы
+			это вытаскиваем, делим на N (точно поделится) и получаем то, что нужно.
+		</li>
+	</ol>
+
+	<h4>Начало</h4>
+	<p>
+		Вместо <span class="but_b">В/О</span> можно использовать и простую
+		<span class="but_k">К</span><span class="op_k">НОП</span>. Сделано
+		по привычке: вдруг в конце программы нужно добавить подпрограмму, тогда можно
+		сэкономить на <span class="but_b">В/О</span>.
+	</p>
+	<p>
+		N (=65) загоняем в R0. Теперь нужно очистить 15 регистров. Это делают команды
+		по адресам 06..10, но в R1 будет не 15, а 1/65 =  1.5384615^-02, которое
+		и содержит 15 (в конце). Для косвенной адресации это не важно
+		(см. <a href="https://sergeanvarov.github.io/russian/mk61/uf/indirect_addr.html##id_lt1" target="_blank">Число положительное, но меньше единицы</a>).
+		Цикл очистки прервется, когда занулится сам R1.
+	</p>
+
+	<h4>Цикл пробега по всем регистрам</h4>
+
+	<p>
+		С адреса 11. Как упоминалось, адрес подпрограммы (80) хранится в хвосте Re.
+		На входе цикла предполагается, что в RX содержится Re&times;100. В самом начале
+		это ноль, что верно.
+	</p>
+	<p>
+		Сумма с 80 сохраняется в Re. Чтобы не потерять из RT число H, мы 10<sup>7</sup>
+		получаем через <span class="but">ВП</span> без сдвига стека. После
+		<span class="but_cx">Cx</span> это безопасно. Напомню, в RZ хранится S (в само начале ноль), RY
+		мы забили мусором (новое Re), и начинаем с 10<sup>7</sup>.
+	</p>
+	<p>
+		После вычисления нового H, командами по адресам 19..22 загоняем его в RT.
+		Число S остается в RY (в RX будет старое H, оно нам уже не нужно).
+	</p>
+	<p>
+		Теперь многократно по адресам 23..67 вызываем
+		<span class="but_b">П&rarr;x</span><span class="reg">r</span>
+		<span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span>
+		<span class="but_b">x&rarr;П</span><span class="reg">r</span>.
+		Стек остаётся как указано в разделе по подпрограмме.
+		Единственное, для Re нужно отрезать две последние цифры, что делается по адресам
+		63..66. Здесь и далее мы сознательно используем опасную в программном режиме
+		<span class="but">ВП</span>, вместо
+		<span class="but_f">F</span><span class="op_f">10<sup>x</sup></span>,
+		чтобы не сдигать стек и не потерять значение H.
+		После <span class="but_b">П&rarr;x</span><span class="reg">e</span>
+		команда <span class="but">ВП</span> безопасна.
+	</p>
+	<p>
+		После последнего
+		<span class="but_k">К</span><span class="but_b">ПП</span><span class="reg">e</span>
+		умножаем на 100 новое Re. Здесь, после возврата из подпрограммы,
+		команда <span class="but">ВП</span> опять безопасна.
+		И возвращаемся на начало цикла, если не <q>кончился</q> N.
+	</p>
+
+	<h3>Окончание</h3>
+	<p>
+		При выходе из цикла (адрес 73), с учётом того, что Re уже умножен на 100,
+		последние цифры числа e просто прибавляем. И делаем <q>жульничество</q>,
+		описанное в разделе по оптимизации.
+	</p>
+	<p>Всё.</p>
+
+
+</body>
+
+</html>
