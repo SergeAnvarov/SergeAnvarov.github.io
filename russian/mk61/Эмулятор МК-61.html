@@ -1626,6 +1626,13 @@
 
 	const getTextOfRegister = (chipIndex, addr) => {
 		const memory = microChips[chipIndex].M;
+		let signValue = memory[addr - 9];
+		// Sometimes the pipeline shifts the memory by one. It is determined by an unusual number for the sign
+		if (signValue === 0xF) {
+			addr--; // Shift back
+			signValue = memory[addr - 9]; // Read again
+			console.log('Shift');
+		}
 		const exponentDigit1 = memory[addr];
 		const exponentDigit2 = memory[addr - 3];
 		const exponentDigit3 = memory[addr - 6];
@@ -1644,13 +1651,12 @@
 			}
 		}
 		if (digits.length === 0) {
-			digits.push('0');
+			digits.push(0);
 		}
-		const signValue = memory[addr - 9];
-		const signChar = (signValue === 0) ? ' ' : DIGIT_CHARS[signValue + 1];
-		const mantissa = digits.reduce((result, digit) => DIGIT_CHARS[digit] + result, '').padEnd(8); // In reverse order
+		const mantissa = digits.toReversed().map(digit => DIGIT_CHARS[digit]).join('').padEnd(8);
 		const exponentIsExplicit = (exponent < 0) || (exponent > 7) || !standartExponent;
 		const pointPos = exponentIsExplicit ? 1 : exponent + 1;
+		const signChar = (signValue === 0) ? ' ' : DIGIT_CHARS[signValue + 1];
 		let result = signChar + mantissa.slice(0, pointPos) + '.' + mantissa.slice(pointPos);
 		if (exponentIsExplicit) {
 			result += '^' + exponent
@@ -1671,12 +1677,12 @@
 	const updateRegisters = () => {
 		const permutation = intDiv(IR2_1.tickIndex, 84);
 		registersControls.forEach((textField, iReg) => {
-			const memIndex = PERMUTATION_ADDRESS_PAGES_OF_MEMORY[permutation][iReg];
-			textField.value = getTextOfRegister(ADDRESS_PAGES_OF_MEMORY[memIndex][0], ADDRESS_PAGES_OF_MEMORY[memIndex][1] - 8);
+			const [chipIndex, memIndex] = ADDRESS_PAGES_OF_MEMORY[PERMUTATION_ADDRESS_PAGES_OF_MEMORY[permutation][iReg]];
+			textField.value = getTextOfRegister(chipIndex, memIndex - 8);
 		});
 		stackContols.forEach((textField, iStack) => {
-			const memIndex = PERMUTATION_ADDRESS_OF_STACK[permutation][iStack];
-			textField.value = getTextOfRegister(ADDRESS_OF_STACK[memIndex][0], ADDRESS_OF_STACK[memIndex][1]);
+			const [chipIndex, memIndex] = ADDRESS_OF_STACK[PERMUTATION_ADDRESS_OF_STACK[permutation][iStack]];
+			textField.value = getTextOfRegister(chipIndex, memIndex);
 		});
 		if (!inProgramMode) {
 			returnsControls.forEach((textField, iRet) => {
