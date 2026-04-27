@@ -1593,6 +1593,7 @@
 	const displayValueImages = [];
 	const displayPointImages = [];
 	const inProgramModeControl = document.getElementById('inProgramMode');
+	const numberFormatter = new Intl.NumberFormat(undefined, {minimumIntegerDigits: 2}); // '1' -> '01', '-2' -> '-02', etc
 
 	const programModeChanged = () => {
 		const opacity = inProgramMode ? 0.67 : 1.0;
@@ -1659,11 +1660,11 @@
 		const signChar = (signValue === 0) ? ' ' : DIGIT_CHARS[signValue + 1];
 		let result = signChar + mantissa.slice(0, pointPos) + '.' + mantissa.slice(pointPos);
 		if (exponentIsExplicit) {
-			result += '^' + exponent
-				.toLocaleString(undefined, {minimumIntegerDigits: 2}) // '1' -> '01', '-2' -> '-02', etc
-				.padStart(3);
+			result += '^';
+			result += numberFormatter.format(exponent).padStart(3);
 			if ((exponentDigit2 > 9) || (exponentDigit3 > 9)) {
-				result += '|' + getNonStandartExponentAsString(exponentDigit1, exponentDigit2, exponentDigit3);
+				result += '|';
+				result += getNonStandartExponentAsString(exponentDigit1, exponentDigit2, exponentDigit3);
 			}
 		}
 		return result;
@@ -1744,7 +1745,7 @@
 
 	const undoStack = new SizeLimitedStack(1000);
 	const undoButton = document.getElementById('undo_button');
-	let lastSignificantState; // = undefined;
+	let lastSignificantState = {};
 	let lastKeyState = '';
 	let lastHintForUndo = '';
 	let lastKeyPressed = '';
@@ -1765,7 +1766,7 @@
 	};
 
 	const initUndoState = () => {
-		lastSignificantState = undefined;
+		lastSignificantState = {};
 		lastKeyState = '';
 		lastHintForUndo = '';
 		lastKeyPressed = '';
@@ -1908,7 +1909,7 @@
 	};
 
 	const calcChangeSpeed = () => {
-		const fast = (document.getElementById('change_speed').checked);
+		const fast = document.getElementById('change_speed').checked;
 		delayBeforeNextExec = fast ? 0 : NORMAL_DELAY;
 		STEP_COUNT = fast ? 16 * 280 : 280;
 	};
@@ -2028,7 +2029,7 @@
 			.replace(/М/g, 'M') // All russian М to english M
 			.replace(/Н/g, 'H') // All russian Н to english H
 			.replace(/О/g, '0') // All russian О to zero
-			.replace(/O/g, '0') // Все english O to zero
+			.replace(/O/g, '0') // All english O to zero
 			.replace(/Р/g, 'P') // All russian Р to english P
 			.replace(/–/g, '-') // En dash to hyphen
 			.replace(/—/g, '-') // Em dash to hyphen
@@ -2392,11 +2393,6 @@
 	document.getElementById('angle_pos').addEventListener('click', ({offsetX}) => {
 		(angleMeasure !== ANGLE_IN_GRAD) ? changeAngleMeasureToGrad() :
 		  (offsetX < 7) ? changeAngleMeasureToRadian() : changeAngleMeasureToDegree()
-		// let newMeasure = ANGLE_IN_GRAD;
-		// if (angleMeasure === ANGLE_IN_GRAD) {
-		// 	newMeasure = (offsetX < 7) ? ANGLE_IN_RADIAN : ANGLE_IN_DEGREE;
-		// }
-		// changeAngleMeasure(newMeasure);
 	});
 	const swapAngleMeasure = () => ((angleMeasure == ANGLE_IN_DEGREE) ? changeAngleMeasureToRadian : changeAngleMeasureToDegree)();
 	document.getElementById('angle_measure').addEventListener('click', swapAngleMeasure);
