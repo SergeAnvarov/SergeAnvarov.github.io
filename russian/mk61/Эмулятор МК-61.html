@@ -886,7 +886,7 @@
 	  Undo analyze engine
 	  Field xy used to set chip state by position of buttons on keyboard
 	  Other used to store sequence of keys as one for undo operation, like КБПе, or Fx<0 etc
-	  Every record contains four items:
+	  Four items:
 	    init - first time pressed key
 		keyF - key pressed after F
 		keyK - key pressed after K
@@ -1279,6 +1279,7 @@
 
 	const arrayNotEqual = (a, b) => (a.length !== b.length) || a.some((value, index) => value !== b[index]);
 	const fromHex = (text) => Number.parseInt(text, 16);
+	const toHex = (num) => num.toString(16);
 	const intDiv = (x, y) => (x / y) | 0;
     const sleep = (timeout) => new Promise((resolve) => { window.setTimeout(resolve, timeout); });
 
@@ -1957,32 +1958,26 @@
 		pressing(buttonId);
 	};
 
-	const keyboardHook = (keyCode) => {
-		if (HOTKEYS_TO_CALC_KEYS_MAP.has(keyCode)) {
-			pressingWithFocus(HOTKEYS_TO_CALC_KEYS_MAP.get(keyCode));
-			return;
-		}
-		if (keyCode === 37) { // ← left arrow
-			switch (angleMeasure) {
-				case ANGLE_IN_DEGREE:
-					changeAngleMeasureToGrad();
-					break;
-				case ANGLE_IN_GRAD:
-					changeAngleMeasureToRadian();
-					break;
-				default: // No change
+	const slideAngleMeasure = (toLeft) => {
+		if (angleMeasure === ANGLE_IN_GRAD) {
+			if (toLeft) {
+				changeAngleMeasureToRadian();
+			} else {
+				changeAngleMeasureToDegree();
 			}
-			return;
+		} else if (toLeft === (angleMeasure === ANGLE_IN_DEGREE)) {
+			changeAngleMeasureToGrad();
 		}
-		if (keyCode === 39) { // → right arrow
-			switch (angleMeasure) {
-				case ANGLE_IN_RADIAN:
-					changeAngleMeasureToGrad();
-					break;
-				case ANGLE_IN_GRAD:
-					changeAngleMeasureToDegree();
-					break;
-				default: // No change
+	};
+
+	const keyboardHook = (keyCode) => {
+		// 37 = ← left arrow, 39 = → right arrow
+		if ((keyCode === 37) || (keyCode === 39)) {
+			slideAngleMeasure(keyCode === 37);
+		} else {
+			const buttonId = HOTKEYS_TO_CALC_KEYS_MAP.get(keyCode);
+			if (buttonId !== undefined) {
+				pressingWithFocus(buttonId);
 			}
 		}
 	};
@@ -2021,29 +2016,34 @@
 			return mnemonic.code + ((mnemonic.type === 'REG') ? fromHex(commandText.slice(-1)) : 0);
 		};
 
-		// Add spaces to the tags to separate them later
+		// We'll add spaces to the tags to separate them later
 		programMemo.innerHTML = programMemo.innerHTML.replace(/(<)(br|div|td|p)/g, ' <$2');
+		const replacement = new Map([
+			['А', 'A'], // All russian А to english A
+			['В', 'B'], // All russian В to english B
+			['С', 'C'], // All russian С to english C
+			['Д', 'D'], // All russian Д to english D
+			['Е', 'E'], // All russian Е to english E
+			['З', '3'], // All russian З to digit 3
+			['К', 'K'], // All russian К to english K
+			['М', 'M'], // All russian М to english M
+			['Н', 'H'], // All russian Н to english H
+			['О', '0'], // All russian О to zero
+			['O', '0'], // All english O to zero
+			['Р', 'P'], // All russian Р to english P
+			['–', '-'], // En dash to hyphen
+			['—', '-'], // Em dash to hyphen
+			['−', '-'], // Minus to hyphen
+			['Х', 'X'], // All russian Х to english X
+		]);
 		const programText = programMemo.textContent
 			.trim()
 			.replace(/#\s*\|\s*00\s*01\s*02\s*03\s*04\s*05\s*06\s*07\s*08\s*09\s*/g, '') // Remove header with addresses
 			.replace(/\s+\|\s+/g, '.') // If exists '|', remove it also. Example '20 | FL1' -> '20.FL1'
 			.toUpperCase()
-			.replace(/А/g, 'A') // All russian А to english A
-			.replace(/В/g, 'B') // All russian В to english B
-			.replace(/С/g, 'C') // All russian С to english C
-			.replace(/Д/g, 'D') // All russian Д to english D
-			.replace(/Е/g, 'E') // All russian Е to english E
-			.replace(/З/g, '3') // All russian З to digit 3
-			.replace(/К/g, 'K') // All russian К to english K
-			.replace(/М/g, 'M') // All russian М to english M
-			.replace(/Н/g, 'H') // All russian Н to english H
-			.replace(/О/g, '0') // All russian О to zero
-			.replace(/O/g, '0') // All english O to zero
-			.replace(/Р/g, 'P') // All russian Р to english P
-			.replace(/–/g, '-') // En dash to hyphen
-			.replace(/—/g, '-') // Em dash to hyphen
-			.replace(/−/g, '-') // Minus to hyphen
-			.replace(/Х/g, 'X'); // All russian Х to english X
+			.split('')
+			.map((chr) => replacement.get(chr) || chr).
+			join('');
 		if (!(/\S/.test(programText))) {
 			return; // Only empty string - don't change program
 		}
@@ -2059,11 +2059,11 @@
 			}
 			let addrIndex = 0;
 			for (let cmd of commands) {
-				if ((cmd.length > 2) && (cmd[2] === '.')) {
+				if (cmd[2] === '.') {
 					// If command with address prefix like 99.Cx, A4.В/О
 					let firstChar = cmd[0];
 					const secondChar = cmd[1];
-					if (['A', '-', '.'].includes(firstChar) && (Number(secondChar) < 5)) {
+					if ('-.A'.includes(firstChar) && (Number(secondChar) < 5)) {
 						firstChar = '10';
 					}
 					const newAddrIndex = Number(firstChar + secondChar);
@@ -2092,7 +2092,7 @@
 	};
 
 	const getProgramAsText = () => {
-		const hexChar = (num) => num.toString(16).toUpperCase();
+		const toUpHex = (num) => num.toString(16).toUpperCase();
 		const commands = new Array(105);
 		const colorGroups = new Array(105);
 		const useTextMnemonic = !document.getElementById('code_only').checked;
@@ -2109,7 +2109,7 @@
 				colorGroups[iAddr] = 'error';
 				continue;
 			}
-			commands[iAddr] = hexChar(codeDiv16) + hexChar(codeMod16);
+			commands[iAddr] = toUpHex(codeDiv16) + toUpHex(codeMod16);
 			if (isJumpCode) {
 				colorGroups[iAddr] = 'jump';
 				isJumpCode = false;
@@ -2117,7 +2117,7 @@
 			}
 			const mnemonic = MNEMONICS.find((item) =>
 				((item.type !== 'REG') && (code === item.code)) ||
-				((item.type === 'REG') && (codeDiv16 === item.code / 16) && (codeMod16 !== 0xF))
+				((item.type === 'REG') && (codeMod16 !== 0xF) && (codeDiv16 * 16 === item.code))
 			);
 			if (mnemonic === undefined) {
 				if ((code < 10) && useTextMnemonic) { // 0..9 without leading 0
@@ -2129,7 +2129,7 @@
 			colorGroups[iAddr] = mnemonic.color;
 			isJumpCode = (mnemonic.type === 'JUMP');
 			if (useTextMnemonic) {
-				commands[iAddr] = mnemonic.text[0] + ((mnemonic.type === 'REG') ? hexChar(codeMod16) : '');
+				commands[iAddr] = mnemonic.text[0] + ((mnemonic.type === 'REG') ? toHex(codeMod16) : '');
 			}
 		}
 
@@ -2148,7 +2148,7 @@
 		}
 		if (!document.getElementById('skip_address').checked) {
 			result = result.map((cmd, i) => {
-				const addressPrefix = `${hexChar(intDiv(i, 10))}${i % 10}.`;
+				const addressPrefix = `${toUpHex(intDiv(i, 10))}${i % 10}.`;
 				const addressSpan = useColorGroups ? `<span class="color_address">${addressPrefix}</span>` : addressPrefix;
 				return addressSpan + cmd;
 			});
@@ -2176,32 +2176,31 @@
 		if (!isPowerOn) {
 			return;
 		}
-		const hexStr = (num) => num.toString(16);
-		let stateStr = hexStr(angleMeasure);
+		let stateStr = toHex(angleMeasure);
 		for (let iChip = 0; iChip < 2; iChip++) {
 			const chipIR2 = microChips[iChip];
-			stateStr += chipIR2.M.map(hexStr).join('');
-			stateStr += hexStr(chipIR2.input);
-			stateStr += hexStr(chipIR2.output);
-			stateStr += hexStr(chipIR2.tickIndex).padStart(2, '0');
+			stateStr += chipIR2.M.map(toHex).join('');
+			stateStr += toHex(chipIR2.input);
+			stateStr += toHex(chipIR2.output);
+			stateStr += toHex(chipIR2.tickIndex).padStart(2, '0');
 		}
 		for (let iChip = 2; iChip < 5; iChip++) {
 			const chipIK13 = microChips[iChip];
-			stateStr += chipIK13.M.map(hexStr).join('');
-			stateStr += chipIK13.R.map(hexStr).join('');
-			stateStr += chipIK13.ST.map(hexStr).join('');
-			stateStr += hexStr(chipIK13.S);
-			stateStr += hexStr(chipIK13.S1);
-			stateStr += hexStr(chipIK13.L);
-			stateStr += hexStr(chipIK13.T);
-			stateStr += hexStr(chipIK13.overflow);
-			stateStr += hexStr(chipIK13.tickIndex).padStart(2, '0');
-			stateStr += hexStr(chipIK13.command).padStart(7, '0');
-			stateStr += hexStr(chipIK13.addrSyncCmd).padStart(2, '0');
-			stateStr += hexStr(chipIK13.input);
-			stateStr += hexStr(chipIK13.output);
-			stateStr += hexStr(chipIK13.keybX);
-			stateStr += hexStr(chipIK13.keybY);
+			stateStr += chipIK13.M.map(toHex).join('');
+			stateStr += chipIK13.R.map(toHex).join('');
+			stateStr += chipIK13.ST.map(toHex).join('');
+			stateStr += toHex(chipIK13.S);
+			stateStr += toHex(chipIK13.S1);
+			stateStr += toHex(chipIK13.L);
+			stateStr += toHex(chipIK13.T);
+			stateStr += toHex(chipIK13.overflow);
+			stateStr += toHex(chipIK13.tickIndex).padStart(2, '0');
+			stateStr += toHex(chipIK13.command).padStart(7, '0');
+			stateStr += toHex(chipIK13.addrSyncCmd).padStart(2, '0');
+			stateStr += toHex(chipIK13.input);
+			stateStr += toHex(chipIK13.output);
+			stateStr += toHex(chipIK13.keybX);
+			stateStr += toHex(chipIK13.keybY);
 			stateStr += chipIK13.elevenPointExists ? 'B' : '0'; // B = 11
 			stateStr += chipIK13.pointsPresent.map(Number).map(String).join('');
 			stateStr += chipIK13.displayValueChanged ? '1' : '0';
@@ -2402,11 +2401,7 @@
 	document.getElementById('in_radian').addEventListener('click', changeAngleMeasureToRadian);
 	document.getElementById('in_grad').addEventListener('click', changeAngleMeasureToGrad);
 	document.getElementById('in_degree').addEventListener('click', changeAngleMeasureToDegree);
-	document.getElementById('angle_pos').addEventListener('click', ({offsetX}) => {
-		const proc = (angleMeasure !== ANGLE_IN_GRAD) ? changeAngleMeasureToGrad :
-		  (offsetX < 7) ? changeAngleMeasureToRadian : changeAngleMeasureToDegree;
-		proc();
-	});
+	document.getElementById('angle_pos').addEventListener('click', ({offsetX}) => { slideAngleMeasure(offsetX < 7); });
 	const swapAngleMeasure = () => ((angleMeasure === ANGLE_IN_DEGREE) ? changeAngleMeasureToRadian : changeAngleMeasureToDegree)();
 	document.getElementById('angle_measure').addEventListener('click', swapAngleMeasure);
 
