@@ -279,350 +279,350 @@ pre {
 		</li>
 	</ul>
 
-	<details open="open">
+	<details>
 		<summary>
 			<h2>Разбор реализации&hellip;</h2>
 		</summary>
-	</details>
 
-	<h3>Регистры</h3>
-	<p>
-		Приведём для удобства в одном месте описание всех регистров:
-	</p>
-	<table>
-		<tr>
-			<th>Регистр</th>
-			<th>Значение</th>
-		</tr>
-		<tr>
-			<th>R0</th>
-			<td>
-				Признак начала игры. Первый раз сюда заносится единица. Если первоначальная
-				проверка положения прошла успешно, то будет не единица.
-			</td>
-		</tr>
-		<tr>
-			<th>R1</th>
-			<td>Координата X чёрного короля.</td>
-		</tr>
-		<tr>
-			<th>R2</th>
-			<td>Координата Y чёрного короля.</td>
-		</tr>
-		<tr>
-			<th>R3</th>
-			<td>Координата X белого короля.</td>
-		</tr>
-		<tr>
-			<th>R4</th>
-			<td>Координата Y белого короля.</td>
-		</tr>
-		<tr>
-			<th>R5</th>
-			<td>Координата X белой ладьи.</td>
-		</tr>
-		<tr>
-			<th>R6</th>
-			<td>Координата Y белой ладьи.</td>
-		</tr>
-		<tr>
-			<th>R7</th>
-			<td>36. Адрес кода отхода ладьёй (MoveRook).</td>
-		</tr>
-		<tr>
-			<th>R8</th>
-			<td>3, адрес начала хода (ввод).</td>
-		</tr>
-		<tr>
-			<th>R9</th>
-			<td>
-				<span class="code"> 9------0.   </span>
-				Признак неверного начального положения, и
-				адрес (A0) функции формирования хода ладьи (PrintRook).
-			</td>
-		</tr>
-		<tr>
-			<th>Ra</th>
-			<td>10.</td>
-		</tr>
-		<tr>
-			<th>Rb</th>
-			<td>Не используется в программе.</td>
-		</tr>
-		<tr>
-			<th>Rc</th>
-			<td>
-				Рабочий. Хранит число вертикалей между белыми фигурами.
-				Проверяется только на ноль.
-			</td>
-		</tr>
-		<tr>
-			<th>Rd</th>
-			<td>
-				Рабочий. Хранит число вертикалей между чёрным королём и белым минус 2.
-				При нулевом значении короли расположены через одну горизонталь.
-			</td>
-		</tr>
-		<tr>
-			<th>Re</th>
-			<td>98. Адрес вывода неверного положения (PrintErr).</td>
-		</tr>
-	</table>
+		<h3>Регистры</h3>
+		<p>
+			Приведём для удобства в одном месте описание всех регистров:
+		</p>
+		<table>
+			<tr>
+				<th>Регистр</th>
+				<th>Значение</th>
+			</tr>
+			<tr>
+				<th>R0</th>
+				<td>
+					Признак начала игры. Первый раз сюда заносится единица. Если первоначальная
+					проверка положения прошла успешно, то будет не единица.
+				</td>
+			</tr>
+			<tr>
+				<th>R1</th>
+				<td>Координата X чёрного короля.</td>
+			</tr>
+			<tr>
+				<th>R2</th>
+				<td>Координата Y чёрного короля.</td>
+			</tr>
+			<tr>
+				<th>R3</th>
+				<td>Координата X белого короля.</td>
+			</tr>
+			<tr>
+				<th>R4</th>
+				<td>Координата Y белого короля.</td>
+			</tr>
+			<tr>
+				<th>R5</th>
+				<td>Координата X белой ладьи.</td>
+			</tr>
+			<tr>
+				<th>R6</th>
+				<td>Координата Y белой ладьи.</td>
+			</tr>
+			<tr>
+				<th>R7</th>
+				<td>36. Адрес кода отхода ладьёй (MoveRook).</td>
+			</tr>
+			<tr>
+				<th>R8</th>
+				<td>3, адрес начала хода (ввод).</td>
+			</tr>
+			<tr>
+				<th>R9</th>
+				<td>
+					<span class="code"> 9------0.   </span>
+					Признак неверного начального положения, и
+					адрес (A0) функции формирования хода ладьи (PrintRook).
+				</td>
+			</tr>
+			<tr>
+				<th>Ra</th>
+				<td>10.</td>
+			</tr>
+			<tr>
+				<th>Rb</th>
+				<td>Не используется в программе.</td>
+			</tr>
+			<tr>
+				<th>Rc</th>
+				<td>
+					Рабочий. Хранит число вертикалей между белыми фигурами.
+					Проверяется только на ноль.
+				</td>
+			</tr>
+			<tr>
+				<th>Rd</th>
+				<td>
+					Рабочий. Хранит число вертикалей между чёрным королём и белым минус 2.
+					При нулевом значении короли расположены через одну горизонталь.
+				</td>
+			</tr>
+			<tr>
+				<th>Re</th>
+				<td>98. Адрес вывода неверного положения (PrintErr).</td>
+			</tr>
+		</table>
 
-	<h3>Алгоритм</h3>
-	<p>
-		Чтобы провести дополнительные проверки, т.е. добавить дополнительные команды,
-		исключены, по сравнению с оригиналом, вертикальные манёвры ладьи.
-		Мат можно поставить и без этого.
-	</p>
-	<p>
-		Алгоритм описан на псевдокоде, похожем на JavaScript.
-	</p>
-	<code><pre>
-Start:
-R0 = 1 // Установить признак начала игры
+		<h3>Алгоритм</h3>
+		<p>
+			Чтобы провести дополнительные проверки, т.е. добавить дополнительные команды,
+			исключены, по сравнению с оригиналом, вертикальные манёвры ладьи.
+			Мат можно поставить и без этого.
+		</p>
+		<p>
+			Алгоритм описан на псевдокоде, похожем на JavaScript.
+		</p>
+		<code><pre>
+	Start:
+	R0 = 1 // Установить признак начала игры
 
-Input:
-stopAndWaitRx()
-R1 = Math.floor(RX/10)
-R2 = RX - (R1 * 10)
-Rd = R2 - R4 - 2
-if (Rd &lt; 0) { // Короли слишком близко по вертикали
-	continue PrintErr
-}
-Rc = R5 - R3 // Если 0, то белые фигуры на одной вертикали
-RX = 1 - Math.abs(R5 - R1); // Удаленность ладьи и чёрного короля в вертикалях
-	// RX == 1 - на одной вертикали
-	// RX == 0 - на соседних, ладья не сможет отрезать черного короля
-	// RX &lt;= -1 - далеко
-if (R0 == 1) // Если начало игры {
-	if (RX &gt;= 0) { // Если ладья и черный король на одной или соседних вертикалях
-		if (Rc != 0) { // Если белые фигуры не на одной вертикали
-			continue PrintErr
-		}
-		R0 = RX // Сбросить признак начала игры (R0 = 0)
-MoveRook: // Отход ладьёй. В другую половину от чёрного короля 1..4 -&gt; 7, 5..8 -&gt; 1
-		RX = Math.floor(R1 / 5)
-		if (RX == 0) {
-			RX = 7
-		} // Или остаётся RX = 1
-		RY = R5
-		R5 = RX
-		if ((RX - RY) == 0) { Если ладья тут и стояла, сдвигаем её правее
-			R5++
-		}
-		RX = PrintRook(R6)
-		continue Input
+	Input:
+	stopAndWaitRx()
+	R1 = Math.floor(RX/10)
+	R2 = RX - (R1 * 10)
+	Rd = R2 - R4 - 2
+	if (Rd &lt; 0) { // Короли слишком близко по вертикали
+		continue PrintErr
 	}
-}
-R0 = RX // Сбросить признак начала игры (R0 &lt;= 0)
-if (RX == 0) { // Если ладья и черный король на соседних вертикалях
-	continue MoveRook // Отходим ладьёй
-}
-RX1 = R2 - 1 // Сохраняем значение на горизонталь ниже чёрного короля
-if ((-R6 + RX1) != 0) { // Если ладья не на горизонталь ниже черного короля, т.е. не отрезает его
-	if (Rc == 0) { // Если белый король и ладья на одной вертикали, то король мешает своей ладье
-		continue MoveRook // Поэтому сначала отходим ладьёй
-	} else {
-		PrintRook(RX1) // Отрезаем чёрного короля
-		continue Input
-	}
-} else { // Если ладья уже отрезает черного короля
-	if (Rd != 0) { // Если белый король слишком низко
-		R4++   // Поднимаем белого короля
-PrintKing: // Вывод координат белого короля
-		RX = R3 + R4/10
-		continue Input
-	} else { // Белый король уже через одну горизонталь от черного
-		RX = R1 - R3
-		if (RX == 0) { // Короли напротив друг друга
-			RX = 10 ** PrintRook(R2) // Делаем шах
+	Rc = R5 - R3 // Если 0, то белые фигуры на одной вертикали
+	RX = 1 - Math.abs(R5 - R1); // Удаленность ладьи и чёрного короля в вертикалях
+		// RX == 1 - на одной вертикали
+		// RX == 0 - на соседних, ладья не сможет отрезать черного короля
+		// RX &lt;= -1 - далеко
+	if (R0 == 1) // Если начало игры {
+		if (RX &gt;= 0) { // Если ладья и черный король на одной или соседних вертикалях
+			if (Rc != 0) { // Если белые фигуры не на одной вертикали
+				continue PrintErr
+			}
+			R0 = RX // Сбросить признак начала игры (R0 = 0)
+	MoveRook: // Отход ладьёй. В другую половину от чёрного короля 1..4 -&gt; 7, 5..8 -&gt; 1
+			RX = Math.floor(R1 / 5)
+			if (RX == 0) {
+				RX = 7
+			} // Или остаётся RX = 1
+			RY = R5
+			R5 = RX
+			if ((RX - RY) == 0) { Если ладья тут и стояла, сдвигаем её правее
+				R5++
+			}
+			RX = PrintRook(R6)
 			continue Input
-		} else { // Не напротив и RX != 0
-			RY = RX
-			if (Math.log10(Math.abs(RX)) == 0) { // Если короли на соседних вертикалях (RX == &plusmn;1)
-				continue MoveRook // Отходим ладьёй - выжидательный ход
-			} else {
-				R3 = R3 + sign(RY) // Продвигаем по горизонтали белого короля к чёрному
-				continue PrintKing
+		}
+	}
+	R0 = RX // Сбросить признак начала игры (R0 &lt;= 0)
+	if (RX == 0) { // Если ладья и черный король на соседних вертикалях
+		continue MoveRook // Отходим ладьёй
+	}
+	RX1 = R2 - 1 // Сохраняем значение на горизонталь ниже чёрного короля
+	if ((-R6 + RX1) != 0) { // Если ладья не на горизонталь ниже черного короля, т.е. не отрезает его
+		if (Rc == 0) { // Если белый король и ладья на одной вертикали, то король мешает своей ладье
+			continue MoveRook // Поэтому сначала отходим ладьёй
+		} else {
+			PrintRook(RX1) // Отрезаем чёрного короля
+			continue Input
+		}
+	} else { // Если ладья уже отрезает черного короля
+		if (Rd != 0) { // Если белый король слишком низко
+			R4++   // Поднимаем белого короля
+	PrintKing: // Вывод координат белого короля
+			RX = R3 + R4/10
+			continue Input
+		} else { // Белый король уже через одну горизонталь от черного
+			RX = R1 - R3
+			if (RX == 0) { // Короли напротив друг друга
+				RX = 10 ** PrintRook(R2) // Делаем шах
+				continue Input
+			} else { // Не напротив и RX != 0
+				RY = RX
+				if (Math.log10(Math.abs(RX)) == 0) { // Если короли на соседних вертикалях (RX == &plusmn;1)
+					continue MoveRook // Отходим ладьёй - выжидательный ход
+				} else {
+					R3 = R3 + sign(RY) // Продвигаем по горизонтали белого короля к чёрному
+					continue PrintKing
+				}
 			}
 		}
 	}
-}
 
-PrintRook: // RX - новое положение ладьи по вертикали
-	R6 = RX
-	RX = R5 * 10 + R6
-	return
+	PrintRook: // RX - новое положение ладьи по вертикали
+		R6 = RX
+		RX = R5 * 10 + R6
+		return
 
-PrintErr:
-	RX = R9
-	continue Input</pre></code>
+	PrintErr:
+		RX = R9
+		continue Input</pre></code>
 
-	<h3>Текст программы</h3>
-	<table class="center">
-		<tr>
-			<th>&#8202;#&#8202;|&#8202;</th>
-			<th>00</th>
-			<th>01</th>
-			<th>02</th>
-			<th>03</th>
-			<th>04</th>
-			<th>05</th>
-			<th>06</th>
-			<th>07</th>
-			<th>08</th>
-			<th>09</th>
-		</tr>
-		<tr>
-			<th>&#8202;00&#8202;|&#8202;</th>
-			<td><span class="but_b">В/О</span></td>
-			<td><span class="but">1</span></td>
-			<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
-			<td><span class="but_b">С/П</span></td>
-			<td><span class="but">В&uarr;</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
-			<td><span class="but">&divide;</span></td>
-			<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
-			<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
-		</tr>
-		<tr>
-			<th>&#8202;10&#8202;|&#8202;</th>
-			<td><span class="but">&times;</span></td>
-			<td><span class="but">&minus;</span></td>
-			<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
-			<td><span class="but">&minus;</span></td>
-			<td><span class="but">2</span></td>
-			<td><span class="but">&minus;</span></td>
-			<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
-			<td><span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="reg">e</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
-		</tr>
-		<tr>
-			<th>&#8202;20&#8202;|&#8202;</th>
-			<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
-			<td><span class="but">&minus;</span></td>
-			<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
-			<td><span class="but">1</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
-			<td><span class="but">&minus;</span></td>
-			<td><span class="but_k">К</span><span class="op_k">&mid;x&mid;</span></td>
-			<td><span class="but">&minus;</span></td>
-			<td><span class="but_f">F</span><span class="op_f">L0</span></td>
-		</tr>
-		<tr>
-			<th>&#8202;30&#8202;|&#8202;</th>
-			<td><span class="but">53</span></td>
-			<td><span class="but_f">F</span><span class="op_f">x&ge;0</span></td>
-			<td><span class="but">53</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
-			<td><span class="but_k">К</span><span class="op_f">x=0</span><span class="reg">e</span></td>
-			<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
-			<td><span class="but">5</span></td>
-			<td><span class="but">&divide;</span></td>
-			<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
-		</tr>
-		<tr>
-			<th>&#8202;40&#8202;|&#8202;</th>
-			<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
-			<td><span class="but">43</span></td>
-			<td><span class="but">7</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
-			<td><span class="but">&lt;-&gt;</span></td>
-			<td><span class="but_b">x&rarr;П</span><span class="but">5</span></td>
-			<td><span class="but">&minus;</span></td>
-			<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
-			<td><span class="but">50</span></td>
-			<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
-		</tr>
-		<tr>
-			<th>&#8202;50&#8202;|&#8202;</th>
-			<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
-			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
-			<td><span class="but_k">К</span><span class="but_b">БП</span><span class="but">8</span></td>
-			<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
-			<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="but">7</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
-			<td><span class="but">/-/</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
-			<td><span class="but">1</span></td>
-			<td><span class="but">&minus;</span></td>
-		</tr>
-		<tr>
-			<th>&#8202;60&#8202;|&#8202;</th>
-			<td><span class="but">+</span></td>
-			<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
-			<td><span class="but">68</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
-			<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="but">7</span></td>
-			<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
-			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
-			<td><span class="but_k">К</span><span class="but_b">БП</span><span class="but">8</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
-			<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
-		</tr>
-		<tr>
-			<th>&#8202;70&#8202;|&#8202;</th>
-			<td><span class="but">78</span></td>
-			<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
-			<td><span class="but">&divide;</span></td>
-			<td><span class="but">+</span></td>
-			<td><span class="but_k">К</span><span class="but_b">БП</span><span class="but">8</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
-		</tr>
-		<tr>
-			<th>&#8202;80&#8202;|&#8202;</th>
-			<td><span class="but">&minus;</span></td>
-			<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
-			<td><span class="but">94</span></td>
-			<td><span class="but">В&uarr;</span></td>
-			<td><span class="but_k">К</span><span class="op_k">&mid;x&mid;</span></td>
-			<td><span class="but_f">F</span><span class="op_f">Lg</span></td>
-			<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="but">7</span></td>
-			<td><span class="but">&lt;-&gt;</span></td>
-			<td><span class="but_k">К</span><span class="op_k">ЗН</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
-		</tr>
-		<tr>
-			<th>&#8202;90&#8202;|&#8202;</th>
-			<td><span class="but">+</span></td>
-			<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
-			<td><span class="but_b">БП</span></td>
-			<td><span class="but">73</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
-			<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
-			<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
-			<td><span class="but_k">К</span><span class="but_b">БП</span><span class="but">8</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
-			<td><span class="but_k">К</span><span class="but_b">БП</span><span class="but">8</span></td>
-		</tr>
-		<tr>
-			<th>&#8202;A0&#8202;|&#8202;</th>
-			<td><span class="but_b">x&rarr;П</span><span class="but">6</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
-			<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
-			<td><span class="but">&times;</span></td>
-			<td><span class="but">+</span></td>
-			<td colspan="5"></td>
-		</tr>
-	</table>
-	<p>
-		Программа один в один выполняет шаги по указанному выше алгоритму. С учётом того, что
-		никаких сложностей (в отличие от оригинала) не производится, то можно легко понять реализацию.
-	</p>
-	<p>
-		Единственное пояснение: команда <span class="but_b">В/О</span> перенесена из конца в начало,
-		чтобы <q>обезопасить</q> ввод единицы. Иначе, если до нажатия <span class="but_b">С/П</span>
-		были введены какие-то цифры, то ввод продолжится и единица не получится.
-	</p>
+		<h3>Текст программы</h3>
+		<table class="center">
+			<tr>
+				<th>&#8202;#&#8202;|&#8202;</th>
+				<th>00</th>
+				<th>01</th>
+				<th>02</th>
+				<th>03</th>
+				<th>04</th>
+				<th>05</th>
+				<th>06</th>
+				<th>07</th>
+				<th>08</th>
+				<th>09</th>
+			</tr>
+			<tr>
+				<th>&#8202;00&#8202;|&#8202;</th>
+				<td><span class="but_b">В/О</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but_b">С/П</span></td>
+				<td><span class="but">В&uarr;</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but">&divide;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">1</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;10&#8202;|&#8202;</th>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">2</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but">2</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">d</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&ge;0</span><span class="reg">e</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;20&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="reg">c</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">&mid;x&mid;</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">L0</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;30&#8202;|&#8202;</th>
+				<td><span class="but">53</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ge;0</span></td>
+				<td><span class="but">53</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x=0</span><span class="reg">e</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but">5</span></td>
+				<td><span class="but">&divide;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">[x]</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;40&#8202;|&#8202;</th>
+				<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+				<td><span class="but">43</span></td>
+				<td><span class="but">7</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">5</span></td>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x=0</span></td>
+				<td><span class="but">50</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;50&#8202;|&#8202;</th>
+				<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_k">К</span><span class="but_b">БП</span><span class="but">8</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">0</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="but">7</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">6</span></td>
+				<td><span class="but">/-/</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+				<td><span class="but">1</span></td>
+				<td><span class="but">&minus;</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;60&#8202;|&#8202;</th>
+				<td><span class="but">+</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+				<td><span class="but">68</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">c</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="but">7</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Вx</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_k">К</span><span class="but_b">БП</span><span class="but">8</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">d</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;70&#8202;|&#8202;</th>
+				<td><span class="but">78</span></td>
+				<td><span class="but_k">К</span><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">4</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but">&divide;</span></td>
+				<td><span class="but">+</span></td>
+				<td><span class="but_k">К</span><span class="but_b">БП</span><span class="but">8</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">1</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;80&#8202;|&#8202;</th>
+				<td><span class="but">&minus;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">x&ne;0</span></td>
+				<td><span class="but">94</span></td>
+				<td><span class="but">В&uarr;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">&mid;x&mid;</span></td>
+				<td><span class="but_f">F</span><span class="op_f">Lg</span></td>
+				<td><span class="but_k">К</span><span class="op_f">x&ne;0</span><span class="but">7</span></td>
+				<td><span class="but">&lt;-&gt;</span></td>
+				<td><span class="but_k">К</span><span class="op_k">ЗН</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">3</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;90&#8202;|&#8202;</th>
+				<td><span class="but">+</span></td>
+				<td><span class="but_b">x&rarr;П</span><span class="but">3</span></td>
+				<td><span class="but_b">БП</span></td>
+				<td><span class="but">73</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">2</span></td>
+				<td><span class="but_k">К</span><span class="but_b">ПП</span><span class="but">9</span></td>
+				<td><span class="but_f">F</span><span class="op_f">10<sup>x</sup></span></td>
+				<td><span class="but_k">К</span><span class="but_b">БП</span><span class="but">8</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">9</span></td>
+				<td><span class="but_k">К</span><span class="but_b">БП</span><span class="but">8</span></td>
+			</tr>
+			<tr>
+				<th>&#8202;A0&#8202;|&#8202;</th>
+				<td><span class="but_b">x&rarr;П</span><span class="but">6</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="but">5</span></td>
+				<td><span class="but_b">П&rarr;x</span><span class="reg">a</span></td>
+				<td><span class="but">&times;</span></td>
+				<td><span class="but">+</span></td>
+				<td colspan="5"></td>
+			</tr>
+		</table>
+		<p>
+			Программа один в один выполняет шаги по указанному выше алгоритму. С учётом того, что
+			никаких сложностей (в отличие от оригинала) не производится, то можно легко понять реализацию.
+		</p>
+		<p>
+			Единственное пояснение: команда <span class="but_b">В/О</span> перенесена из конца в начало,
+			чтобы <q>обезопасить</q> ввод единицы. Иначе, если до нажатия <span class="but_b">С/П</span>
+			были введены какие-то цифры, то ввод продолжится и единица не получится.
+		</p>
+	</details>
 </body>
 
 </html>
