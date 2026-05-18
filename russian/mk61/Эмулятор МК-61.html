@@ -1818,16 +1818,9 @@
 			arrayNotEqual(newDisplayValues, displayValues) ||
 			arrayNotEqual(newDisplayPointsPresent, displayPointsPresent);
 		if (needUpdate) {
-			const skipUpdate = (newDisplayValues[0] === 0) &&
-				(inProgramMode ||
-				(newDisplayValues[9] === 0xF) &&
-				(newDisplayValues[10] === 0xF) &&
-				(newDisplayValues[11] === 0xF));
 			displayValues = newDisplayValues;
 			displayPointsPresent = newDisplayPointsPresent;
-			if (!skipUpdate) {
-				updateDisplay();
-			}
+			updateDisplay();
 		}
 		if (forceUpdateRegs || (IR2_1.tickIndex === 84)) {
 			updateRegisters();
