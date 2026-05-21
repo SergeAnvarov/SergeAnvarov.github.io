@@ -1305,10 +1305,7 @@
 		}
 
 		getDeepCopy() {
-			return Object.assign({},
-				this,
-				{M: this.M.slice()},
-			);
+			return {...this, M: this.M.slice()};
 		}
 	} // IR2
 
@@ -1344,13 +1341,12 @@
 		}
 
 		getDeepCopy() {
-			return Object.assign({},
-				this,
-				{M: this.M.slice()},
-				{R: this.R.slice()},
-				{ST: this.ST.slice()},
-				{pointsPresent: this.pointsPresent.slice()},
-			);
+			return {...this,
+				M: this.M.slice(),
+				R: this.R.slice(),
+				ST: this.ST.slice(),
+				pointsPresent: this.pointsPresent.slice(),
+			};
 		}
 
 		execCommand(commandId, adder) {
