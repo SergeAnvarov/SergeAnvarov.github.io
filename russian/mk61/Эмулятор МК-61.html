@@ -346,7 +346,7 @@
 	/* global queueMicrotask */
 	/* global window */
 	/* global Image */
-	/* jshint esversion: 8 */
+	/* jshint esversion: 9 */
 	/* jshint bitwise: false */
 	/* jshint browser: true */
 	/* jshint strict: global */
@@ -890,7 +890,7 @@
 	    init - first time pressed key
 		keyF - key pressed after F
 		keyK - key pressed after K
-		wReg - waiting register char for sequence
+		wReg - register name, if exists
 	  Each item contains hint for it, and possible next field, if it not last key in sequence
 	  If no next field, then sequence done
 	*/
@@ -900,70 +900,60 @@
 			init: {hint: '', next: 'keyF'},
 			keyF: {hint: '', next: 'keyF'},
 			keyK: {hint: '', next: 'keyF'},
-			wReg: {hint: '', next: 'keyF'},
 		},
 		bStepRight: {
 			xy: [7, 9],
 			init: {hint: 'ШГ→'},
 			keyF: {hint: 'Fx<0'},
 			keyK: {hint: 'Kx<0', next: 'wReg'},
-			wReg: {hint: 'ШГ→'},
 		},
 		bStepLeft: {
 			xy: [9, 9],
 			init: {hint: 'ШГ←'},
 			keyF: {hint: 'Fx=0'},
 			keyK: {hint: 'Kx=0', next: 'wReg'},
-			wReg: {hint: 'ШГ←'},
 		},
 		bHome: {
 			xy: [4, 9],
 			init: {hint: 'В/О'},
 			keyF: {hint: 'Fx≥0'},
 			keyK: {hint: 'Kx≥0', next: 'wReg'},
-			wReg: {hint: 'В/О'},
 		},
 		bRun: {
 			xy: [2, 9],
 			init: {hint: 'С/П'},
 			keyF: {hint: 'Fx≠0'},
 			keyK: {hint: 'Kx≠0', next: 'wReg'},
-			wReg: {hint: 'С/П'},
 		},
 		bKKey: {
 			xy: [10, 9],
 			init: {hint: '', next: 'keyK'},
 			keyF: {hint: '', next: 'keyK'},
 			keyK: {hint: '', next: 'keyK'},
-			wReg: {hint: '', next: 'keyK'},
 		},
 		bRecall: {
 			xy: [8, 9],
 			init: {hint: 'П→x', next: 'wReg'},
 			keyF: {hint: 'FL0'},
 			keyK: {hint: 'KП→x', next: 'wReg'},
-			wReg: {hint: '', next: 'keyK'},
 		},
 		bStore: {
 			xy: [6, 9],
 			init: {hint: 'x→П', next: 'wReg'},
 			keyF: {hint: 'FL1'},
 			keyK: {hint: 'Kx→П', next: 'wReg'},
-			wReg: {hint: '', next: 'keyK'},
 		},
 		bGoTo: {
 			xy: [3, 9],
 			init: {hint: 'БП'},
 			keyF: {hint: 'FL2'},
 			keyK: {hint: 'КБП', next: 'wReg'},
-			wReg: {hint: 'БП'},
 		},
 		bSubStep: {
 			xy: [5, 9],
 			init: {hint: 'ПП'},
 			keyF: {hint: 'FL3'},
 			keyK: {hint: 'КПП', next: 'wReg'},
-			wReg: {hint: 'ПП'},
 		},
 		b7: {
 			xy: [9, 1],
@@ -1107,171 +1097,193 @@
 		},
 	};
 
-	const HOTKEYS_TO_CALC_KEYS_MAP = new Map([
-		[  8, 'bSwap'],	// Backspace = <->
-		[ 27, 'bClear'], // Esc = Сx
-		[ 33, 'bStepLeft'], // PgUp = ШГ<-
-		[ 34, 'bStepRight'], // PgDown = ШГ->
-		[ 36, 'bHome'], // Home = В/О
-		[ 38, 'bEnter'], // ↑ = В↑
-		[ 45, 'bPower'], // Ins = ВП
-		[ 46, 'bClear'], // Del = Сx
-		[ 48, 'b0'], // 0 = 0
-		[ 49, 'b1'], // 1 = 1
-		[ 50, 'b2'], // 2 = 2
-		[ 51, 'b3'], // 3 = 3
-		[ 52, 'b4'], // 4 = 4
-		[ 53, 'b5'], // 5 = 5
-		[ 54, 'b6'], // 6 = 6
-		[ 55, 'b7'], // 7 = 7
-		[ 56, 'b8'], // 8 = 8
-		[ 57, 'b9'], // 9 = 9
-		[ 70, 'bFKey'], // F = F
-		[ 75, 'bKKey'], // K = K
-		[ 82, 'bKKey'], // К russian = K
-		[ 96, 'b0'], // numpad 0 = 0
-		[ 97, 'b1'], // numpad 1 = 1
-		[ 98, 'b2'], // numpad 2 = 2
-		[ 99, 'b3'], // numpad 3 = 3
-		[100, 'b4'], // numpad 4 = 4
-		[101, 'b5'], // numpad 5 = 5
-		[102, 'b6'], // numpad 6 = 6
-		[103, 'b7'], // numpad 7 = 7
-		[104, 'b8'], // numpad 8 = 8
-		[105, 'b9'], // numpad 9 = 9
-		[106, 'bMult'], // numpad * = *
-		[107, 'bPlus'], // numpad + = +
-		[109, 'bMinus'], // numpad - = -
-		[110, 'bPoint'], // numpad . = .
-		[111, 'bDivide'], // numpad / = /
-		[113, 'bStore'], // F2 = х→П
-		[115, 'bRecall'], // F4 = П→х
-		[118, 'bGoTo'], // F7 = БП
-		[119, 'bSubStep'], // F8 = ПП
-		[120, 'bRun'], // F9 = С/П
-		[187, 'bPlus'], // = inplace of + = +
-		[188, 'bPoint'], // , = .
-		[189, 'bMinus'], // - = -
-		[191, 'bDivide'], // / = /
-		[192, 'bNeg'], // ~ = /-/
-	]);
+	const HOTKEYS_TO_CALC_KEYS = {
+		  8: 'bSwap',	// Backspace = <->
+		 27: 'bClear', // Esc = Сx
+		 33: 'bStepLeft', // PgUp = ШГ<-
+		 34: 'bStepRight', // PgDown = ШГ->
+		 36: 'bHome', // Home = В/О
+		 38: 'bEnter', // ↑ = В↑
+		 45: 'bPower', // Ins = ВП
+		 46: 'bClear', // Del = Сx
+		 48: 'b0', // 0 = 0
+		 49: 'b1', // 1 = 1
+		 50: 'b2', // 2 = 2
+		 51: 'b3', // 3 = 3
+		 52: 'b4', // 4 = 4
+		 53: 'b5', // 5 = 5
+		 54: 'b6', // 6 = 6
+		 55: 'b7', // 7 = 7
+		 56: 'b8', // 8 = 8
+		 57: 'b9', // 9 = 9
+		 70: 'bFKey', // F = F
+		 75: 'bKKey', // K = K
+		 82: 'bKKey', // К russian = K
+		 96: 'b0', // numpad 0 = 0
+		 97: 'b1', // numpad 1 = 1
+		 98: 'b2', // numpad 2 = 2
+		 99: 'b3', // numpad 3 = 3
+		100: 'b4', // numpad 4 = 4
+		101: 'b5', // numpad 5 = 5
+		102: 'b6', // numpad 6 = 6
+		103: 'b7', // numpad 7 = 7
+		104: 'b8', // numpad 8 = 8
+		105: 'b9', // numpad 9 = 9
+		106: 'bMult', // numpad * = *
+		107: 'bPlus', // numpad + = +
+		109: 'bMinus', // numpad - = -
+		110: 'bPoint', // numpad . = .
+		111: 'bDivide', // numpad / = /
+		113: 'bStore', // F2 = х→П
+		115: 'bRecall', // F4 = П→х
+		118: 'bGoTo', // F7 = БП
+		119: 'bSubStep', // F8 = ПП
+		120: 'bRun', // F9 = С/П
+		187: 'bPlus', // = inplace of + = +
+		188: 'bPoint', // , = .
+		189: 'bMinus', // - = -
+		191: 'bDivide', // / = /
+		192: 'bNeg', // ~ = /-/
+	};
 
 	/* Text to program conversion
 		code - command code
-		type - 'REG' - with registry, 'JUMP' - plus address after it, '' - normal
-		color - hightlight color group (see color_x)
+		hasJump - for code with address after it (check only property exists)
+		useReg - with registry postfix (check only property exists)
+		color - hightlight color group (see color_x in css)
 		text - array of possible nemonics of command, first is used for out and prefer russian letters in it
 	*/
 	const MNEMONICS = [
-		{code: 0x10, type: '',     color: 'operation', text: ['+']},
-		{code: 0x11, type: '',     color: 'operation', text: ['-']},
-		{code: 0x12, type: '',     color: 'operation', text: ['×', '⋅', 'X', '*']},
-		{code: 0x13, type: '',     color: 'operation', text: ['÷', '/', ':']},
-		{code: 0x0A, type: '',     color: 'number',    text: ['.', ',', '•']},
-		{code: 0x0B, type: '',     color: 'number',    text: ['/-/', '+/-']},
-		{code: 0x0C, type: '',     color: 'number',    text: ['ВП', 'BП']},
-		{code: 0x0D, type: '',     color: 'operation', text: ['Сx', 'CX']},
-		{code: 0x15, type: '',     color: 'operation', text: ['F10ˣ', '10ˣ', 'F10^X', '10^X', 'F10X', '10X', 'F10**X', '10**X']},
-		{code: 0x16, type: '',     color: 'operation', text: ['Feˣ', 'FEˣ', 'Eˣ', 'FE^X', 'E^X', 'FEX', 'EX', 'FE**X', 'E**X']},
-		{code: 0x22, type: '',     color: 'operation', text: ['Fx²', 'FX²', 'X²', 'FX^2', 'X^2', 'FX2', 'X2', 'FX**2', 'X**2', 'F*']},
-		{code: 0x24, type: '',     color: 'operation', text: ['Fxʸ', 'FXʸ', 'Xʸ', 'FX^Y', 'X^Y', 'FXY']},
-		{code: 0x17, type: '',     color: 'operation', text: ['Flg', 'FLG', 'LG']},
-		{code: 0x18, type: '',     color: 'operation', text: ['Fln', 'FLN', 'LN']},
-		{code: 0x1D, type: '',     color: 'operation', text: ['Fcos', 'FC0S', 'C0S']},
-		{code: 0x1A, type: '',     color: 'operation', text: ['Fcosᐨ¹', 'FC0Sᐨ¹', 'C0Sᐨ¹', 'FC0S⁻¹', 'C0S⁻¹', 'FC0S-1', 'C0S-1', 'FARCC0S', 'ARCC0S']},
-		{code: 0x1C, type: '',     color: 'operation', text: ['Fsin', 'FSIN', 'SIN']},
-		{code: 0x19, type: '',     color: 'operation', text: ['Fsinᐨ¹', 'FSINᐨ¹', 'SINᐨ¹', 'FSIN⁻¹', 'SIN⁻¹', 'FSIN-1', 'SIN-1', 'FARCSIN', 'ARCSIN']},
-		{code: 0x1E, type: '',     color: 'operation', text: ['Ftg', 'FTG', 'TG']},
-		{code: 0x1B, type: '',     color: 'operation', text: ['Ftgᐨ¹', 'FTGᐨ¹', 'TGᐨ¹', 'FTG⁻¹', 'TG⁻¹', 'FTG-1', 'TG-1', 'FARCTG', 'ARCTG']},
-		{code: 0x20, type: '',     color: 'operation', text: ['Fπ', 'FΠ', 'Π', 'FПИ', 'ПИ', 'F+']},
-		{code: 0x21, type: '',     color: 'operation', text: ['F√', '√', 'FKBK0P', 'KBK0P', 'FK0PEHЬ', 'K0PEHЬ', 'FKBK0PEHЬ', 'KBK0PEHЬ']},
-		{code: 0x23, type: '',     color: 'operation', text: ['F1/x', 'F1/X', '1/X', 'F/']},
-		{code: 0x0E, type: '',     color: 'stack',     text: ['В↑', 'B↑', '↑', 'B^', '^']},
-		{code: 0x0F, type: '',     color: 'stack',     text: ['FВх', 'FBX', 'BX']},
-		{code: 0x14, type: '',     color: 'stack',     text: ['<->', '↔', 'XY', 'X↔Y', '⟷', '←→']},
-		{code: 0x25, type: '',     color: 'stack',     text: ['Fѻ', 'FѺ', 'Ѻ', 'F↻', '↻', 'F->', '->', 'F→', '→', 'F.']},
-		{code: 0x3E, type: '',     color: 'stack',     text: ['x←y', 'X←Y']},
-		{code: 0x3B, type: '',     color: 'operation', text: ['КCЧ', 'KCЧ', 'CЧ', 'KE']},
-		{code: 0x37, type: '',     color: 'operation', text: ['КɅ', 'KɅ', 'Ʌ', 'K^', 'K⋀',  '⋀', 'K∧', '∧', 'K/\\', '/\\', 'KΛ', 'Λ', 'K.', 'KA']},
-		{code: 0x38, type: '',     color: 'operation', text: ['КV', 'KV', 'V', 'K⋁', '⋁', 'K∨', '∨', 'K\\/', '\\/', 'K/-/', 'KB']},
-		{code: 0x39, type: '',     color: 'operation', text: ['К(+)', 'K(+)', '(+)', 'K⊕', '⊕', 'KBП', 'KC']},
-		{code: 0x3A, type: '',     color: 'operation', text: ['Кинв', 'KИHB', 'ИHB', 'KCX', 'KD']},
-		{code: 0x2A, type: '',     color: 'operation', text: ['КМ→Ч', 'KM→Ч', 'M→Ч', 'KM→Ч', 'KMЧ', 'MЧ']},
-		{code: 0x30, type: '',     color: 'operation', text: ['КЧ→М', 'KЧ→M', 'KЧM', 'ЧM', 'K3']},
-		{code: 0x26, type: '',     color: 'operation', text: ['КМ→Г', 'KM→Г', 'M→Г', 'KMГ', 'MГ', 'K+']},
-		{code: 0x33, type: '',     color: 'operation', text: ['КГ→М', 'KГ→M', 'Г→M', 'KГM', 'ГM', 'K6']},
-		{code: 0x32, type: '',     color: 'operation', text: ['Кзн', 'K3H', '3H', 'K5']},
-		{code: 0x31, type: '',     color: 'operation', text: ['К|x|', 'K|X|', '|X|', 'K4']},
-		{code: 0x34, type: '',     color: 'operation', text: ['К[x]', 'K[X]', '[X]', 'K7']},
-		{code: 0x35, type: '',     color: 'operation', text: ['К{x}', 'K{X}', '{X}', 'K(X)', '(X)', 'K8']},
-		{code: 0x36, type: '',     color: 'operation', text: ['Кmax', 'KMAX', 'MAX', 'K9']},
-		{code: 0x27, type: '',     color: 'error',     text: ['K-']},
-		{code: 0x28, type: '',     color: 'error',     text: ['K×', 'KX', 'K*', 'K⋅']},
-		{code: 0x29, type: '',     color: 'error',     text: ['K÷', 'K/', 'K:']},
-		{code: 0x52, type: '',     color: 'flow',      text: ['В/О', 'B/0']},
-		{code: 0x50, type: '',     color: 'flow',      text: ['С/П', 'C/П', 'CП']},
-		{code: 0x51, type: 'JUMP', color: 'flow',      text: ['БП']},
-		{code: 0x80, type: 'REG',  color: 'flow',      text: ['KБП']},
-		{code: 0x53, type: 'JUMP', color: 'flow',      text: ['ПП']},
-		{code: 0xA0, type: 'REG',  color: 'flow',      text: ['KПП']},
-		{code: 0x5E, type: 'JUMP', color: 'flow',      text: ['Fx=0', 'FX=0', 'X=0']},
-		{code: 0xE0, type: 'REG',  color: 'flow',      text: ['Kx=0', 'KX=0']},
-		{code: 0x57, type: 'JUMP', color: 'flow',      text: ['Fx≠0', 'FX≠0', 'X≠0', 'FX#0', 'X#0', 'FX!=0', 'X!=0', 'FX<>0', 'X<>0']},
-		{code: 0x70, type: 'REG',  color: 'flow',      text: ['Kx≠0', 'KX≠0', 'KX#0', 'KX!=0', 'KX<>0']},
-		{code: 0x59, type: 'JUMP', color: 'flow',      text: ['Fx≥0', 'FX≥0', 'X≥0', 'FX>=0', 'X>=0', 'FX⩾0', 'X⩾0']},
-		{code: 0x90, type: 'REG',  color: 'flow',      text: ['Kx≥0', 'KX≥0', 'KX⩾0', 'KX>=0']},
-		{code: 0x5C, type: 'JUMP', color: 'flow',      text: ['Fx<0', 'FX<0', 'X<0']},
-		{code: 0xC0, type: 'REG',  color: 'flow',      text: ['Kx<0', 'KX<0']},
-		{code: 0x5D, type: 'JUMP', color: 'flow',      text: ['FL0', 'L0']},
-		{code: 0x5B, type: 'JUMP', color: 'flow',      text: ['FL1', 'L1']},
-		{code: 0x58, type: 'JUMP', color: 'flow',      text: ['FL2', 'L2']},
-		{code: 0x5A, type: 'JUMP', color: 'flow',      text: ['FL3', 'L3']},
-		{code: 0x54, type: '',     color: 'nop',       text: ['КНОП', 'KH0П', 'H0П', 'K0']},
-		{code: 0x55, type: '',     color: 'nop',       text: ['K1']},
-		{code: 0x56, type: '',     color: 'nop',       text: ['K2']},
-		{code: 0x40, type: 'REG',  color: 'register',  text: ['xП', 'XП', 'П', 'X→П']},
-		{code: 0xB0, type: 'REG',  color: 'register',  text: ['KxП', 'KXП', 'KX→П', 'KП']},
-		{code: 0x60, type: 'REG',  color: 'register',  text: ['Пx', 'ПX', 'ИП', 'П→X']},
-		{code: 0xD0, type: 'REG',  color: 'register',  text: ['КПx', 'KПX', 'KП→X', 'KИП']},
-		{code: 0xF0, type: '',     color: 'nop',       text: ['F0']},
-		{code: 0x1F, type: '',     color: 'nop',       text: ['1F']},
-		{code: 0x2F, type: '',     color: 'nop',       text: ['2F']},
-		{code: 0x2B, type: '',     color: 'error',     text: ['2B']},
-		{code: 0x2C, type: '',     color: 'error',     text: ['2C']},
-		{code: 0x2D, type: '',     color: 'error',     text: ['2D']},
-		{code: 0x2E, type: '',     color: 'error',     text: ['2E']},
-		{code: 0x2F, type: '',     color: 'nop',       text: ['2F']},
-		{code: 0x3C, type: '',     color: 'error',     text: ['3C']},
-		{code: 0x3D, type: '',     color: 'operation', text: ['3D']},
-		{code: 0x3F, type: '',     color: 'nop',       text: ['3F']},
-		{code: 0x4F, type: '',     color: 'register',  text: ['4F']},
-		{code: 0x5F, type: '',     color: 'error',     text: ['5F']},
-		{code: 0x6F, type: '',     color: 'register',  text: ['6F']},
-		{code: 0x7F, type: '',     color: 'flow',      text: ['7F']},
-		{code: 0x8F, type: '',     color: 'flow',      text: ['8F']},
-		{code: 0x9F, type: '',     color: 'flow',      text: ['9F']},
-		{code: 0xAF, type: '',     color: 'flow',      text: ['AF']},
-		{code: 0xBF, type: '',     color: 'register',  text: ['BF']},
-		{code: 0xCF, type: '',     color: 'flow',      text: ['CF']},
-		{code: 0xDF, type: '',     color: 'register',  text: ['DF']},
-		{code: 0xEF, type: '',     color: 'flow',      text: ['EF']},
-		{code: 0xF0, type: '',     color: 'nop',       text: ['F0']},
-		{code: 0xF1, type: '',     color: 'nop',       text: ['F1']},
-		{code: 0xF2, type: '',     color: 'nop',       text: ['F2']},
-		{code: 0xF3, type: '',     color: 'nop',       text: ['F3']},
-		{code: 0xF4, type: '',     color: 'nop',       text: ['F4']},
-		{code: 0xF5, type: '',     color: 'nop',       text: ['F5']},
-		{code: 0xF6, type: '',     color: 'nop',       text: ['F6']},
-		{code: 0xF7, type: '',     color: 'nop',       text: ['F7']},
-		{code: 0xF8, type: '',     color: 'nop',       text: ['F8']},
-		{code: 0xF9, type: '',     color: 'nop',       text: ['F9']},
-		{code: 0xFA, type: '',     color: 'nop',       text: ['FA']},
-		{code: 0xFB, type: '',     color: 'nop',       text: ['FB']},
-		{code: 0xFC, type: '',     color: 'nop',       text: ['FC']},
-		{code: 0xFD, type: '',     color: 'nop',       text: ['FD']},
-		{code: 0xFE, type: '',     color: 'nop',       text: ['FE']},
-		{code: 0xFF, type: '',     color: 'nop',       text: ['FF']},
+		{code: 0x10, color: 'operation', text: ['+']},
+		{code: 0x11, color: 'operation', text: ['-']},
+		{code: 0x12, color: 'operation', text: ['×', '⋅', 'X', '*']},
+		{code: 0x13, color: 'operation', text: ['÷', '/', ':']},
+		{code: 0x0A, color: 'number',    text: ['.', ',', '•']},
+		{code: 0x0B, color: 'number',    text: ['/-/', '+/-']},
+		{code: 0x0C, color: 'number',    text: ['ВП', 'BП']},
+		{code: 0x0D, color: 'operation', text: ['Сx', 'CX']},
+		{code: 0x15, color: 'operation', text: ['F10ˣ', '10ˣ', 'F10^X', '10^X', 'F10X', '10X', 'F10**X', '10**X']},
+		{code: 0x16, color: 'operation', text: ['Feˣ', 'FEˣ', 'Eˣ', 'FE^X', 'E^X', 'FEX', 'EX', 'FE**X', 'E**X']},
+		{code: 0x22, color: 'operation', text: ['Fx²', 'FX²', 'X²', 'FX^2', 'X^2', 'FX2', 'X2', 'FX**2', 'X**2', 'F*']},
+		{code: 0x24, color: 'operation', text: ['Fxʸ', 'FXʸ', 'Xʸ', 'FX^Y', 'X^Y', 'FXY']},
+		{code: 0x17, color: 'operation', text: ['Flg', 'FLG', 'LG']},
+		{code: 0x18, color: 'operation', text: ['Fln', 'FLN', 'LN']},
+		{code: 0x1D, color: 'operation', text: ['Fcos', 'FC0S', 'C0S']},
+		{code: 0x1A, color: 'operation', text: ['Fcosᐨ¹', 'FC0Sᐨ¹', 'C0Sᐨ¹', 'FC0S⁻¹', 'C0S⁻¹', 'FC0S-1', 'C0S-1', 'FARCC0S', 'ARCC0S']},
+		{code: 0x1C, color: 'operation', text: ['Fsin', 'FSIN', 'SIN']},
+		{code: 0x19, color: 'operation', text: ['Fsinᐨ¹', 'FSINᐨ¹', 'SINᐨ¹', 'FSIN⁻¹', 'SIN⁻¹', 'FSIN-1', 'SIN-1', 'FARCSIN', 'ARCSIN']},
+		{code: 0x1E, color: 'operation', text: ['Ftg', 'FTG', 'TG']},
+		{code: 0x1B, color: 'operation', text: ['Ftgᐨ¹', 'FTGᐨ¹', 'TGᐨ¹', 'FTG⁻¹', 'TG⁻¹', 'FTG-1', 'TG-1', 'FARCTG', 'ARCTG']},
+		{code: 0x20, color: 'operation', text: ['Fπ', 'FΠ', 'Π', 'FПИ', 'ПИ', 'F+']},
+		{code: 0x21, color: 'operation', text: ['F√', '√', 'FKBK0P', 'KBK0P', 'FK0PEHЬ', 'K0PEHЬ', 'FKBK0PEHЬ', 'KBK0PEHЬ']},
+		{code: 0x23, color: 'operation', text: ['F1/x', 'F1/X', '1/X', 'F/']},
+		{code: 0x0E, color: 'stack',     text: ['В↑', 'B↑', '↑', 'B^', '^']},
+		{code: 0x0F, color: 'stack',     text: ['FВх', 'FBX', 'BX']},
+		{code: 0x14, color: 'stack',     text: ['<->', '↔', 'XY', 'X↔Y', '⟷', '←→']},
+		{code: 0x25, color: 'stack',     text: ['Fѻ', 'FѺ', 'Ѻ', 'F↻', '↻', 'F->', '->', 'F→', '→', 'F.']},
+		{code: 0x3E, color: 'stack',     text: ['x←y', 'X←Y']},
+		{code: 0x3B, color: 'operation', text: ['КCЧ', 'KCЧ', 'CЧ', 'KE']},
+		{code: 0x37, color: 'operation', text: ['КɅ', 'KɅ', 'Ʌ', 'K^', 'K⋀',  '⋀', 'K∧', '∧', 'K/\\', '/\\', 'KΛ', 'Λ', 'K.', 'KA']},
+		{code: 0x38, color: 'operation', text: ['КV', 'KV', 'V', 'K⋁', '⋁', 'K∨', '∨', 'K\\/', '\\/', 'K/-/', 'KB']},
+		{code: 0x39, color: 'operation', text: ['К(+)', 'K(+)', '(+)', 'K⊕', '⊕', 'KBП', 'KC']},
+		{code: 0x3A, color: 'operation', text: ['Кинв', 'KИHB', 'ИHB', 'KCX', 'KD']},
+		{code: 0x2A, color: 'operation', text: ['КМ→Ч', 'KM→Ч', 'M→Ч', 'KM→Ч', 'KMЧ', 'MЧ']},
+		{code: 0x30, color: 'operation', text: ['КЧ→М', 'KЧ→M', 'KЧM', 'ЧM', 'K3']},
+		{code: 0x26, color: 'operation', text: ['КМ→Г', 'KM→Г', 'M→Г', 'KMГ', 'MГ', 'K+']},
+		{code: 0x33, color: 'operation', text: ['КГ→М', 'KГ→M', 'Г→M', 'KГM', 'ГM', 'K6']},
+		{code: 0x32, color: 'operation', text: ['Кзн', 'K3H', '3H', 'K5']},
+		{code: 0x31, color: 'operation', text: ['К|x|', 'K|X|', '|X|', 'K4']},
+		{code: 0x34, color: 'operation', text: ['К[x]', 'K[X]', '[X]', 'K7']},
+		{code: 0x35, color: 'operation', text: ['К{x}', 'K{X}', '{X}', 'K(X)', '(X)', 'K8']},
+		{code: 0x36, color: 'operation', text: ['Кmax', 'KMAX', 'MAX', 'K9']},
+		{code: 0x27, color: 'error',     text: ['K-']},
+		{code: 0x28, color: 'error',     text: ['K×', 'KX', 'K*', 'K⋅']},
+		{code: 0x29, color: 'error',     text: ['K÷', 'K/', 'K:']},
+		{code: 0x52, color: 'flow',      text: ['В/О', 'B/0']},
+		{code: 0x50, color: 'flow',      text: ['С/П', 'C/П', 'CП']},
+		{code: 0x51, hasJump: null, color: 'flow', text: ['БП']},
+		{code: 0x80, useReg: null,  color: 'flow', text: ['KБП']},
+		{code: 0x53, hasJump: null, color: 'flow', text: ['ПП']},
+		{code: 0xA0, useReg: null,  color: 'flow', text: ['KПП']},
+		{code: 0x5E, hasJump: null, color: 'flow', text: ['Fx=0', 'FX=0', 'X=0']},
+		{code: 0xE0, useReg: null,  color: 'flow', text: ['Kx=0', 'KX=0']},
+		{code: 0x57, hasJump: null, color: 'flow', text: ['Fx≠0', 'FX≠0', 'X≠0', 'FX#0', 'X#0', 'FX!=0', 'X!=0', 'FX<>0', 'X<>0']},
+		{code: 0x70, useReg: null,  color: 'flow', text: ['Kx≠0', 'KX≠0', 'KX#0', 'KX!=0', 'KX<>0']},
+		{code: 0x59, hasJump: null, color: 'flow', text: ['Fx≥0', 'FX≥0', 'X≥0', 'FX>=0', 'X>=0', 'FX⩾0', 'X⩾0']},
+		{code: 0x90, useReg: null,  color: 'flow', text: ['Kx≥0', 'KX≥0', 'KX⩾0', 'KX>=0']},
+		{code: 0x5C, hasJump: null, color: 'flow', text: ['Fx<0', 'FX<0', 'X<0']},
+		{code: 0xC0, useReg: null,  color: 'flow', text: ['Kx<0', 'KX<0']},
+		{code: 0x5D, hasJump: null, color: 'flow', text: ['FL0', 'L0']},
+		{code: 0x5B, hasJump: null, color: 'flow', text: ['FL1', 'L1']},
+		{code: 0x58, hasJump: null, color: 'flow', text: ['FL2', 'L2']},
+		{code: 0x5A, hasJump: null, color: 'flow', text: ['FL3', 'L3']},
+		{code: 0x54, color: 'nop',       text: ['КНОП', 'KH0П', 'H0П', 'K0']},
+		{code: 0x55, color: 'nop',       text: ['K1']},
+		{code: 0x56, color: 'nop',       text: ['K2']},
+		{code: 0x40, useReg: null,  color: 'register', text: ['xП', 'XП', 'П', 'X→П']},
+		{code: 0xB0, useReg: null,  color: 'register', text: ['KxП', 'KXП', 'KX→П', 'KП']},
+		{code: 0x60, useReg: null,  color: 'register', text: ['Пx', 'ПX', 'ИП', 'П→X']},
+		{code: 0xD0, useReg: null,  color: 'register', text: ['КПx', 'KПX', 'KП→X', 'KИП']},
+		{code: 0xF0, color: 'nop',       text: ['F0']},
+		{code: 0x1F, color: 'nop',       text: ['1F']},
+		{code: 0x2F, color: 'nop',       text: ['2F']},
+		{code: 0x2B, color: 'error',     text: ['2B']},
+		{code: 0x2C, color: 'error',     text: ['2C']},
+		{code: 0x2D, color: 'error',     text: ['2D']},
+		{code: 0x2E, color: 'error',     text: ['2E']},
+		{code: 0x2F, color: 'nop',       text: ['2F']},
+		{code: 0x3C, color: 'error',     text: ['3C']},
+		{code: 0x3D, color: 'operation', text: ['3D']},
+		{code: 0x3F, color: 'nop',       text: ['3F']},
+		{code: 0x4F, color: 'register',  text: ['4F']},
+		{code: 0x5F, color: 'error',     text: ['5F']},
+		{code: 0x6F, color: 'register',  text: ['6F']},
+		{code: 0x7F, color: 'flow',      text: ['7F']},
+		{code: 0x8F, color: 'flow',      text: ['8F']},
+		{code: 0x9F, color: 'flow',      text: ['9F']},
+		{code: 0xAF, color: 'flow',      text: ['AF']},
+		{code: 0xBF, color: 'register',  text: ['BF']},
+		{code: 0xCF, color: 'flow',      text: ['CF']},
+		{code: 0xDF, color: 'register',  text: ['DF']},
+		{code: 0xEF, color: 'flow',      text: ['EF']},
+		{code: 0xF0, color: 'nop',       text: ['F0']},
+		{code: 0xF1, color: 'nop',       text: ['F1']},
+		{code: 0xF2, color: 'nop',       text: ['F2']},
+		{code: 0xF3, color: 'nop',       text: ['F3']},
+		{code: 0xF4, color: 'nop',       text: ['F4']},
+		{code: 0xF5, color: 'nop',       text: ['F5']},
+		{code: 0xF6, color: 'nop',       text: ['F6']},
+		{code: 0xF7, color: 'nop',       text: ['F7']},
+		{code: 0xF8, color: 'nop',       text: ['F8']},
+		{code: 0xF9, color: 'nop',       text: ['F9']},
+		{code: 0xFA, color: 'nop',       text: ['FA']},
+		{code: 0xFB, color: 'nop',       text: ['FB']},
+		{code: 0xFC, color: 'nop',       text: ['FC']},
+		{code: 0xFD, color: 'nop',       text: ['FD']},
+		{code: 0xFE, color: 'nop',       text: ['FE']},
+		{code: 0xFF, color: 'nop',       text: ['FF']},
 	];
+
+	// Text to program conversion
+	// Keys are meant to be uppercase
+	const CHAR_REPLACEMENT = {
+		'А': 'A', // Russian А to english A
+		'В': 'B', // Russian В to english B
+		'С': 'C', // Russian С to english C
+		'Д': 'D', // Russian Д to english D
+		'Е': 'E', // Russian Е to english E
+		'З': '3', // Russian З to digit 3
+		'К': 'K', // Russian К to english K
+		'М': 'M', // Russian М to english M
+		'Н': 'H', // Russian Н to english H
+		'О': '0', // Russian О to zero
+		'O': '0', // English O to zero
+		'Р': 'P', // Russian Р to english P
+		'–': '-', // En dash to hyphen
+		'—': '-', // Em dash to hyphen
+		'−': '-', // Minus to hyphen
+		'Х': 'X', // Russian Х to english X
+	};
 
 	const BASE38_CHARS = 'АБВГҐДЕЄЁЖЗИІЇЙКЛМНОПРСТУЎФХЦЧШЩЪЫЬЭЮЯ'; // For compress '0' in string of state
 
@@ -1313,9 +1325,9 @@
 		constructor(aROM) {
 			Object.assign(this, aROM);
 			// Exclude the newly assigned aROM properties from the future Object.assign()
-			for (const propName of Object.keys(this)) {
-				Object.defineProperty(this, propName, {enumerable: false});
-			}
+			// for (const propName of Object.keys(this)) {
+			// 	Object.defineProperty(this, propName, {enumerable: false});
+			// }
 			this.reset();
 		}
 
@@ -1354,12 +1366,12 @@
 				case 0: adder.alpha |= this.R[this.tickIndex]; break;
 				case 1: adder.alpha |= this.M[this.tickIndex]; break;
 				case 2: adder.alpha |= this.ST[this.tickIndex]; break;
-				case 3: adder.alpha |= ~this.R[this.tickIndex] & 0b1111; break;
-				case 4: adder.alpha |= (this.L === 0) ? 0xA : 0; break;
+				case 3: adder.alpha |= ~this.R[this.tickIndex] & 0x0F; break;
+				case 4: adder.alpha |= (this.L === 0) ? 0x0A : 0; break;
 				case 5: adder.alpha |= this.S; break;
 				case 6: adder.alpha |= 4; break;
 				case 7: adder.beta |= this.S; break;
-				case 8: adder.beta |= ~this.S & 0b1111; break;
+				case 8: adder.beta |= ~this.S & 0x0F; break;
 				case 9: adder.beta |= this.S1; break;
 				case 10: adder.beta |= 6; break;
 				case 11: adder.beta |= 1; break;
@@ -1416,21 +1428,23 @@
 		tick() {
 			if (this.tickIndex === 0) {
 				this.command = this.commands[this.R[36] + 16 * this.R[39]];
-				if ((this.command & (0b111111 << 18)) === 0) {
+				if ((this.command & (0x3F << 18)) === 0) {
 					this.T = 0;
 				}
 			}
-			if (this.tickIndex % 9 === 0) {
+			const tickDiv3 = intDiv(this.tickIndex, 3);
+			const tickMod9 = this.tickIndex % 9;
+			if (tickMod9 === 0) {
 				const tickDiv9 = intDiv(this.tickIndex, 9);
 				if (tickDiv9 < 3) {
-					this.addrSyncCmd = this.command & 0b11111111;
+					this.addrSyncCmd = this.command & 0xFF;
 				} else if (tickDiv9 === 3) {
-					this.addrSyncCmd = (this.command >>> 8) & 0b11111111;
+					this.addrSyncCmd = (this.command >>> 8) & 0xFF;
 				} else if (tickDiv9 === 4) {
-					this.addrSyncCmd = (this.command >>> 16) & 0b11111111;
+					this.addrSyncCmd = (this.command >>> 16) & 0xFF;
 					if (this.addrSyncCmd > 31) {
 						if (this.tickIndex === 36) {
-							this.R[37] = this.addrSyncCmd & 0b1111;
+							this.R[37] = this.addrSyncCmd & 0x0F;
 							this.R[40] = this.addrSyncCmd >>> 4;
 						}
 						this.addrSyncCmd = 95;
@@ -1439,15 +1453,14 @@
 			}
 
 			let addrMicroCommand = this.synchroPrograms[
-				this.addrSyncCmd * 9 + ((this.tickIndex < 6) ? this.tickIndex : (this.tickIndex < 21) ? this.tickIndex % 3 + 3 : this.tickIndex % 9)
+				this.addrSyncCmd * 9 + ((this.tickIndex < 6) ? this.tickIndex : (this.tickIndex < 21) ? this.tickIndex % 3 + 3 : tickMod9)
 			];
-			addrMicroCommand &= 0b111111;
+			addrMicroCommand &= 0x3F;
 			if (addrMicroCommand > 59) {
 				addrMicroCommand += addrMicroCommand - 60 + (this.L === 0);
 			}
 
 			let restOfBits = this.microCommands[addrMicroCommand];
-			const tickDiv3 = intDiv(this.tickIndex, 3);
 			if (((restOfBits & 0x2000000) !== 0) && (tickDiv3 !== this.keybX - 1)) {
 				this.S1 |= this.keybY;
 			}
@@ -1457,7 +1470,7 @@
 					this.execCommand(bitIndex, adder);
 				}
 			}
-			if ((this.command & (0b111111 << 18)) !== 0) {
+			if ((this.command & (0x3F << 18)) !== 0) {
 				if (this.keybY === 0) {
 					this.T = 0;
 				}
@@ -1477,29 +1490,29 @@
 			}
 
 			const sum = adder.alpha + adder.beta + adder.gamma;
-			adder.sigma = sum & 0b1111;
+			adder.sigma = sum & 0x0F;
 			this.overflow = (sum >>> 4) & 1;
-			if (((this.command & (0b11111111 << 24)) === 0) || (this.tickIndex >= 36)) {
-				const nextCommandId = restOfBits & 0b111;
+			if (((this.command & (0xFF << 24)) === 0) || (this.tickIndex >= 36)) {
+				const nextCommandId = restOfBits & 0x07;
 				if (nextCommandId > 0) {
 					this.execCommand(nextCommandId + 14, adder);
 				}
-				if ((restOfBits & 0b1000) !== 0) {
+				if ((restOfBits & 0x08) !== 0) {
 					this.execCommand(22, adder);
 				}
-				if ((restOfBits & 0b10000) !== 0) {
+				if ((restOfBits & 0x10) !== 0) {
 					this.execCommand(23, adder);
 				}
 			}
-			if ((restOfBits & 0b100000) !== 0) {
+			if ((restOfBits & 0x20) !== 0) {
 				this.execCommand(24, adder);
 			}
-			if ((restOfBits & 0b1000000) !== 0) {
+			if ((restOfBits & 0x40) !== 0) {
 				this.execCommand(25, adder);
 			}
 			restOfBits >>>= 7;
 			for (let i = 0; i < 3; i++, restOfBits >>>= 2) {
-				const nextCommandId = restOfBits & 0b11;
+				const nextCommandId = restOfBits & 0x03;
 				if (nextCommandId > 0) {
 					this.execCommand(nextCommandId + 25 + i * 3, adder);
 				}
@@ -1516,48 +1529,27 @@
 	class SizeLimitedStack {
 		constructor(maxSize) {
 			const ensureRange = (value, low, high) => Math.min(Math.max(value, low), high);
-			this.dataLength = ensureRange(maxSize, 1, 32000);
+			this.maxSize = ensureRange(maxSize, 1, 32000);
 			this.clear();
 		}
 
 		clear() {
-			this.data = new Array(this.dataLength);
-			this.baseIndex = 0;
-			this.topIndex = 0;
+			this.data = [];
 		}
 
 		push(value) {
-			this.topIndex++;
-			if (this.topIndex === this.dataLength) { // Wrap to the beginning
-				this.topIndex = 0;
+			this.data.push(value);
+			if (this.data.length > this.maxSize) {
+				this.data.shift();
 			}
-			if (this.topIndex === this.baseIndex) { // If reached the maximum
-				this.baseIndex++; // Forget very old item
-				if (this.baseIndex === this.dataLength) {
-					this.baseIndex = 0;
-				}
-			}
-			this.data[this.topIndex] = value;
 		}
 
 		isEmpty() {
-			return this.topIndex === this.baseIndex;
+			return this.data.length === 0;
 		}
 
 		pop() {
-			if (this.isEmpty()) {
-				return undefined;
-			}
-			const result = this.data[this.topIndex];
-			this.topIndex--;
-			if (this.topIndex < 0) {
-				this.topIndex = this.dataLength - 1;
-			}
-			return result;
-		}
-
-		top() {
-			return this.isEmpty() ? undefined : this.data[this.topIndex];
+			return this.data.pop();
 		}
 	} // SizeLimitedStack
 
@@ -1571,8 +1563,8 @@
 	let inProgramMode = false;
 	const inProgramModeControl = document.getElementById('inProgramMode');
 
-	const displayValueImages = [];
-	const displayPointImages = [];
+	const displayValueImages = new Array(12);
+	const displayPointImages = new Array(12);
 
 	const programModeChanged = () => {
 		const opacity = inProgramMode ? 0.67 : 1.0;
@@ -1616,37 +1608,21 @@
 				this.lastKeyState = 'init';
 			}
 			const itemInKeyInfo = keyInfo[this.lastKeyState];
-			const newKeyState = ('next' in itemInKeyInfo) ? itemInKeyInfo.next : 'done';
-			switch (newKeyState) {
-				case 'keyK':
-					if (((keyPressed === 'bRecall') || (keyPressed === 'bStore')) && (keyPressed !== this.lastKeyPressed)) {
-						// For хП and Пх used "last" rule: K + хП + Пх + 8 = КПх8
-						this.lastHintForUndo = keyInfo.keyK.hint;
-						this.lastKeyState = 'wReg';
-						break;
-						// For equal used "ignore" rule: K + хП + хП + 8 = K{x}
-					}
-					/* falls through */
-				case 'keyF':
-				case 'wReg':
-					this.lastHintForUndo = itemInKeyInfo.hint;
-					this.lastKeyState = newKeyState;
-					break;
-				case 'done':
-					this.stack.push({
-						state: this.lastSignificantState,
-						hint: this.popControl.textContent});
-					// For reg sequence add reg prefix. Sample 'Kx=0' + 'c'
-					const hintPrefix = ((this.lastKeyState === 'wReg') && (itemInKeyInfo.hint.length === 1)) ? this.lastHintForUndo : '';
-					this.popControl.textContent = `Отменить "${hintPrefix + itemInKeyInfo.hint}"`;
-					this.popControl.hidden = false;
-					this.initState();
-					break;
-				case 'CF':
-					this.initState();
-					break;
-				default:
-					throw `Unexpected wait index "${newKeyState}" in push()`;
+			const nextKeyState = itemInKeyInfo.next;
+			if (nextKeyState === undefined) { // Done key sequence
+				this.stack.push({
+					state: this.lastSignificantState,
+					hint: this.popControl.textContent});
+				// For reg sequence add reg prefix. Sample 'Kx=0' + 'c'
+				const hintPrefix = (this.lastKeyState === 'wReg') ? this.lastHintForUndo : '';
+				this.popControl.textContent = `Отменить "${hintPrefix + itemInKeyInfo.hint}"`;
+				this.popControl.hidden = false;
+				this.initState();
+			} else if (nextKeyState == 'CF') {
+				this.initState();
+			} else {
+				this.lastKeyState = nextKeyState;
+				this.lastHintForUndo = itemInKeyInfo.hint;
 			}
 			this.lastKeyPressed = keyPressed;
 		}
@@ -1703,8 +1679,8 @@
 	const getTextOfRegister = (chipIndex, addr) => {
 		const memory = microChips[chipIndex].M;
 		let signValue = memory[addr - 9];
-		// Sometimes the pipeline shifts the memory by one. It is determined by an unusual number for the sign
-		if (signValue === 0xF) {
+		// Sometimes the pipeline shifts the memory by one. It is determined by an unusual value for the sign
+		if (signValue === 0x0F) {
 			addr--; // Shift back
 			signValue = memory[addr - 9]; // Read again
 			console.log('Shift');
@@ -1716,12 +1692,12 @@
 		if (exponent > 900) {
 			exponent -= 1000;
 		}
-		const standartExponent = (exponentDigit1 !== 9) && (exponentDigit2 !== 9) && (exponentDigit3 <= 9);
+		const standartExponent = (exponentDigit1 !== 9) && ((exponentDigit2 !== 9) || (exponentDigit3 <= 9));
 		const digits = [];
 		let isSignificantDigit = false;
 		for (let i = 0; i < 8; i++) {
 			const digit = memory[addr - 33 + i * 3];
-			isSignificantDigit ||= (digit !== 0) || (standartExponent && (i === 7 - exponent));
+			isSignificantDigit = isSignificantDigit || (digit !== 0) || (standartExponent && (i === 7 - exponent));
 			if (isSignificantDigit) {
 				digits.push(digit);
 			}
@@ -1790,7 +1766,7 @@
 	const stepExec = (forceUpdateRegs = true) => {
 		IK1303.keybY = 1;
 		IK1303.keybX = angleMeasure;
-		const newDisplayValues = new Array(12).fill(0xF);
+		const newDisplayValues = new Array(12).fill(0x0F);
 		const newDisplayPointsPresent = new Array(12).fill(false);
 		for (let k = 1; k <= stepCount; k++) {
 			for (let i = 1; i <= 42; i++) {
@@ -1964,7 +1940,7 @@
 		if ((keyCode === 37) || (keyCode === 39)) {
 			slideAngleMeasure(keyCode === 37);
 		} else {
-			const buttonId = HOTKEYS_TO_CALC_KEYS_MAP.get(keyCode);
+			const buttonId = HOTKEYS_TO_CALC_KEYS[keyCode];
 			if (buttonId !== undefined) {
 				pressingWithFocus(buttonId);
 			}
@@ -1996,42 +1972,24 @@
 
 		const parseCommand = (commandText) => {
 			const mnemonic = MNEMONICS.find((item) =>
-  				((item.type === 'REG') && item.text.includes(commandText.slice(0, -1))) ||
-				((item.type !== 'REG') && item.text.includes(commandText))
+				(!Object.hasOwn(item, 'useReg') && item.text.includes(commandText)) ||
+				(Object.hasOwn(item, 'useReg') && item.text.includes(commandText.slice(0, -1)))
 			);
 			if (mnemonic === undefined) { // Numeric code
 				return fromHex(commandText.replace(/[-.]/g, 'A'));
 			}
-			return mnemonic.code + ((mnemonic.type === 'REG') ? fromHex(commandText.slice(-1)) : 0);
+			return mnemonic.code + (Object.hasOwn(mnemonic, 'useReg') ? fromHex(commandText.slice(-1)) : 0);
 		};
 
 		// We'll add spaces to the tags to separate them later
 		programMemo.innerHTML = programMemo.innerHTML.replace(/(<)(br|div|td|p)/g, ' <$2');
-		const replacement = new Map([
-			['А', 'A'], // All russian А to english A
-			['В', 'B'], // All russian В to english B
-			['С', 'C'], // All russian С to english C
-			['Д', 'D'], // All russian Д to english D
-			['Е', 'E'], // All russian Е to english E
-			['З', '3'], // All russian З to digit 3
-			['К', 'K'], // All russian К to english K
-			['М', 'M'], // All russian М to english M
-			['Н', 'H'], // All russian Н to english H
-			['О', '0'], // All russian О to zero
-			['O', '0'], // All english O to zero
-			['Р', 'P'], // All russian Р to english P
-			['–', '-'], // En dash to hyphen
-			['—', '-'], // Em dash to hyphen
-			['−', '-'], // Minus to hyphen
-			['Х', 'X'], // All russian Х to english X
-		]);
 		const programText = programMemo.textContent
 			.trim()
 			.replace(/#\s*\|\s*00\s*01\s*02\s*03\s*04\s*05\s*06\s*07\s*08\s*09\s*/g, '') // Remove header with addresses
 			.replace(/\s+\|\s+/g, '.') // If exists '|', remove it also. Example '20 | FL1' -> '20.FL1'
 			.toUpperCase()
 			.split('')
-			.map((chr) => replacement.get(chr) || chr).
+			.map((chr) => CHAR_REPLACEMENT[chr] || chr).
 			join('');
 		if (!(/\S/.test(programText))) {
 			return; // Only empty string - don't change program
@@ -2105,8 +2063,8 @@
 				continue;
 			}
 			const mnemonic = MNEMONICS.find((item) =>
-				((item.type !== 'REG') && (code === item.code)) ||
-				((item.type === 'REG') && (codeMod16 !== 0xF) && (codeDiv16 * 16 === item.code))
+				(!Object.hasOwn(item, 'useReg') && (code === item.code)) ||
+				(Object.hasOwn(item, 'useReg') && (codeMod16 !== 0x0F) && (codeDiv16 * 16 === item.code))
 			);
 			if (mnemonic === undefined) {
 				if ((code < 10) && useTextMnemonic) { // 0..9 without leading 0
@@ -2116,9 +2074,9 @@
 				continue;
 			}
 			colorGroups[iAddr] = mnemonic.color;
-			isJumpCode = (mnemonic.type === 'JUMP');
+			isJumpCode = Object.hasOwn(mnemonic, 'hasJump');
 			if (useTextMnemonic) {
-				commands[iAddr] = mnemonic.text[0] + ((mnemonic.type === 'REG') ? toHex(codeMod16) : '');
+				commands[iAddr] = mnemonic.text[0] + (Object.hasOwn(mnemonic, 'useReg') ? toHex(codeMod16) : '');
 			}
 		}
 
@@ -2190,8 +2148,8 @@
 			stateStr += toHex(chipIK13.output);
 			stateStr += toHex(chipIK13.keybX);
 			stateStr += toHex(chipIK13.keybY);
-			stateStr += chipIK13.elevenPointExists ? 'B' : '0'; // B = 11
-			stateStr += chipIK13.pointsPresent.map(Number).map(String).join('');
+			stateStr += chipIK13.elevenPointExists ? 'B' : '0'; // 0xB = 11
+			stateStr += chipIK13.pointsPresent.map(Number).map(String).join(''); // Number(false|true) equal (0|1)
 			stateStr += chipIK13.displayValueChanged ? '1' : '0';
 		}
 		const stateStrLength = stateStr.length;
@@ -2272,7 +2230,7 @@
 			chipIK13.overflow = fromHex(stateStr[319 + 162 * iChip]);
 			chipIK13.tickIndex = fromHex(stateStr.substr(320 + 162 * iChip, 2));
 			chipIK13.command = fromHex(stateStr.substr(322 + 162 * iChip, 7));
-			chipIK13.addrSyncCmd = fromHex(stateStr.substr(328 + 162 * iChip, 2));
+			chipIK13.addrSyncCmd = fromHex(stateStr.substr(329 + 162 * iChip, 2));
 			chipIK13.input = fromHex(stateStr[331 + 162 * iChip]);
 			chipIK13.output = fromHex(stateStr[332 + 162 * iChip]);
 			chipIK13.keybX = fromHex(stateStr[333 + 162 * iChip]);
@@ -2350,8 +2308,8 @@
 			return result;
 		};
 		for (let i = 0; i < 12; i++) {
-			displayValueImages.push(appendNewImage(59 + 13 * i, 79));
-			displayPointImages.push(appendNewImage(66 + 13 * i, 93));
+			displayValueImages[i] = appendNewImage(59 + 13 * i, 79);
+			displayPointImages[i] = appendNewImage(66 + 13 * i, 93);
 		}
 	}
 
@@ -2395,7 +2353,7 @@
 	document.getElementById('angle_measure').addEventListener('click', swapAngleMeasure);
 
 	document.body.addEventListener('keydown', (event) => {
-		if (isPowerOn && (document.activeElement !== programMemo) && !event.shiftKey) { // Skip shift prevent Shift+Ins as Ins
+		if (isPowerOn && (document.activeElement !== programMemo) && !event.shiftKey) {
 			keyboardHook(event.keyCode);
 		}
 	});
