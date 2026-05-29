@@ -1148,7 +1148,7 @@
 
 	/* Text to program conversion
 		code - command code
-		hasJump - for code with address after it (check only property exists)
+		withJump - for code with address after it (check only property exists)
 		useReg - with registry postfix (check only property exists)
 		color - hightlight color group (see color_x in css)
 		text - array of possible nemonics of command, first is used for out and prefer russian letters in it
@@ -1201,22 +1201,22 @@
 		{code: 0x29, color: 'error',     text: ['K÷', 'K/', 'K:']},
 		{code: 0x52, color: 'flow',      text: ['В/О', 'B/0']},
 		{code: 0x50, color: 'flow',      text: ['С/П', 'C/П', 'CП']},
-		{code: 0x51, hasJump: null, color: 'flow', text: ['БП']},
-		{code: 0x80, useReg: null,  color: 'flow', text: ['KБП']},
-		{code: 0x53, hasJump: null, color: 'flow', text: ['ПП']},
-		{code: 0xA0, useReg: null,  color: 'flow', text: ['KПП']},
-		{code: 0x5E, hasJump: null, color: 'flow', text: ['Fx=0', 'FX=0', 'X=0']},
-		{code: 0xE0, useReg: null,  color: 'flow', text: ['Kx=0', 'KX=0']},
-		{code: 0x57, hasJump: null, color: 'flow', text: ['Fx≠0', 'FX≠0', 'X≠0', 'FX#0', 'X#0', 'FX!=0', 'X!=0', 'FX<>0', 'X<>0']},
-		{code: 0x70, useReg: null,  color: 'flow', text: ['Kx≠0', 'KX≠0', 'KX#0', 'KX!=0', 'KX<>0']},
-		{code: 0x59, hasJump: null, color: 'flow', text: ['Fx≥0', 'FX≥0', 'X≥0', 'FX>=0', 'X>=0', 'FX⩾0', 'X⩾0']},
-		{code: 0x90, useReg: null,  color: 'flow', text: ['Kx≥0', 'KX≥0', 'KX⩾0', 'KX>=0']},
-		{code: 0x5C, hasJump: null, color: 'flow', text: ['Fx<0', 'FX<0', 'X<0']},
-		{code: 0xC0, useReg: null,  color: 'flow', text: ['Kx<0', 'KX<0']},
-		{code: 0x5D, hasJump: null, color: 'flow', text: ['FL0', 'L0']},
-		{code: 0x5B, hasJump: null, color: 'flow', text: ['FL1', 'L1']},
-		{code: 0x58, hasJump: null, color: 'flow', text: ['FL2', 'L2']},
-		{code: 0x5A, hasJump: null, color: 'flow', text: ['FL3', 'L3']},
+		{code: 0x51, withJump: null, color: 'flow', text: ['БП']},
+		{code: 0x80, useReg: null,   color: 'flow', text: ['KБП']},
+		{code: 0x53, withJump: null, color: 'flow', text: ['ПП']},
+		{code: 0xA0, useReg: null,   color: 'flow', text: ['KПП']},
+		{code: 0x5E, withJump: null, color: 'flow', text: ['Fx=0', 'FX=0', 'X=0']},
+		{code: 0xE0, useReg: null,   color: 'flow', text: ['Kx=0', 'KX=0']},
+		{code: 0x57, withJump: null, color: 'flow', text: ['Fx≠0', 'FX≠0', 'X≠0', 'FX#0', 'X#0', 'FX!=0', 'X!=0', 'FX<>0', 'X<>0']},
+		{code: 0x70, useReg: null,   color: 'flow', text: ['Kx≠0', 'KX≠0', 'KX#0', 'KX!=0', 'KX<>0']},
+		{code: 0x59, withJump: null, color: 'flow', text: ['Fx≥0', 'FX≥0', 'X≥0', 'FX>=0', 'X>=0', 'FX⩾0', 'X⩾0']},
+		{code: 0x90, useReg: null,   color: 'flow', text: ['Kx≥0', 'KX≥0', 'KX⩾0', 'KX>=0']},
+		{code: 0x5C, withJump: null, color: 'flow', text: ['Fx<0', 'FX<0', 'X<0']},
+		{code: 0xC0, useReg: null,   color: 'flow', text: ['Kx<0', 'KX<0']},
+		{code: 0x5D, withJump: null, color: 'flow', text: ['FL0', 'L0']},
+		{code: 0x5B, withJump: null, color: 'flow', text: ['FL1', 'L1']},
+		{code: 0x58, withJump: null, color: 'flow', text: ['FL2', 'L2']},
+		{code: 0x5A, withJump: null, color: 'flow', text: ['FL3', 'L3']},
 		{code: 0x54, color: 'nop',       text: ['КНОП', 'KH0П', 'H0П', 'K0']},
 		{code: 0x55, color: 'nop',       text: ['K1']},
 		{code: 0x56, color: 'nop',       text: ['K2']},
@@ -1289,19 +1289,20 @@
 
 	// Misc functions
 
-	const arrayNotEqual = (a, b) => (a.length !== b.length) || a.some((value, index) => value !== b[index]);
+	const arraysNotEqual = (a, b) => (a.length !== b.length) || a.some((value, index) => value !== b[index]);
 	const fromHex = (text) => Number.parseInt(text, 16);
 	const toHex = (num) => num.toString(16);
 	const intDiv = (x, y) => (x / y) | 0;
-    const sleep = (timeout) => new Promise((resolve) => { window.setTimeout(resolve, timeout); });
+    const sleep = (timeout) => new Promise((resolve) => void window.setTimeout(resolve, timeout));
 
 	class IR2 {
 		constructor() {
+			this.M = new Array(252);
 			this.reset();
 		}
 
 		reset() {
-			this.M = new Array(252).fill(0);
+			this.M.fill(0);
 			this.input = 0;
 			this.output = 0;
 			this.tickIndex = 0;
@@ -1317,24 +1318,24 @@
 		}
 
 		getDeepCopy() {
-			return {...this, M: this.M.slice()};
+			return {...this, M: [...this.M]};
 		}
 	} // IR2
 
 	class IK13 {
 		constructor(aROM) {
 			Object.assign(this, aROM);
-			// Exclude the newly assigned aROM properties from the future Object.assign()
-			// for (const propName of Object.keys(this)) {
-			// 	Object.defineProperty(this, propName, {enumerable: false});
-			// }
+			this.M = new Array(42);
+			this.R = new Array(42);
+			this.ST = new Array(42);
+			this.pointsPresent = new Array(14);
 			this.reset();
 		}
 
 		reset() {
-			this.M = new Array(42).fill(0);
-			this.R = new Array(42).fill(0);
-			this.ST = new Array(42).fill(0);
+			this.M.fill(0);
+			this.R.fill(0);
+			this.ST.fill(0);
 			this.S = 0;
 			this.S1 = 0;
 			this.L = 0;
@@ -1348,16 +1349,16 @@
 			this.keybX = 0;
 			this.keybY = 0;
 			this.elevenPointExists = false;
-			this.pointsPresent = new Array(14).fill(false);
+			this.pointsPresent.fill(false);
 			this.displayValueChanged = false;
 		}
 
 		getDeepCopy() {
 			return {...this,
-				M: this.M.slice(),
-				R: this.R.slice(),
-				ST: this.ST.slice(),
-				pointsPresent: this.pointsPresent.slice(),
+				M: [...this.M],
+				R: [...this.R],
+				ST: [...this.ST],
+				pointsPresent: [...this.pointsPresent],
 			};
 		}
 
@@ -1396,15 +1397,15 @@
 				// case 30: this.S1 = this.S1; break;
 				case 31: this.S1 |= adder.sigma; break;
 				case 32: {
-					const tickPlus1 = (this.tickIndex + 1) % 42;
+					const tickPlus1 = (this.tickIndex < 41) ? this.tickIndex + 1 : 0;
 					this.ST[(this.tickIndex + 2) % 42] = this.ST[tickPlus1];
 					this.ST[tickPlus1] = this.ST[this.tickIndex];
 					this.ST[this.tickIndex] = adder.sigma;
 					break;
 				}
 				case 33: {
-					const tickPlus1 = (this.tickIndex + 1) % 42;
-					const tickPlus2 = (this.tickIndex + 2) % 42;
+					const tickPlus1 = (this.tickIndex < 41) ? this.tickIndex + 1 : 0;
+					const tickPlus2 = (tickPlus1 < 41) ? tickPlus1 + 1 : 0;
 					const current = this.ST[this.tickIndex];
 					this.ST[this.tickIndex] = this.ST[tickPlus1];
 					this.ST[tickPlus1] = this.ST[tickPlus2];
@@ -1412,8 +1413,8 @@
 					break;
 				}
 				case 34: {
-					const tickPlus1 = (this.tickIndex + 1) % 42;
-					const tickPlus2 = (this.tickIndex + 2) % 42;
+					const tickPlus1 = (this.tickIndex < 41) ? this.tickIndex + 1 : 0;
+					const tickPlus2 = (tickPlus1 < 41) ? tickPlus1 + 1 : 0;
 					const x = this.ST[this.tickIndex];
 					const y = this.ST[tickPlus1];
 					this.ST[this.tickIndex] = adder.sigma | y;
@@ -1568,8 +1569,8 @@
 
 	const programModeChanged = () => {
 		const opacity = inProgramMode ? 0.67 : 1.0;
-		displayValueImages.forEach((img) => { img.style.opacity = opacity; });
-		displayPointImages.forEach((img) => { img.style.opacity = opacity; });
+		displayValueImages.forEach((img) => void (img.style.opacity = opacity));
+		displayPointImages.forEach((img) => void (img.style.opacity = opacity));
 		inProgramModeControl.hidden = !inProgramMode;
 	};
 
@@ -1584,7 +1585,6 @@
 			this.lastSignificantState = {};
 			this.lastKeyState = '';
 			this.lastHintForUndo = '';
-			this.lastKeyPressed = '';
 		}
 
 		getCalcState() {
@@ -1595,19 +1595,22 @@
 		}
 
 		setCalcState(from) {
-			from.memory.forEach((state, index) => { Object.assign(microChips[index], state); });
+			from.memory.forEach((state, index) => void Object.assign(microChips[index], state));
 			if (inProgramMode !== from.inProgramMode) {
 				inProgramMode = from.inProgramMode;
 				programModeChanged();
 			}
 		}
 
-		push(keyPressed, keyInfo) {
+		push(keyInfo) {
 			if (this.lastKeyState === '') {
 				this.lastSignificantState = this.getCalcState();
 				this.lastKeyState = 'init';
 			}
 			const itemInKeyInfo = keyInfo[this.lastKeyState];
+			if (!itemInKeyInfo) {
+				throw Error("UndoEngine.push(): itemInKeyInfo is absent");
+			}
 			const nextKeyState = itemInKeyInfo.next;
 			if (nextKeyState === undefined) { // Done key sequence
 				this.stack.push({
@@ -1615,7 +1618,7 @@
 					hint: this.popControl.textContent});
 				// For reg sequence add reg prefix. Sample 'Kx=0' + 'c'
 				const hintPrefix = (this.lastKeyState === 'wReg') ? this.lastHintForUndo : '';
-				this.popControl.textContent = `Отменить "${hintPrefix + itemInKeyInfo.hint}"`;
+				this.popControl.textContent = `Отменить "${hintPrefix}${itemInKeyInfo.hint}"`;
 				this.popControl.hidden = false;
 				this.initState();
 			} else if (nextKeyState == 'CF') {
@@ -1624,7 +1627,6 @@
 				this.lastKeyState = nextKeyState;
 				this.lastHintForUndo = itemInKeyInfo.hint;
 			}
-			this.lastKeyPressed = keyPressed;
 		}
 
 		pop() {
@@ -1642,7 +1644,7 @@
 			this.initState();
 			this.stack.clear();
 		}
-	} // operationUndo
+	} // UndoEngine
 
 	const tick = () => {
 		IK1302.input = IR2_2.output;
@@ -1667,10 +1669,10 @@
 			exponentDigit1 = 15;
 		} else {
 			if (exponentDigit3 !== 0) {
-				exponentDigit3 = (26 - exponentDigit3) % 16;
+				exponentDigit3 = (26 - exponentDigit3) & 0x0F ; // % 16;
 				exponentDigit2++;
 			}
-			exponentDigit2 = (26 - exponentDigit2) % 16;
+			exponentDigit2 = (26 - exponentDigit2) & 0x0F; // % 16;
 			exponentDigit1++;
 		}
 		return DIGIT_CHARS[exponentDigit1] + DIGIT_CHARS[exponentDigit2] + DIGIT_CHARS[exponentDigit3];
@@ -1759,8 +1761,8 @@
 			inProgramMode = IK1302.elevenPointExists;
 			programModeChanged();
 		}
-		displayValueImages.forEach((img, i) => { img.src = IMAGES_OF_DIGITS[displayValues[i]]; });
-		displayPointImages.forEach((img, i) => { img.src = displayPointsPresent[i] ? IMAGE_OF_POINT : ''; });
+		displayValueImages.forEach((img, i) => void (img.src = IMAGES_OF_DIGITS[displayValues[i]]));
+		displayPointImages.forEach((img, i) => void (img.src = displayPointsPresent[i] ? IMAGE_OF_POINT : ''));
 	};
 
 	const stepExec = (forceUpdateRegs = true) => {
@@ -1787,8 +1789,8 @@
 		IK1302.keybX = 0;
 		IK1302.keybY = 0;
 		const needUpdate =
-			arrayNotEqual(newDisplayValues, displayValues) ||
-			arrayNotEqual(newDisplayPointsPresent, displayPointsPresent);
+			arraysNotEqual(newDisplayValues, displayValues) ||
+			arraysNotEqual(newDisplayPointsPresent, displayPointsPresent);
 		if (needUpdate) {
 			displayValues = newDisplayValues;
 			displayPointsPresent = newDisplayPointsPresent;
@@ -1805,11 +1807,11 @@
 	let isPaused = false;
 
 	const pressing = (buttonId, execNow = false) => {
-		if (!isPowerOn || isPaused || !(buttonId in CALCULATOR_KEYS)) {
+		if (!isPowerOn || isPaused || !Object.hasOwn(CALCULATOR_KEYS, buttonId)) {
 			return;
 		}
 		const keyInfo = CALCULATOR_KEYS[buttonId];
-		undo.push(buttonId, keyInfo);
+		undo.push(keyInfo);
 		[IK1302.keybX, IK1302.keybY] = keyInfo.xy;
 		if (execNow) {
 			stepExec();
@@ -1835,29 +1837,29 @@
 				angleMeasurePos.left = '198px';
 				break;
 			default:
-				throw `Unknown angleMeasure "${angleMeasure}" in changeAngleMeasure()`;
+				throw Error(`changeAngleMeasure(): unknown angleMeasure "${angleMeasure}`);
 		}
 	};
 
-	const changeAngleMeasureToRadian = () => { changeAngleMeasure(ANGLE_IN_RADIAN); };
-	const changeAngleMeasureToGrad = () => { changeAngleMeasure(ANGLE_IN_GRAD); };
-	const changeAngleMeasureToDegree = () => { changeAngleMeasure(ANGLE_IN_DEGREE); };
+	const changeAngleMeasureToRadian = () => void changeAngleMeasure(ANGLE_IN_RADIAN);
+	const changeAngleMeasureToGrad = () => void changeAngleMeasure(ANGLE_IN_GRAD);
+	const changeAngleMeasureToDegree = () => void changeAngleMeasure(ANGLE_IN_DEGREE);
 
 	const disableButtons = (disable) => {
-		document.querySelectorAll('.transparent_button').forEach((elem) => { elem.disabled = disable; });
+		document.querySelectorAll('.transparent_button').forEach((elem) => void (elem.disabled = disable));
 		document.getElementById('angle_measure').disabled = disable;
 	};
 
 	const turnOff = () => {
-		const clearTextField = (textField) => { textField.value = ''; };
-		const clearImage = (img) => { img.src = ''; };
+		const clearTextField = (textField) => void (textField.value = '');
+		const clearImage = (img) => void (img.src = '');
 		isPowerOn = false;
 		isPaused = false;
 		inProgramMode = false;
 		programModeChanged();
 		displayValues = [];
 		displayPointsPresent = [];
-		microChips.forEach((chip) => { chip.reset(); });
+		microChips.forEach((chip) => void chip.reset());
 		registersControls.forEach(clearTextField);
 		stackContols.forEach(clearTextField);
 		returnsControls.forEach(clearTextField);
@@ -1966,8 +1968,8 @@
 	const writeTextToProgram = () => {
 		const writeSingleCommand = (addr, intCode) => {
 			const ref = getCommandRef(addr);
-			ref.memory[ref.indexHigh] = intDiv(intCode, 16) % 16; // Use % because intCode can be large like 99999
-			ref.memory[ref.indexLow] = intCode % 16;
+			ref.memory[ref.indexHigh] = intDiv(intCode, 16) & 0x0F // Use % 16 because intCode can be large like 99999
+			ref.memory[ref.indexLow] = intCode & 0x0F; // % 16;
 		};
 
 		const parseCommand = (commandText) => {
@@ -2074,7 +2076,7 @@
 				continue;
 			}
 			colorGroups[iAddr] = mnemonic.color;
-			isJumpCode = Object.hasOwn(mnemonic, 'hasJump');
+			isJumpCode = Object.hasOwn(mnemonic, 'withJump');
 			if (useTextMnemonic) {
 				commands[iAddr] = mnemonic.text[0] + (Object.hasOwn(mnemonic, 'useReg') ? toHex(codeMod16) : '');
 			}
@@ -2191,7 +2193,7 @@
 				do {
 					packet.push(textChar);
 					textPos++;
-					textChar = (textPos < textLength) ? text[textPos] : ' ';
+					textChar = (textPos < textLength) ? text[textPos] : ' '; // Space
 				} while (BASE38_CHARS.includes(textChar));
 				const repCount = packet.reduce((result, chr, index) => (
 					result + BASE38_CHARS.indexOf(chr) * (BASE38_CHARS.length ** index)
@@ -2265,7 +2267,7 @@
 			}
 			switch (chr) {
 				case ' ':
-					// ignore
+					// Ignore
 					break;
 				case '.':
 				case ',':
@@ -2327,8 +2329,8 @@
 
 	// Add event handlers
 
-	const pressingEvent = (event) => { pressing(event.target.id); };
-	document.querySelectorAll('.transparent_button').forEach((button) => { button.addEventListener('click', pressingEvent); });
+	const pressingEvent = (event) => void pressing(event.target.id);
+	document.querySelectorAll('.transparent_button').forEach((button) => void button.addEventListener('click', pressingEvent));
 
 	const powerSwitch = () => (isPowerOn ? turnOff : turnOn)();
 	document.getElementById('power_switch').addEventListener('click', powerSwitch);
@@ -2348,7 +2350,7 @@
 	document.getElementById('in_radian').addEventListener('click', changeAngleMeasureToRadian);
 	document.getElementById('in_grad').addEventListener('click', changeAngleMeasureToGrad);
 	document.getElementById('in_degree').addEventListener('click', changeAngleMeasureToDegree);
-	document.getElementById('angle_pos').addEventListener('click', ({offsetX}) => { slideAngleMeasure(offsetX < 7); });
+	document.getElementById('angle_pos').addEventListener('click', ({offsetX}) => void slideAngleMeasure(offsetX < 7));
 	const swapAngleMeasure = () => ((angleMeasure === ANGLE_IN_DEGREE) ? changeAngleMeasureToRadian : changeAngleMeasureToDegree)();
 	document.getElementById('angle_measure').addEventListener('click', swapAngleMeasure);
 
