@@ -1856,7 +1856,6 @@
 		isPowerOn = false;
 		isPaused = false;
 		inProgramMode = false;
-		programModeChanged();
 		displayValues = [];
 		displayPointsPresent = [];
 		microChips.forEach((chip) => void chip.reset());
@@ -1868,6 +1867,7 @@
 		document.getElementById('power_pos').style.left = '51px';
 		displayValueImages.forEach(clearImage);
 		displayPointImages.forEach(clearImage);
+		programModeChanged();
 		changeAngleMeasure(ANGLE_IN_RADIAN, false);
 		undo.reset();
 		disableButtons(true);
@@ -1968,7 +1968,7 @@
 	const writeTextToProgram = () => {
 		const writeSingleCommand = (addr, intCode) => {
 			const ref = getCommandRef(addr);
-			ref.memory[ref.indexHigh] = intDiv(intCode, 16) & 0x0F // Use % 16 because intCode can be large like 99999
+			ref.memory[ref.indexHigh] = intDiv(intCode, 16) & 0x0F; // Use % 16 because intCode can be large like 99999
 			ref.memory[ref.indexLow] = intCode & 0x0F; // % 16;
 		};
 
@@ -2121,10 +2121,11 @@
 		programMemo.innerHTML = isPowerOn ? getProgramAsText() : '<br>';
 	};
 
-	const showStateAsText = () => {
+	const showStateAsText = (event) => {
 		if (!isPowerOn) {
 			return;
 		}
+		const newFormat = !event.shiftKey && !event.ctrlKey;
 		let stateStr = toHex(angleMeasure);
 		for (let iChip = 0; iChip < 2; iChip++) {
 			const chipIR2 = microChips[iChip];
@@ -2150,28 +2151,31 @@
 			stateStr += toHex(chipIK13.output);
 			stateStr += toHex(chipIK13.keybX);
 			stateStr += toHex(chipIK13.keybY);
-			stateStr += chipIK13.elevenPointExists ? 'B' : '0'; // 0xB = 11
+			if (newFormat) {
+				stateStr += chipIK13.elevenPointExists ? 'B' : '0'; // 0xB = 11
+			}
 			stateStr += chipIK13.pointsPresent.map(Number).map(String).join(''); // Number(false|true) equal (0|1)
-			stateStr += chipIK13.displayValueChanged ? '1' : '0';
+			if (newFormat) {
+				stateStr += chipIK13.displayValueChanged ? '1' : '0';
+			}
 		}
 		const stateStrLength = stateStr.length;
 		let result = '';
-		let iStateStr = 0;
-		while (iStateStr < stateStrLength) {
-			if (stateStr[iStateStr] !== '0') {
-				result += stateStr[iStateStr];
-				iStateStr++;
+		let iPos = 0;
+		while (iPos < stateStrLength) {
+			if (stateStr[iPos] !== '0') {
+				result += stateStr[iPos++];
 				continue;
 			}
 			let repCount = 0;
 			do {
 				repCount++;
-				iStateStr++;
-			} while ((iStateStr < stateStrLength) && (stateStr[iStateStr] === '0'));
-			do {
+				iPos++;
+			} while ((iPos < stateStrLength) && (stateStr[iPos] === '0'));
+			do { // Max 2 times
 				result += BASE38_CHARS[repCount % BASE38_CHARS.length];
 				repCount = intDiv(repCount, BASE38_CHARS.length);
-			} while (repCount !== 0);
+			} while (repCount > 0);
 		}
 		const stateWindow = window.open('', 'Состояние', 'width=300px, height=300px');
 		stateWindow.document.body.innerHTML = `<textarea id="state" style="width: 100%; height: 100%;">${result}</textarea>`;
@@ -2179,69 +2183,87 @@
 	};
 
 	const setStateByText = () => {
-		const text = window.prompt('Введите сохранённое состояние:');
-		if (text === null) {
+		const inputStr = window.prompt('Введите сохранённое состояние:');
+		if (inputStr === null) {
+			return;
+		}
+		const inputLength = inputStr.length;
+		if (inputLength < 50) {
 			return;
 		}
 		let stateStr = '';
-		const textLength = text.length;
-		let textPos = 0;
-		while (textPos < textLength) {
-			let textChar = text[textPos];
-			if (BASE38_CHARS.includes(textChar)) {
-				const packet = [];
-				do {
-					packet.push(textChar);
-					textPos++;
-					textChar = (textPos < textLength) ? text[textPos] : ' '; // Space
-				} while (BASE38_CHARS.includes(textChar));
-				const repCount = packet.reduce((result, chr, index) => (
-					result + BASE38_CHARS.indexOf(chr) * (BASE38_CHARS.length ** index)
-				), 0);
+		let iPos = 0;
+		do {
+			let chr = inputStr[iPos++];
+			let repCount = BASE38_CHARS.indexOf(chr);
+			if (repCount >= 0) {
+				if (iPos < inputLength) {
+					chr = inputStr[iPos++];
+					const rep38Count = BASE38_CHARS.indexOf(chr);
+					if (rep38Count >= 0) {
+						repCount += rep38Count * BASE38_CHARS.length;
+						chr = inputStr[iPos++];
+					}
+				}
 				stateStr += '0'.repeat(repCount);
+				if (iPos >= inputLength) {
+					break;
+				}
 			}
-			stateStr += textChar;
-			textPos++;
+			stateStr += chr;
+		} while (iPos < inputLength);
+		const newFormat = (stateStr.length === 999);
+		if ((stateStr.length !== 993) && !newFormat) { // Old format length === 993
+			return;
 		}
 		turnOff();
 		changeAngleMeasure(fromHex(stateStr[0]), false);
+		iPos = 1;
 		for (let iChip = 0; iChip < 2; iChip++) {
 			const chipIR2 = microChips[iChip];
 			for (let iMem = 0; iMem < 252; iMem++) {
-				chipIR2.M[iMem] = fromHex(stateStr[iMem + 1 + 256 * iChip]);
+				chipIR2.M[iMem] = fromHex(stateStr[iPos++]);
 			}
-			chipIR2.input = fromHex(stateStr[253 + 256 * iChip]);
-			chipIR2.output = fromHex(stateStr[254 + 256 * iChip]);
-			chipIR2.tickIndex = fromHex(stateStr.substr(255 + 256 * iChip, 2));
+			chipIR2.input = fromHex(stateStr[iPos++]);
+			chipIR2.output = fromHex(stateStr[iPos++]);
+			chipIR2.tickIndex = fromHex(stateStr.substring(iPos, iPos + 2));
+			iPos += 2;
 		}
 		for (let iChip = 2; iChip < 5; iChip++) {
 			const chipIK13 = microChips[iChip];
 			for (let iMem = 0; iMem < 42; iMem++) {
-				chipIK13.M[iMem] = fromHex(stateStr[iMem + 189 + 162 * iChip]);
+				chipIK13.M[iMem] = fromHex(stateStr[iPos++]);
 			}
 			for (let iMem = 0; iMem < 42; iMem++) {
-				chipIK13.R[iMem] = fromHex(stateStr[iMem + 231 + 162 * iChip]);
+				chipIK13.R[iMem] = fromHex(stateStr[iPos++]);
 			}
 			for (let iMem = 0; iMem < 42; iMem++) {
-				chipIK13.ST[iMem] = fromHex(stateStr[iMem + 273 + 162 * iChip]);
+				chipIK13.ST[iMem] = fromHex(stateStr[iPos++]);
 			}
-			chipIK13.S = fromHex(stateStr[315 + 162 * iChip]);
-			chipIK13.S1 = fromHex(stateStr[316 + 162 * iChip]);
-			chipIK13.L = fromHex(stateStr[317 + 162 * iChip]);
-			chipIK13.T = fromHex(stateStr[318 + 162 * iChip]);
-			chipIK13.overflow = fromHex(stateStr[319 + 162 * iChip]);
-			chipIK13.tickIndex = fromHex(stateStr.substr(320 + 162 * iChip, 2));
-			chipIK13.command = fromHex(stateStr.substr(322 + 162 * iChip, 7));
-			chipIK13.addrSyncCmd = fromHex(stateStr.substr(329 + 162 * iChip, 2));
-			chipIK13.input = fromHex(stateStr[331 + 162 * iChip]);
-			chipIK13.output = fromHex(stateStr[332 + 162 * iChip]);
-			chipIK13.keybX = fromHex(stateStr[333 + 162 * iChip]);
-			chipIK13.keybY = fromHex(stateStr[334 + 162 * iChip]);
-			chipIK13.elevenPointExists = (fromHex(stateStr[335 + 162 * iChip]) === 11);
+			chipIK13.S = fromHex(stateStr[iPos++]);
+			chipIK13.S1 = fromHex(stateStr[iPos++]);
+			chipIK13.L = fromHex(stateStr[iPos++]);
+			chipIK13.T = fromHex(stateStr[iPos++]);
+			chipIK13.overflow = fromHex(stateStr[iPos++]);
+			chipIK13.tickIndex = fromHex(stateStr.substring(iPos, iPos + 2));
+			iPos += 2;
+			chipIK13.command = fromHex(stateStr.substring(iPos, iPos + 7));
+			iPos += 7;
+			chipIK13.addrSyncCmd = fromHex(stateStr.substring(iPos, iPos + 2));
+			iPos += 2;
+			chipIK13.input = fromHex(stateStr[iPos++]);
+			chipIK13.output = fromHex(stateStr[iPos++]);
+			chipIK13.keybX = fromHex(stateStr[iPos++]);
+			chipIK13.keybY = fromHex(stateStr[iPos++]);
+			if (newFormat) {
+				chipIK13.elevenPointExists = (fromHex(stateStr[iPos++]) === 11);
+			}
 			for (let iPoint = 0; iPoint < 14; iPoint++) {
-				chipIK13.pointsPresent[iPoint] = Number.parseInt(stateStr[iPoint + 336 + 162 * iChip], 10) !== 0;
+				chipIK13.pointsPresent[iPoint] = Number.parseInt(stateStr[iPos++], 10) !== 0;
 			}
-			chipIK13.displayValueChanged = Number.parseInt(stateStr[350 + 162 * iChip], 10) !== 0;
+			if (newFormat) {
+				chipIK13.displayValueChanged = Number.parseInt(stateStr[iPos++], 10) !== 0;
+			}
 		}
 		turnOn();
 	};
@@ -2255,7 +2277,7 @@
 		forLoop:
 		for (let chr of text) {
 			stepExec();
-			if (chr >= '0' && chr <= '9') {
+			if ((chr >= '0') && (chr <= '9')) {
 				pressing(`b${chr}`, true);
 				digitsCount++;
 				if ((digitsCount < 8) || powerButtonIsPressed)  {
@@ -2355,7 +2377,9 @@
 	document.getElementById('angle_measure').addEventListener('click', swapAngleMeasure);
 
 	document.body.addEventListener('keydown', (event) => {
-		if (isPowerOn && (document.activeElement !== programMemo) && !event.shiftKey) {
+		const unwantedCases = !isPowerOn || (document.activeElement === programMemo) ||
+			event.shiftKey || event.ctrlKey || event.isComposing || (event.keyCode === 229);
+		if (!unwantedCases) {
 			keyboardHook(event.keyCode);
 		}
 	});
