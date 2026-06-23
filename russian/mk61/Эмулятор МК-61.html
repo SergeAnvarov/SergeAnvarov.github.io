@@ -262,7 +262,7 @@
 								</table>
 							</td>
 							<td style="vertical-align: top; border-left: dashed 1px #C0C0C0;">
-								<table>
+								<table id="ret_table">
 									<tr><td><input type="text" id="ret_4" size="2" readonly></td></tr>
 									<tr><td><input type="text" id="ret_3" size="2" readonly></td></tr>
 									<tr><td><input type="text" id="ret_2" size="2" readonly></td></tr>
@@ -278,9 +278,12 @@
 										</td>
 									</tr>
 									<tr>
+										<td>Состояние в виде строки:</td>
+									</tr>
+									<tr>
 										<td>
-											<button type="button" id="state_to_text" style="width: 5rem; margin: 0.4rem;">Прочитать</button>
-											<button type="button" id="text_to_state" style="width: 5rem; margin: 0.4rem;">Ввести</button>
+											<button type="button" id="state_to_text" style="width: 6rem; margin: 0.4rem;">Копировать…</button>
+											<button type="button" id="text_to_state" style="width: 4rem; margin: 0.4rem;">Ввести…</button>
 										</td>
 									</tr>
 									<tr>
@@ -288,10 +291,9 @@
 											<label><input type="checkbox" id="change_speed" style="margin-top: 1rem;">Ускоренный режим</label>
 										</td>
 									</tr>
-									<tr><td>&nbsp;</td></tr>
-									<tr>
+									<tr id="inProgramMode" style="color: red;" hidden>
 										<td>
-											<span id="inProgramMode" style="color: red;" hidden>Выполняется&hellip;</span>
+											<span>Выполняется…</span>
 										</td>
 									</tr>
 								</table>
@@ -1429,16 +1431,16 @@
 		tick() {
 			if (this.tickIndex === 0) {
 				this.command = this.commands[this.R[36] + 16 * this.R[39]];
-				if ((this.command & (0x3F << 18)) === 0) {
+				if ((this.command & (0x3F << 16)) === 0) {
 					this.T = 0;
 				}
 			}
 			const tickDiv3 = intDiv(this.tickIndex, 3);
 			const tickMod9 = this.tickIndex % 9;
-			if (tickMod9 === 0) {
-				const tickDiv9 = intDiv(this.tickIndex, 9);
-				if (tickDiv9 < 3) {
-					this.addrSyncCmd = this.command & 0xFF;
+			const tickDiv9 = intDiv(this.tickIndex, 9);
+			if ((tickMod9 === 0) && ((tickDiv9 === 0) || (tickDiv9 >= 3))) {
+				if (tickDiv9 === 0) {
+					this.addrSyncCmd = this.command & 0x7F;
 				} else if (tickDiv9 === 3) {
 					this.addrSyncCmd = (this.command >>> 8) & 0xFF;
 				} else if (tickDiv9 === 4) {
@@ -1471,7 +1473,7 @@
 					this.execCommand(bitIndex, adder);
 				}
 			}
-			if ((this.command & (0x3F << 18)) !== 0) {
+			if ((this.command & (0x3F << 16)) !== 0) {
 				if (this.keybY === 0) {
 					this.T = 0;
 				}
@@ -1563,6 +1565,7 @@
 
 	let inProgramMode = false;
 	const inProgramModeControl = document.getElementById('inProgramMode');
+	const retTable = document.getElementById("ret_table");
 
 	const displayValueImages = new Array(12);
 	const displayPointImages = new Array(12);
@@ -1572,6 +1575,7 @@
 		displayValueImages.forEach((img) => void (img.style.opacity = opacity));
 		displayPointImages.forEach((img) => void (img.style.opacity = opacity));
 		inProgramModeControl.hidden = !inProgramMode;
+		retTable.hidden = inProgramMode;
 	};
 
 	class UndoEngine {
@@ -2123,6 +2127,7 @@
 
 	const showStateAsText = (event) => {
 		if (!isPowerOn) {
+			alert('Включите ПМК для копирования состояния!')
 			return;
 		}
 		const newFormat = !event.shiftKey && !event.ctrlKey;
@@ -2177,18 +2182,14 @@
 				repCount = intDiv(repCount, BASE38_CHARS.length);
 			} while (repCount > 0);
 		}
-		const stateWindow = window.open('', 'Состояние', 'width=300px, height=300px');
-		stateWindow.document.body.innerHTML = `<textarea id="state" style="width: 100%; height: 100%;">${result}</textarea>`;
-		stateWindow.document.getElementById('state').select();
+		window.navigator.clipboard.writeText(result).then(() => window.alert('Скопировано в буфер обмена:\n\n' + result));
 	};
 
 	const setStateByText = () => {
 		const inputStr = window.prompt('Введите сохранённое состояние:');
-		if (inputStr === null) {
-			return;
-		}
 		const inputLength = inputStr.length;
 		if (inputLength < 50) {
+			alert(`Строка "${inputStr}" не похожа на строку состояния.`)
 			return;
 		}
 		let stateStr = '';

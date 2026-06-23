@@ -75,7 +75,7 @@
 		</p>
 		<ul>
 			<li>
-				Цифры 0&hellip;9 работают как на основной, так и на дополнительной
+				Цифры 0…9 работают как на основной, так и на дополнительной
 				клавиатуре.
 			</li>
 			<li>
@@ -120,7 +120,7 @@
 	<section>
 		<h2>Отображение содержимого регистров памяти</h2>
 		<p>
-			Содержимое каждого из пятнадцати регистров памяти R0&hellip;RE отображается
+			Содержимое каждого из пятнадцати регистров памяти R0…RE отображается
 			в виде:
 		</p>
 		<ul>
@@ -226,7 +226,8 @@
 		</p>
 		<p>
 			Стек адресов возврата считается снизу вверх: внизу самый последний адрес возврата. Во время
-			выполнения не обновляется. При остановке всё нормализуется.
+			выполнения скрыт, потому что в этот момент его содержимое не соотвествует действительности.
+			При остановке отображается.
 		</p>
 		<h3>Буфер обмена</h3>
 		<p>
@@ -262,12 +263,6 @@
 	<section>
 		<h2>Состояние</h2>
 		<p>
-			Кнопка <strong>Прочитать</strong> позволяют прочитать всё содержимое ПМК в
-			виде одной строки. Автоматического копирования в буфер обмена
-			не производится с целью безопасности. Строку не нужно интерпретировать,
-			считайте это бинарное состояние, но в виде текста.
-		</p>
-		<p>
 			Если требуется прочитать состояние при работающей программе, можно
 			использовать переключатель  <strong>Пауза</strong>, который остановит
 			работу ПМК без сброса переменных. При этом нажатие на кнопки ПМК станет
@@ -275,13 +270,24 @@
 			без паузы тоже работает.
 		</p>
 		<p>
+			Состояние в виде строки можно скопировать в буфер обмена или ввести.
+		</p>
+		<p>
+			Кнопка <strong>Копировать…</strong> позволяют скопировать в буфер обмена
+			всё содержимое ПМК в виде одной строки. Что именно скопировано, отобразится в
+			сообщении. Строку не нужно интерпретировать,
+			считайте это бинарное состояние, но в виде текста.
+		</p>
+		<p>
 			Позднее в любой момент можно <strong>Ввести</strong> сохранённую
 			строку состояния обратно, восстановив все регистры и программу.
 			Если ПМК до этого был выключен, то он автоматически включится.
+			Ввод напрямую из буфера обмена не делается из-за ограничений безопасности,
+			только через отдельный диалог.
 		</p>
 		<p>
 			Для совместимости со старым эмулятором нужно зажать на клавиатуре
-			Shift или Ctrl перед нажатием на кнопку чтения состояния. В
+			Shift или Ctrl перед нажатием на кнопку копирования состояния. В
 			этом случае сформируется строка, совместимая со
 			старой версией. При вводе ПМК сам различает, в каком
 			формате (новый или старый) входная строка.
@@ -304,7 +310,7 @@
 			восстановлении состояния, соответственно, не изменяются.
 		</p>
 		<p>
-			При выполнении программы отображается надпись <q>Выполняется&hellip;</q>.
+			При выполнении программы отображается надпись <q>Выполняется…</q>.
 		</p>
 	</section>
 
@@ -373,7 +379,7 @@
 		<table>
 			<tr>
 				<th>Цвет</th>
-				<th>Используется для&hellip;</th>
+				<th>Используется для…</th>
 			</tr>
 			<tr>
 				<td style="color:#A0A000;">Цитрусовый</td>
@@ -776,8 +782,8 @@
 					<td></td>
 				</tr>
 				<tr>
-					<td class="center">8&hellip;</td>
-					<td class="center">KБП&hellip;</td>
+					<td class="center">8…</td>
+					<td class="center">KБП…</td>
 					<td></td>
 				</tr>
 				<tr>
@@ -786,8 +792,8 @@
 					<td></td>
 				</tr>
 				<tr>
-					<td class="center">A&hellip;</td>
-					<td class="center">KПП&hellip;</td>
+					<td class="center">A…</td>
+					<td class="center">KПП…</td>
 					<td></td>
 				</tr>
 				<tr>
@@ -796,9 +802,9 @@
 					<td>FX=0&emsp;X=0</td>
 				</tr>
 				<tr>
-					<td class="center">E&hellip;</td>
-					<td class="center">Kx=0&hellip;</td>
-					<td>KX=0&hellip;</td>
+					<td class="center">E…</td>
+					<td class="center">Kx=0…</td>
+					<td>KX=0…</td>
 				</tr>
 				<tr>
 					<td class="center">57</td>
@@ -806,9 +812,9 @@
 					<td>FX≠0&emsp;X≠0&emsp;FX#0&emsp;X#0&emsp;FX!=0&emsp;X!=0&emsp;FX&lt;&gt;0&emsp;X&lt;&gt;0</td>
 				</tr>
 				<tr>
-					<td class="center">7&hellip;</td>
-					<td class="center">Kx≠0&hellip;</td>
-					<td>KX≠0&hellip;&emsp;KX#0&hellip;&emsp;KX!=0&hellip;&emsp;KX&lt;&gt;0&hellip;</td>
+					<td class="center">7…</td>
+					<td class="center">Kx≠0…</td>
+					<td>KX≠0…&emsp;KX#0…&emsp;KX!=0…&emsp;KX&lt;&gt;0…</td>
 				</tr>
 				<tr>
 					<td class="center">59</td>
@@ -816,9 +822,9 @@
 					<td>FX≥0&emsp;X≥0&emsp;FX&gt;=0&emsp;X&gt;=0&emsp;FX⩾0&emsp;X⩾0</td>
 				</tr>
 				<tr>
-					<td class="center">9&hellip;</td>
-					<td class="center">Kx≥0&hellip;</td>
-					<td>KX≥0&hellip;&emsp;KX⩾0&hellip;&emsp;KX&gt;=0&hellip;</td>
+					<td class="center">9…</td>
+					<td class="center">Kx≥0…</td>
+					<td>KX≥0…&emsp;KX⩾0…&emsp;KX&gt;=0…</td>
 				</tr>
 				<tr>
 					<td class="center">5C</td>
@@ -826,9 +832,9 @@
 					<td>FX&lt;0&emsp;X&lt;0</td>
 				</tr>
 				<tr>
-					<td class="center">C&hellip;</td>
-					<td class="center">Kx&lt;0&hellip;</td>
-					<td>KX&lt;0&hellip;</td>
+					<td class="center">C…</td>
+					<td class="center">Kx&lt;0…</td>
+					<td>KX&lt;0…</td>
 				</tr>
 				<tr>
 					<td class="center">5D</td>
@@ -866,24 +872,24 @@
 					<td></td>
 				</tr>
 				<tr>
-					<td class="center">4&hellip;</td>
-					<td class="center">xП&hellip;</td>
-					<td>XП&hellip;&emsp;П&hellip;&emsp;X→П&hellip;</td>
+					<td class="center">4…</td>
+					<td class="center">xП…</td>
+					<td>XП…&emsp;П…&emsp;X→П…</td>
 				</tr>
 				<tr>
-					<td class="center">B&hellip;</td>
-					<td class="center">KxП&hellip;</td>
-					<td>KXП&hellip;&emsp;KX→П&hellip;&emsp;KП&hellip;</td>
+					<td class="center">B…</td>
+					<td class="center">KxП…</td>
+					<td>KXП…&emsp;KX→П…&emsp;KП…</td>
 				</tr>
 				<tr>
-					<td class="center">6&hellip;</td>
-					<td class="center">Пx&hellip;</td>
-					<td>ПX&hellip;&emsp;ИП&hellip;&emsp;П→X&hellip;</td>
+					<td class="center">6…</td>
+					<td class="center">Пx…</td>
+					<td>ПX…&emsp;ИП…&emsp;П→X…</td>
 				</tr>
 				<tr>
-					<td class="center">D&hellip;</td>
-					<td class="center">КПx&hellip;</td>
-					<td>KПX&hellip;&emsp;KП→X&hellip;&emsp;KИП&hellip;</td>
+					<td class="center">D…</td>
+					<td class="center">КПx…</td>
+					<td>KПX…&emsp;KП→X…&emsp;KИП…</td>
 				</tr>
 			</tbody>
 		</table>
@@ -892,7 +898,7 @@
 		</p>
 		<ul>
 			<li>
-				&hellip; означает какой-то номер регистра. Т.&#8239;е. шестнадцатеричная
+				… означает какой-то номер регистра. Т.&#8239;е. шестнадцатеричная
 				цифра от <q>0</q> до <q>E</q>.
 			</li>
 			<li>
